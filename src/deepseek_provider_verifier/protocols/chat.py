@@ -36,7 +36,8 @@ def _choices(
         if ci in seen:
             observed.flag("DUPLICATE_CHOICE_INDEX", source)
         seen.add(ci)
-        if ci not in observed.choice_indices:
+        initial_choice = ci not in observed.choice_indices
+        if initial_choice:
             observed.choice_indices.append(ci)
             if stream:
                 observed.assistant_messages.append({})
@@ -44,6 +45,11 @@ def _choices(
         if not isinstance(delta, dict):
             observed.flag("INVALID_DELTA" if stream else "INVALID_MESSAGE", source)
             continue
+        if stream and (
+            (initial_choice and delta.get("role") != "assistant")
+            or delta.get("role") not in (None, "assistant")
+        ):
+            observed.flag("RESPONSE_ENVELOPE", source)
         if ci in observed.finish_reasons:
             observed.flag("DATA_AFTER_FINISH", source)
             if choice.get("finish_reason") is not None:
@@ -58,6 +64,7 @@ def _choices(
                     key: value
                     for key, value in delta.items()
                     if key not in ("content", "reasoning_content", "tool_calls")
+                    and not (key == "role" and value is None)
                 }
             )
         for field, segments in [
@@ -190,6 +197,7 @@ def assemble_chat(events: list[SSEEvent]) -> Observation:
     """Keep DONE distinct from choice finish reasons; EOF never supplies either."""
     observed = Observation(protocol="chat", raw_events=events)
     terminal = False
+    identity = None
     for event in events:
         if event.complete and not event.errors and event.data == "[DONE]":
             if terminal:
@@ -200,6 +208,24 @@ def assemble_chat(events: list[SSEEvent]) -> Observation:
             observed.flag("DATA_AFTER_TERMINAL", event.source())
         value = object_event(event, observed)
         if value is not None and not terminal:
+            envelope_ok = (
+                isinstance(value.get("id"), str)
+                and bool(value["id"])
+                and value.get("object") == "chat.completion.chunk"
+                and type(value.get("created")) is int
+                and isinstance(value.get("model"), str)
+            )
+            current_identity = (
+                value.get("id"),
+                value.get("created"),
+                value.get("model"),
+            )
+            if not envelope_ok or (
+                identity is not None and identity != current_identity
+            ):
+                observed.flag("RESPONSE_ENVELOPE", event.source())
+            if identity is None and envelope_ok:
+                identity = current_identity
             _choices(value, observed, event.source(), True)
     return _finish(observed, terminal)
 

@@ -40,7 +40,7 @@ def test_official_key_routing_cannot_follow_candidate_url():
 
 
 def test_candidate_uses_only_its_separate_credential_and_quotes_inputs():
-    model = 'alias"\n[endpoints.reference]\napi_key_env="DEEPSEEK_API_KEY'
+    model = '🧪alias"\n[endpoints.reference]\napi_key_env="DEEPSEEK_API_KEY'
     c = config(
         env(
             DPV_ENDPOINT="candidate",

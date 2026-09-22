@@ -1,5 +1,5 @@
 event: response.created
-data: {"type":"response.created","sequence_number":0,"response":{"id":"r1","status":"in_progress"}}
+data: {"type":"response.created","sequence_number":0,"response":{"object":"response","id":"r1","status":"in_progress"}}
 
 event: response.output_item.added
 data: {"type":"response.output_item.added","sequence_number":1,"output_index":0,"item":{"id":"i1","type":"function_call","call_id":"a","name":"add","arguments":"","status":"in_progress"}}
@@ -32,5 +32,5 @@ event: response.output_item.done
 data: {"type":"response.output_item.done","sequence_number":10,"output_index":1,"item":{"id":"i2","type":"function_call","call_id":"b","name":"echo","arguments":"{\"s\":\"你\"}","status":"completed"}}
 
 event: response.completed
-data: {"type":"response.completed","sequence_number":11,"response":{"id":"r1","status":"completed","output":[{"id":"i1","type":"function_call","call_id":"a","name":"add","arguments":"{\"x\":2}","status":"completed"},{"id":"i2","type":"function_call","call_id":"b","name":"echo","arguments":"{\"s\":\"你\"}","status":"completed"}],"usage":{"output_tokens":6},"vendor":true}}
+data: {"type":"response.completed","sequence_number":11,"response":{"object":"response","id":"r1","status":"completed","output":[{"id":"i1","type":"function_call","call_id":"a","name":"add","arguments":"{\"x\":2}","status":"completed"},{"id":"i2","type":"function_call","call_id":"b","name":"echo","arguments":"{\"s\":\"你\"}","status":"completed"}],"usage":{"output_tokens":6},"vendor":true}}
 

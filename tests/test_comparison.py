@@ -537,6 +537,9 @@ def test_wide_uncertainty_is_inconclusive():
 
     metric = result.metrics["task_success"]
     assert metric.lower_bound < -0.1 < metric.upper_bound
+    assert any(
+        "task_success" in r and "margin" in r and "overlap" in r for r in result.reasons
+    )
     assert result.metric_gates["task_success"] == "INCONCLUSIVE"
 
 
@@ -578,6 +581,7 @@ def test_noninferiority_boundary_equality_is_inconclusive():
     result = compare_runs(reference, candidate, (m, m), policy=policy())
 
     assert result.metrics["task_success"].lower_bound == pytest.approx(-0.1)
+    assert any("task_success" in r and "margin" in r for r in result.reasons)
     assert result.metric_gates["task_success"] == "INCONCLUSIVE"
 
 
@@ -590,6 +594,9 @@ def test_one_repeated_prompt_cannot_manufacture_confidence():
 
     metric = result.metrics["task_success"]
     assert metric.paired_distinct_prompts == 1
+    assert any(
+        "task_success" in r and "distinct prompts 1 < 2" in r for r in result.reasons
+    )
     assert metric.lower_bound is None and metric.upper_bound is None
     assert result.metric_gates["task_success"] == "INCONCLUSIVE"
 

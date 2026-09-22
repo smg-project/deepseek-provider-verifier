@@ -240,6 +240,13 @@ class _Assembly:
         self, response: Any, state: str, source: SourcePosition
     ) -> None:
         self.o.raw_response = response
+        if not (
+            isinstance(response, dict)
+            and isinstance(response.get("id"), str)
+            and bool(response["id"])
+            and response.get("object") == "response"
+        ):
+            self.o.flag("RESPONSE_ENVELOPE", source)
         if not isinstance(response, dict):
             self.o.flag("INVALID_RESPONSE", source)
             return

@@ -164,7 +164,7 @@ class _FixtureHandler(BaseHTTPRequestHandler):
                     "choices": [
                         {
                             "index": 0,
-                            "delta": {"content": "amber"},
+                            "delta": {"role": "assistant", "content": "amber"},
                             "finish_reason": None,
                         }
                     ],

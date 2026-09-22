@@ -547,7 +547,25 @@ def test_resume_keeps_interrupted_first_attempt_and_eventual_http_success(tmp_pa
     resumed = run(
         m, lambda r: httpx.Response(200, json=response()), tmp_path, resume=True
     )
-    comparison = compare_runs(resumed, resumed, (m, m), policy=None)
+    from deepseek_provider_verifier.reports import (
+        load_run_evidence,
+        render_report,
+        write_report_bundle,
+    )
+
+    write_report_bundle(tmp_path, resumed, allow_existing=True)
+    loaded_manifest, loaded = load_run_evidence(tmp_path)
+    assert loaded.complete and loaded.exit_code == 0
+    assert loaded.budget_usage == {"candidate": 2}
+    assert loaded.resume_dispositions[0]["disposition"] == "interrupted_attempt"
+    assert loaded.report.integrity == "verified"
+    for format in ("markdown", "junit", "json"):
+        assert render_report(loaded, format)
+    comparison = compare_runs(
+        loaded, loaded, (loaded_manifest, loaded_manifest), policy=None
+    )
+    for format in ("markdown", "junit", "json"):
+        assert render_report(comparison, format)
 
     assert [metric.http_exchange_completed for metric in resumed.attempt_metrics] == [
         False,
@@ -555,6 +573,16 @@ def test_resume_keeps_interrupted_first_attempt_and_eventual_http_success(tmp_pa
     ]
     assert comparison.metrics["first_http_2xx_rate"].value == 0
     assert comparison.metrics["eventual_http_2xx_rate"].value == 1
+
+    for metrics in (
+        loaded.attempt_metrics[:1],
+        loaded.attempt_metrics + loaded.attempt_metrics[:1],
+    ):
+        damaged = loaded.model_copy(update={"attempt_metrics": metrics})
+        atomic_json(tmp_path / "summary.json", damaged.model_dump(mode="json"))
+        with pytest.raises(ValueError, match="attempts do not match"):
+            load_run_evidence(tmp_path)
+    write_report_bundle(tmp_path, loaded, allow_existing=True)
 
 
 def test_resume_retains_first_ever_http_attempt_for_availability(tmp_path):
@@ -790,6 +818,16 @@ def test_unreconciled_torn_tail_is_reported_and_cannot_be_a_passing_subset(tmp_p
     )
     assert not result.complete and result.exit_code == 2
     assert result.resume_dispositions[0]["disposition"] == "retained_torn_tail"
+    from deepseek_provider_verifier.evidence import atomic_json
+    from deepseek_provider_verifier.reports import load_run_evidence
+
+    assert not load_run_evidence(tmp_path)[1].complete
+    atomic_json(
+        tmp_path / "summary.json",
+        result.model_copy(update={"complete": True}).model_dump(mode="json"),
+    )
+    with pytest.raises(ValueError, match="completion does not match"):
+        load_run_evidence(tmp_path)
 
 
 def test_failed_infrastructure_trial_is_incomplete_and_not_marked_done(tmp_path):

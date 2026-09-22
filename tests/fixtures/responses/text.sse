@@ -1,5 +1,5 @@
 event: response.created
-data: {"type":"response.created","sequence_number":0,"response":{"id":"r4","status":"in_progress"}}
+data: {"type":"response.created","sequence_number":0,"response":{"object":"response","id":"r4","status":"in_progress"}}
 
 event: response.output_item.added
 data: {"type":"response.output_item.added","sequence_number":1,"output_index":0,"item":{"id":"reason","type":"reasoning","content":[]}}
@@ -38,5 +38,5 @@ event: response.output_item.done
 data: {"type":"response.output_item.done","sequence_number":12,"output_index":1,"item":{"id":"msg","type":"message","role":"assistant","content":[{"type":"output_text","text":"你"}]}}
 
 event: response.completed
-data: {"type":"response.completed","sequence_number":13,"response":{"id":"r4","status":"completed","output":[{"id":"reason","type":"reasoning","content":[{"type":"reasoning_text","text":"think"}]},{"id":"msg","type":"message","role":"assistant","content":[{"type":"output_text","text":"你"}]}],"usage":{"output_tokens":2}}}
+data: {"type":"response.completed","sequence_number":13,"response":{"object":"response","id":"r4","status":"completed","output":[{"id":"reason","type":"reasoning","content":[{"type":"reasoning_text","text":"think"}]},{"id":"msg","type":"message","role":"assistant","content":[{"type":"output_text","text":"你"}]}],"usage":{"output_tokens":2}}}
 

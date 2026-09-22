@@ -761,6 +761,27 @@ def compare_runs(
                 verdict = "FAIL"
             else:
                 verdict = "INCONCLUSIVE"
+            if verdict == "INCONCLUSIVE":
+                details = []
+                if not comparable:
+                    details.append("workloads are not comparable")
+                if unknown_release:
+                    details.append("checkpoint identity is unknown")
+                if metric.paired_distinct_prompts < policy.minimum_distinct_prompts:
+                    details.append(
+                        f"distinct prompts {metric.paired_distinct_prompts} < {policy.minimum_distinct_prompts}"
+                    )
+                if metric.paired_repetitions < policy.minimum_repetitions:
+                    details.append(
+                        f"paired repetitions {metric.paired_repetitions} < {policy.minimum_repetitions}"
+                    )
+                if metric.lower_bound is None or metric.upper_bound is None:
+                    details.append("difference interval unavailable")
+                elif not details:
+                    details.append(
+                        f"difference interval [{metric.lower_bound:.6g}, {metric.upper_bound:.6g}] overlaps or touches boundary {-margin:.6g} (allowed-drop margin {margin:.6g})"
+                    )
+                reasons.append(f"{name}: " + "; ".join(details))
             metric_gates[name] = verdict
         quality_gate = (
             "FAIL"

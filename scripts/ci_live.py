@@ -39,7 +39,8 @@ def config_text(env):
     )
     if target.base_url.scheme != "https":
         raise ValueError("Manual workflow requires HTTPS")
-    # JSON basic strings/lists are valid TOML; no input is evaluated as shell text.
+    # These validated strings, integers and string lists use TOML-compatible JSON
+    # quoting with Unicode scalars preserved (no UTF-16 surrogate escapes).
     values = {
         "profile": profile,
         "suite": "smoke",
@@ -51,7 +52,10 @@ def config_text(env):
         "execution_order": "sequential",
         "scorer_revision": env["GITHUB_SHA"],
     }
-    lines = ["[run]", *[f"{k} = {json.dumps(v)}" for k, v in values.items()]]
+    lines = [
+        "[run]",
+        *[f"{k} = {json.dumps(v, ensure_ascii=False)}" for k, v in values.items()],
+    ]
     lines += [f"\n[endpoints.{endpoint}]"]
     for key in [
         "name",
@@ -61,7 +65,9 @@ def config_text(env):
         "model_release",
         "api_key_env",
     ]:
-        lines.append(f"{key} = {json.dumps(str(getattr(target, key)))}")
+        lines.append(
+            f"{key} = {json.dumps(str(getattr(target, key)), ensure_ascii=False)}"
+        )
     return "\n".join(lines) + "\n"
 
 

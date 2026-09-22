@@ -123,7 +123,10 @@ def load_run_evidence(directory: Path) -> tuple[Manifest, RunResult]:
         expected_complete = (
             set(journal_results) == expected_identities
             and all(item.completed for item in state.results)
-            and not state.incomplete_records
+            and not any(
+                record.get("disposition") == "retained_torn_tail"
+                for record in state.incomplete_records
+            )
         )
         if run.complete != expected_complete:
             raise ValueError(
@@ -138,7 +141,15 @@ def load_run_evidence(directory: Path) -> tuple[Manifest, RunResult]:
             for record in state.incomplete_records
             if record.get("disposition") == "interrupted_attempt"
         )
-        if run.attempt_metrics and run.attempt_metrics != projected:
+
+        # Reservations and completed attempts occupy separate journal projections;
+        # resume appends new attempts after historical reservations in the summary.
+        def attempt_order(item):
+            return item.endpoint, item.case_id, item.attempt_number
+
+        if run.attempt_metrics and sorted(
+            run.attempt_metrics, key=attempt_order
+        ) != sorted(projected, key=attempt_order):
             raise ValueError("Run aggregate attempts do not match evidence journals")
         usage = Counter(item.endpoint for item in projected)
         if {name: usage[name] for name in manifest.endpoints} != run.budget_usage:
@@ -358,7 +369,7 @@ def _run_markdown(result: RunResult) -> str:
         )
         lines.append(
             f"| {_md(item.case_id)} | {_md(item.endpoint)} | {item.status} | "
-            f"{'yes' if item.case_id in required else 'no'} | {evidence} | {_md('; '.join(reasons))} |"
+            f"{'unavailable' if context is None else 'yes' if item.case_id in required else 'no'} | {evidence} | {_md('; '.join(reasons))} |"
         )
     return "\n".join(lines) + "\n"
 
@@ -392,6 +403,7 @@ def _comparison_markdown(result: ComparisonResult) -> str:
         f"- Comparable: `{str(result.comparable).lower()}`",
         f"- Date: `{_md(_date(context.created_at) if context else 'unavailable')}`",
         f"- Profile: `{_md(context.profile if context and context.profile else 'unavailable')}`",
+        f"- Profile hash: `{_md(context.profile_hash if context and context.profile_hash else 'unavailable')}`",
         f"- Dataset hash: `{_md(context.dataset_hash if context and context.dataset_hash else 'unavailable')}`",
         f"- Cases: `{context.case_count if context else 'unavailable'}`",
         f"- Required cases: `{context.required_case_count if context else 'unavailable'}`",
@@ -426,6 +438,42 @@ def _comparison_markdown(result: ComparisonResult) -> str:
             f"| {_md(name)} | {_number(metric.reference_value)} | {_number(metric.value)} | "
             f"{_number(metric.difference)} | {result.metric_gates.get(name, 'REPORT_ONLY')} |"
         )
+    lines.extend(
+        [
+            "",
+            "## Metric populations and uncertainty",
+            "",
+            "| Metric | Reference numerator/denominator | Reference unavailable | Candidate numerator/denominator | Candidate unavailable | Paired observations / prompts / repetitions | Missing reference / candidate | Difference interval | Confidence | Bootstrap seed |",
+            "| --- | ---: | ---: | ---: | ---: | --- | --- | --- | ---: | ---: |",
+        ]
+    )
+    for name, metric in result.metrics.items():
+        lines.append(
+            f"| {_md(name)} | {_number(metric.reference_numerator)}/{metric.reference_denominator} | {metric.reference_unavailable} | "
+            f"{_number(metric.numerator)}/{metric.denominator} | {metric.unavailable} | "
+            f"{metric.paired_observations} / {metric.paired_distinct_prompts} / {metric.paired_repetitions} | "
+            f"{metric.missing_reference} / {metric.missing_candidate} | "
+            f"{_number(metric.lower_bound)} to {_number(metric.upper_bound)} | "
+            f"{_number(metric.confidence_level)} | {metric.bootstrap_seed if metric.bootstrap_seed is not None else 'unavailable'} |"
+        )
+    lines.extend(["", "## Comparison policy", ""])
+    if result.policy:
+        policy = result.policy
+        lines.extend(
+            [
+                f"- Minimum distinct prompts: {policy.minimum_distinct_prompts}",
+                f"- Minimum repetitions: {policy.minimum_repetitions}",
+                f"- Confidence level: {_number(policy.confidence_level)}",
+                f"- Bootstrap samples: {policy.bootstrap_samples}",
+                f"- Bootstrap seed: {policy.bootstrap_seed}",
+                *[
+                    f"- Allowed drop for {_md(name)}: {_number(margin)}"
+                    for name, margin in policy.allowed_drops.items()
+                ],
+            ]
+        )
+    else:
+        lines.append("- unavailable (report only)")
     if context and context.evidence_links:
         lines.extend(
             ["", "## Evidence", "", "| Case | Stored evidence |", "| --- | --- |"]
@@ -474,6 +522,11 @@ def _run_junit(result: RunResult) -> str:
     )
     _property(
         properties,
+        "profile_hash",
+        context.profile_hash if context and context.profile_hash else "unavailable",
+    )
+    _property(
+        properties,
         "dataset_hash",
         context.dataset_hash if context and context.dataset_hash else "unavailable",
     )
@@ -517,11 +570,12 @@ def _run_junit(result: RunResult) -> str:
 
 def _comparison_junit(result: ComparisonResult) -> str:
     report_only = result.policy is None
-    metrics = (
-        {name: "REPORT_ONLY" for name in result.metrics}
+    metrics = {
+        name: "REPORT_ONLY"
         if report_only
-        else result.metric_gates
-    )
+        else result.metric_gates.get(name, "REPORT_ONLY")
+        for name in result.metrics
+    }
     suite = ET.Element(
         "testsuite",
         name="deepseek-provider-verifier-comparison",
@@ -544,11 +598,29 @@ def _comparison_junit(result: ComparisonResult) -> str:
     )
     _property(
         properties,
+        "profile_hash",
+        context.profile_hash if context and context.profile_hash else "unavailable",
+    )
+    _property(
+        properties,
         "dataset_hash",
         context.dataset_hash if context and context.dataset_hash else "unavailable",
     )
     _property(
         properties, "case_count", context.case_count if context else "unavailable"
+    )
+    _property(properties, "integrity", context.integrity if context else "unavailable")
+    _property(
+        properties,
+        "required_case_count",
+        context.required_case_count if context else "unavailable",
+    )
+    _property(
+        properties,
+        "policy",
+        json.dumps(result.policy.model_dump(mode="json"), sort_keys=True)
+        if result.policy
+        else "unavailable",
     )
     for name, model in context.endpoint_models.items() if context else ():
         _property(properties, f"endpoint.{name}.model", model)
@@ -558,10 +630,26 @@ def _comparison_junit(result: ComparisonResult) -> str:
         _property(properties, "required_gate", gate)
     for name, verdict in metrics.items():
         case = ET.SubElement(suite, "testcase", name=_xml(name), classname="quality")
+        metric = result.metrics.get(name)
+        if metric:
+            ET.SubElement(case, "system-out").text = _xml(
+                json.dumps(metric.model_dump(mode="json"), sort_keys=True)
+            )
         if verdict == "FAIL":
             ET.SubElement(case, "failure", message="quality gate failed")
         elif verdict == "INCONCLUSIVE":
-            ET.SubElement(case, "error", message="quality gate inconclusive")
+            ET.SubElement(
+                case,
+                "error",
+                message=_xml(
+                    "; ".join(
+                        reason
+                        for reason in result.reasons
+                        if reason.startswith(name + ":")
+                    )
+                    or "quality gate inconclusive"
+                ),
+            )
         elif verdict == "REPORT_ONLY":
             ET.SubElement(case, "skipped", message="report-only observation")
     if context and context.evidence_links:
