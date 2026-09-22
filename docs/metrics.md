@@ -90,3 +90,25 @@ strictly greater than `-allowed_drop`. FAIL requires the upper bound to be stric
 less. Equality at either boundary, insufficient pairing, unknown checkpoint
 identity, or an incompatible workload is INCONCLUSIVE. With no policy, comparison
 is descriptive and has no quality verdict.
+
+## Opt-in reliability analysis
+
+Depth suites add a derived `reliability.json` sidecar and Markdown tables. Groups
+are endpoint/model, explicit fixture family, protocol, mode, and stream setting;
+each contains per-prompt rows. Planned, started, completed, PASS, FAIL, ERROR,
+INCONCLUSIVE, SKIP, and MISSING counts remain explicit. Conditional failure is
+FAIL/(PASS+FAIL); an empty denominator is null. Execution errors and skipped work
+are unavailable in the derived end-to-end metric, including when an older runner
+stored a scored zero. Canonical results and existing comparisons are unchanged.
+
+Wilson 95% intervals apply only to measured binary repeats of one prompt and
+variant, assuming independent trials. No pooled interval treats prompt variants
+as independent. Mixed PASS/FAIL prompts and error-affected prompts are separate.
+Five repetitions do not establish production reliability or create a quality gate.
+
+HTTP counts use retained attempts and actual logical requests, including interrupted
+reservations. Reused completed trials are counted once. When a whole trial was
+rerun, the latest result cannot reconstruct the original contract assessment;
+its first-contract status is unavailable. The first HTTP attempt remains the
+lowest retained attempt number. Reports recompute analysis from validated sources;
+the sidecar is never trusted as authoritative evidence.

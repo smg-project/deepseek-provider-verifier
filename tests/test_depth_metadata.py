@@ -1,9 +1,10 @@
 """Reject malformed opt-in semantics before a manifest can reach the network."""
 
 import pytest
+
+from deepseek_provider_verifier.catalog import load_cases
 from deepseek_provider_verifier.depth_metadata import validate_depth_oracle
 from deepseek_provider_verifier.records import CaseTemplate
-from deepseek_provider_verifier.catalog import load_cases
 
 
 @pytest.mark.parametrize(

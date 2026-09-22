@@ -46,7 +46,12 @@ def exit_status(result: RunResult) -> int:
     return 0
 
 
-def render_report(result: RunResult | ComparisonResult, format: str) -> str:
+def render_report(
+    result: RunResult | ComparisonResult,
+    format: str,
+    *,
+    manifest: Manifest | None = None,
+) -> str:
     """Render a result without consulting credentials or raw evidence bodies."""
 
     format = format.lower()
@@ -57,11 +62,20 @@ def render_report(result: RunResult | ComparisonResult, format: str) -> str:
             value["exit_code"] = exit_status(result)
         return json.dumps(value, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
     if format == "markdown":
-        return (
+        rendered = (
             _run_markdown(result)
             if isinstance(result, RunResult)
             else _comparison_markdown(result)
         )
+        if (
+            isinstance(result, RunResult)
+            and manifest is not None
+            and any("depth" in c.oracle for c in manifest.cases)
+        ):
+            from .reliability import build_reliability, render_reliability_markdown
+
+            rendered += render_reliability_markdown(build_reliability(manifest, result))
+        return rendered
     if format == "junit":
         return (
             _run_junit(result)
@@ -223,6 +237,7 @@ def write_report_bundle(
     result: RunResult | ComparisonResult,
     *,
     allow_existing: bool = False,
+    manifest: Manifest | None = None,
 ) -> None:
     """Write the canonical aggregate and its two derived renderings atomically."""
 
@@ -234,8 +249,18 @@ def write_report_bundle(
     directory.mkdir(parents=True, exist_ok=True)
     canonical = json.loads(render_report(result, "json"))
     atomic_json(directory / "summary.json", canonical)
-    _atomic_text(directory / "summary.md", render_report(result, "markdown"))
+    _atomic_text(
+        directory / "summary.md", render_report(result, "markdown", manifest=manifest)
+    )
     _atomic_text(directory / "junit.xml", render_report(result, "junit"))
+    if (
+        isinstance(result, RunResult)
+        and manifest is not None
+        and any("depth" in c.oracle for c in manifest.cases)
+    ):
+        from .reliability import build_reliability
+
+        atomic_json(directory / "reliability.json", build_reliability(manifest, result))
 
 
 def _atomic_text(path: Path, value: str) -> None:

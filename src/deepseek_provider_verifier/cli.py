@@ -184,7 +184,7 @@ def _run(args) -> int:
     context = _run_context(manifest, result, "verified")
     result = result.model_copy(update={"report": context})
     result = result.model_copy(update={"exit_code": exit_status(result)})
-    write_report_bundle(args.out, result, allow_existing=True)
+    write_report_bundle(args.out, result, allow_existing=True, manifest=manifest)
     print(args.out)
     return result.exit_code
 
@@ -297,8 +297,12 @@ def _relative_evidence_link(path: Path, report_directory: Path, digest: str) -> 
 
 
 def _report(args) -> int:
-    result = load_stored_result(args.evidence)
-    rendered = render_report(result, args.format)
+    manifest = None
+    if args.evidence.is_dir() and (args.evidence / "manifest.json").exists():
+        manifest, result = load_run_evidence(args.evidence)
+    else:
+        result = load_stored_result(args.evidence)
+    rendered = render_report(result, args.format, manifest=manifest)
     if args.out:
         if args.out.exists():
             raise ValueError(f"Output path already exists: {args.out}")
