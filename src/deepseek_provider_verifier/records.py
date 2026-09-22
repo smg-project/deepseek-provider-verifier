@@ -108,6 +108,10 @@ class Rule(Record):
 
     @model_validator(mode="after")
     def diagnostic_rules_are_not_gates(self) -> Rule:
+        from .depth_metadata import validate_deployment_limits
+
+        if "deployment_limits" in self.conditions:
+            validate_deployment_limits(self.conditions["deployment_limits"])
         if "compatibility_policy" in self.conditions and self.conditions[
             "compatibility_policy"
         ] not in ("self_hosted", "official_parity"):

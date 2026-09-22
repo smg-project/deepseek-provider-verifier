@@ -878,6 +878,80 @@
       "feature": "local_ref",
       "target": "output",
       "strict": true
+    },
+    {
+      "id": "L01",
+      "family": "size.single",
+      "shape": "single",
+      "input_bytes": 16384,
+      "seed": 8
+    },
+    {
+      "id": "L05",
+      "family": "size.history",
+      "shape": "history",
+      "input_bytes": 16384,
+      "seed": 8
+    },
+    {
+      "id": "L02",
+      "family": "size.single",
+      "shape": "single",
+      "input_bytes": 65536,
+      "seed": 9
+    },
+    {
+      "id": "L06",
+      "family": "size.history",
+      "shape": "history",
+      "input_bytes": 65536,
+      "seed": 9
+    },
+    {
+      "id": "L03",
+      "family": "size.single",
+      "shape": "single",
+      "input_bytes": 262144,
+      "seed": 10
+    },
+    {
+      "id": "L07",
+      "family": "size.history",
+      "shape": "history",
+      "input_bytes": 262144,
+      "seed": 10
+    },
+    {
+      "id": "L04",
+      "family": "size.single",
+      "shape": "single",
+      "input_bytes": 1048576,
+      "seed": 11
+    },
+    {
+      "id": "L08",
+      "family": "size.history",
+      "shape": "history",
+      "input_bytes": 1048576,
+      "seed": 11
+    },
+    {
+      "id": "L09",
+      "family": "size.output",
+      "shape": "output",
+      "output_tokens": 1024
+    },
+    {
+      "id": "L10",
+      "family": "size.output",
+      "shape": "output",
+      "output_tokens": 4096
+    },
+    {
+      "id": "L11",
+      "family": "size.output",
+      "shape": "output",
+      "output_tokens": 16384
     }
   ]
 }

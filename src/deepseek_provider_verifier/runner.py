@@ -14,7 +14,7 @@ import httpx
 from .assertions import evaluate_case, has_execution_error, rule_applies
 from .capture import AttemptPayload, Observation, redact
 from .catalog import content_hash
-from .depth_metadata import resource_limits
+from .depth_metadata import resource_limits, validate_deployment_cases
 from .evidence import (
     append_record,
     atomic_json,
@@ -77,6 +77,9 @@ def validate_manifest(manifest: Manifest) -> None:
     # model_copy bypasses validation; revalidate all nested records at the boundary.
     Manifest.model_validate(manifest.model_dump(mode="json"))
     expected = rehash_manifest(manifest)
+    validate_deployment_cases(
+        manifest.cases, manifest.profile_snapshot.rules, manifest.endpoints
+    )
     if any(
         getattr(expected, field) != getattr(manifest, field)
         for field in ("profile_hash", "dataset_hash", "manifest_hash")

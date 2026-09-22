@@ -29,6 +29,36 @@
       "evidence_status": "project-policy",
       "maturity": "calibrated",
       "gating": true
+    },
+    {
+      "id": "chat.size",
+      "protocol": "chat",
+      "conditions": {
+        "deployment_limits": {}
+      },
+      "expectation": "Satisfy the authored deterministic depth fixture and observable protocol contract. No official calibration is implied.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/reliability-depth.md",
+      "retrieved_at": "2026-09-22T20:00:00Z",
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "id": "responses.size",
+      "protocol": "responses",
+      "conditions": {
+        "deployment_limits": {}
+      },
+      "expectation": "Satisfy the authored deterministic depth fixture and observable protocol contract. No official calibration is implied.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/reliability-depth.md",
+      "retrieved_at": "2026-09-22T20:00:00Z",
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
     }
   ],
   "presets": {
@@ -220,6 +250,53 @@
         "S62",
         "S63",
         "S64"
+      ]
+    },
+    "sizes-small": {
+      "max_requests_per_protocol": 24,
+      "max_requests_per_endpoint": 48,
+      "max_total_requests": 96,
+      "max_requests_per_conversation": 4,
+      "max_retries": 0,
+      "concurrency": 1,
+      "case_deadline_seconds": 600,
+      "mode_max_output_tokens": {
+        "non_thinking": 16384,
+        "thinking": 4096
+      },
+      "case_ids": [
+        "L01",
+        "L02",
+        "L05",
+        "L06",
+        "L09",
+        "L10"
+      ]
+    },
+    "sizes-large": {
+      "max_requests_per_protocol": 46,
+      "max_requests_per_endpoint": 92,
+      "max_total_requests": 184,
+      "max_requests_per_conversation": 4,
+      "max_retries": 0,
+      "concurrency": 1,
+      "case_deadline_seconds": 600,
+      "mode_max_output_tokens": {
+        "non_thinking": 16384,
+        "thinking": 4096
+      },
+      "case_ids": [
+        "L01",
+        "L02",
+        "L03",
+        "L04",
+        "L05",
+        "L06",
+        "L07",
+        "L08",
+        "L09",
+        "L10",
+        "L11"
       ]
     }
   }

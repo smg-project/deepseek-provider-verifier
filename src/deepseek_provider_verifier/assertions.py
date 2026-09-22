@@ -40,6 +40,10 @@ def evaluate_case(
     case: Case, observations: list[Observation], rules: list[Rule]
 ) -> CaseResult:
     applicable = [r for r in rules if r.id in case.rule_ids and rule_applies(r, case)]
+    if case.oracle.get("kind") in ("large_input", "large_output"):
+        from .size_cases import evaluate_size_case
+
+        return evaluate_size_case(case, observations, applicable)
     if case.oracle.get("kind") == "schema_probe":
         from .schema_cases import evaluate_schema_probe
 

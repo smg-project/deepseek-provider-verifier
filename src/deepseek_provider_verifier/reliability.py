@@ -159,6 +159,27 @@ def build_reliability(manifest: Manifest, result: RunResult) -> dict:
             "scope": "Conditional PASS/FAIL only; no pooled interval across prompt variants; descriptive, not a quality gate",
         },
         "groups": groups,
+        "observations": [
+            {
+                "endpoint": r.endpoint,
+                "case_id": r.case_id,
+                "assertion_id": a.id,
+                "status": a.status,
+                "observed": a.observed,
+            }
+            for r in result.case_results
+            if any(c.id == r.case_id and "depth" in c.oracle for c in manifest.cases)
+            for a in r.assertions
+            if a.id
+            in {
+                "SCHEMA_CAPABILITY",
+                "SIZE_CAPABILITY",
+                "SIZE_MEASUREMENTS",
+                "OUTPUT_BOUNDARY",
+                "WORKFLOW_COMPLETE",
+                "ACCUMULATED_REASONING",
+            }
+        ],
     }
 
 
@@ -200,5 +221,21 @@ def render_reliability_markdown(analysis: dict) -> str:
                 f"| ↳ {_md(p['prompt_id'])}; {p['repetitions']} repetitions; mixed PASS/FAIL={p['unstable']} | {p['planned']} / {p['started']} / {p['completed']} | "
                 + " / ".join(str(p["counts"][s]) for s in STATUSES)
                 + f" | {ratio(p['failure_rate'])}; 95% {interval} | {ratio(p['first_http_2xx_rate'])} / {ratio(p['eventual_http_2xx_rate'])} | {p['http_attempts']} / {p['http_retry_attempts']} |"
+            )
+    if analysis.get("observations"):
+        import json
+
+        lines.extend(
+            [
+                "",
+                "### Fixture measurements",
+                "",
+                "| Endpoint / case | Measurement | Status | Observed |",
+                "| --- | --- | --- | --- |",
+            ]
+        )
+        for row in analysis["observations"]:
+            lines.append(
+                f"| {_md(row['endpoint'])} / {_md(row['case_id'])} | {_md(row['assertion_id'])} | {row['status']} | {_md(json.dumps(row['observed'], sort_keys=True))} |"
             )
     return "\n".join(lines) + "\n"

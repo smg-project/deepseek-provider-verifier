@@ -168,4 +168,8 @@ def _expand(descriptor, protocol, prompts):
         from .schema_cases import schema_template
 
         return schema_template(descriptor, protocol)
+    if descriptor["family"].startswith("size."):
+        from .size_cases import size_template
+
+        return size_template(descriptor, protocol)
     raise ValueError("Unknown depth family")
