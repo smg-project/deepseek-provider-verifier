@@ -72,3 +72,66 @@ may be omitted or null (as in the documented final chunk). Additive fields are
 retained. These scorer changes postdate both live revisions and are verified only
 offline, including exact-request replay of both original captures. Neither live
 run is a current-version quality baseline.
+
+
+## Official two-model catalog calibration, September 22
+
+`deepseek-official-full-2026-09-22-v1` adds a separate profile for
+`deepseek-flash` and `deepseek-v4-pro`. It promotes 41 rules within enumerated
+variants of the shipped C01–C24 matrix. The earlier diagnostic and Flash smoke
+profiles and their source evidence remain unchanged. Model aliases remain
+mutable and releases unknown; these observations do not authenticate weights.
+
+The official run used merged revision `a97566f0aac6baec3c83e3187dd4c5b98e1b4e0c`
+on September 22, approximately 10:01–10:19 America/Los_Angeles, with the user's
+explicit authorization to run outside the usual window for that task. It sent
+696 inference requests (365 Flash, 331 Pro): 582 HTTP 200, 105 HTTP 400, and nine
+HTTP 422, with no transport or server errors. Three separate metadata requests
+listed models and created/deleted only the tiny test fixture file. Original
+live outcomes have not been rescored in place or presented as all passing.
+
+Five corrections follow those observations:
+
+- Responses C06 now sends typed properties with single-value enums. Both
+  models accepted this exact schema in the follow-up capture.
+- Chat C24 expects nonstream `stream_options` to be rejected with 4xx.
+- Responses C08/C09 expect forced tool-choice rejection only in thinking mode;
+  non-thinking cases still require valid calls. This is an observed project-policy
+  expectation, not a new claim that the Responses documentation mandates it.
+- C15 records reasoning-omission acceptance or rejection as diagnostic. Successful
+  setup and an actual omission remain prerequisites. It cannot become PASS merely
+  because a caller supplies a calibrated rule.
+- C04/C23 explicitly request the lowercase color word without punctuation,
+  matching their existing exact-answer oracle.
+
+Offline verification used 198 saved responses, with every generated request
+matched exactly to its original JSON payload, including multi-turn history.
+C04 on both protocols, Responses C06, and Responses C23 use the corrected
+`conversations` captures; other variants use `catalog` captures. The resulting
+172 trials contain 154 PASS, 14 INCONCLUSIVE and four SKIP, with 786 passing and
+20 inconclusive assertions, zero failed assertions and no execution errors.
+This verification made **zero live requests**. Original source artifact hashes,
+per-trial request/evidence hashes, and exact rule coverage are in the
+[content-free calibration record](calibration/official-both-models-2026-09-22.json).
+
+The profile intentionally keeps C10, C15, and Responses C24 diagnostic. Required
+diagnostics preserve full-suite exit 2; no inference-quality gate is enabled.
+Chat C06/C23 remain explicitly inapplicable. Additional probes exposed ambiguous
+JSON formatting, three output-budget exhaustions, four user-field validation
+differences, two remaining Pro instruction-following mismatches, and no reliable
+image understanding. Clarified follow-ups resolved the ambiguous formatting and
+tool-prohibition prompts; they do not erase the original observations. These
+supplementary probes are outside this profile's calibrated scope.
+
+An evidence holder can reproduce the correction without credentials or network:
+
+```sh
+uv run python scripts/replay_official_calibration.py \
+  --evidence-root runs/official-full-20260922
+```
+
+The script validates the original journals and committed artifact hashes, uses
+only an HTTPX mock transport, rejects any request/result mismatch, and checks
+that source files are unchanged afterward. Script success means the stored
+calibration was reproduced; its reported verifier exit code remains 2. Raw
+captures stay private and are not included in the repository or release.

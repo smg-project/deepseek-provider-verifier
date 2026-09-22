@@ -167,7 +167,11 @@ def test_negative_probe_cannot_pass_when_setup_is_rejected(case_id, protocol):
         catalog_manifest(case_id, protocol),
         lambda r: httpx.Response(400, json={"error": "setup rejected"}),
     )
-    assert result.exit_code == 1 and result.case_results[0].status == "FAIL"
+    expected_exit, expected_status = (
+        (2, "INCONCLUSIVE") if case_id == "C15" else (1, "FAIL")
+    )
+    assert result.exit_code == expected_exit
+    assert result.case_results[0].status == expected_status
     assert any(
         a.id == "NEGATIVE_PROBE_SETUP" and a.status == "FAIL"
         for a in result.case_results[0].assertions
@@ -186,7 +190,7 @@ def test_negative_probe_requires_actual_mutated_continuation(case_id, protocol):
         return httpx.Response(400, json={"error": "mutated continuation rejected"})
 
     result = run(catalog_manifest(case_id, protocol), handler)
-    assert result.exit_code == 0 and len(calls) == 2
+    assert result.exit_code == (2 if case_id == "C15" else 0) and len(calls) == 2
     assert any(
         a.id == "NEGATIVE_PROBE_MUTATION" and a.status == "PASS"
         for a in result.case_results[0].assertions
@@ -366,7 +370,11 @@ def test_status_only_mutated_continuation_accepts_html_rejection(
 
     result = run(catalog_manifest(case_id, protocol), handler, tmp_path)
     trial = result.case_results[0]
-    assert result.exit_code == 0 and trial.status == "PASS" and len(calls) == 2
+    expected_exit, expected_status = (
+        (2, "INCONCLUSIVE") if case_id == "C15" else (0, "PASS")
+    )
+    assert result.exit_code == expected_exit and trial.status == expected_status
+    assert len(calls) == 2
     assert all(
         a.status == "PASS"
         for a in trial.assertions
