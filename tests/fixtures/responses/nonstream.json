@@ -1,0 +1,1 @@
+{"id":"r2","status":"completed","output":[{"id":"reason","type":"reasoning","content":[{"type":"reasoning_text","text":"think"}]},{"id":"msg","type":"message","role":"assistant","content":[{"type":"output_text","text":"hello","annotations":[]}]}],"usage":{"output_tokens":2},"vendor":true}
