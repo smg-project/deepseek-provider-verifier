@@ -1,7 +1,7 @@
 # Reliability and depth suites — proposed design
 
 Date: 2026-09-22
-Status: Written design for review; product implementation has not started.
+Status: Approved by the user on 2026-09-22; product implementation has not started.
 Base: compatibility PR #3, commit 27f8f1c76cfdfc31ab2e3b6235747ae56e2b4736.
 
 ## Intended outcome
