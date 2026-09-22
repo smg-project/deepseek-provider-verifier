@@ -1,0 +1,104 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "assertion_id": {
+      "minLength": 1,
+      "title": "Assertion Id",
+      "type": "string"
+    },
+    "conditions": {
+      "additionalProperties": true,
+      "title": "Conditions",
+      "type": "object"
+    },
+    "evidence_status": {
+      "enum": [
+        "documented",
+        "observed",
+        "project-policy"
+      ],
+      "title": "Evidence Status",
+      "type": "string"
+    },
+    "expectation": {
+      "minLength": 1,
+      "title": "Expectation",
+      "type": "string"
+    },
+    "gating": {
+      "title": "Gating",
+      "type": "boolean"
+    },
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "maturity": {
+      "default": "diagnostic",
+      "enum": [
+        "diagnostic",
+        "calibrated"
+      ],
+      "title": "Maturity",
+      "type": "string"
+    },
+    "protocol": {
+      "enum": [
+        "chat",
+        "responses"
+      ],
+      "title": "Protocol",
+      "type": "string"
+    },
+    "retrieved_at": {
+      "format": "date-time",
+      "title": "Retrieved At",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "source_section": {
+      "minLength": 1,
+      "title": "Source Section",
+      "type": "string"
+    },
+    "source_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Sha256"
+    },
+    "source_url": {
+      "format": "uri",
+      "minLength": 1,
+      "title": "Source Url",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "protocol",
+    "conditions",
+    "expectation",
+    "assertion_id",
+    "source_url",
+    "source_section",
+    "retrieved_at",
+    "evidence_status",
+    "gating"
+  ],
+  "title": "Rule",
+  "type": "object"
+}

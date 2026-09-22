@@ -1,0 +1,1131 @@
+{
+  "schema_version": 1,
+  "purpose": "Scoped API-rule calibration provenance; not a quality-equivalence or final-CLI live result",
+  "session": {
+    "runner_revision": "bc3a9cce705aa53161bfbf1037be397b5d05a7e0",
+    "manifest_hash": "4b690088c66087fefa26a578bf364e522823962d91a76101fcce3f869745d128",
+    "started_at": "2026-09-21T20:09:48.503756-07:00",
+    "window_end": "2026-09-21T22:00:00-07:00",
+    "maximum_requests": 34,
+    "purpose": "Official API contract calibration; not a final-version quality baseline",
+    "finished_at": "2026-09-21T20:10:17.484718-07:00",
+    "sent_requests": 30,
+    "complete": true,
+    "counts": {
+      "INCONCLUSIVE": 24
+    }
+  },
+  "profile_hash": "036e5a86f4fadf30d2ce5f22123c4b307b2fb9cd789038b32de13b368f405480",
+  "dataset_hash": "b09be191935fccabfe52238a7bb017444ba9812c21735c5055764de088115658",
+  "manifest_hash": "4b690088c66087fefa26a578bf364e522823962d91a76101fcce3f869745d128",
+  "requested_model": "deepseek-flash",
+  "contract_model": "deepseek-flash",
+  "model_release": "unknown",
+  "http_status_counts": {
+    "200": 30
+  },
+  "observed_assertion_counts": {
+    "PASS": 197
+  },
+  "credential_scan": "clean, including decoded persisted body_base64",
+  "artifact_sha256": {
+    "manifest.json": "b087a482ec35c2ef340bf1220452dcb91ac3a7a67635fb81c2823c9a63b279d6",
+    "attempts.jsonl": "864901076fc98972307980a184cdf8a707fef1317f1e159ddf019e4460fb3563",
+    "results.jsonl": "7097129160232e8d8b0009eb9dfb3505b783765ab2f8a9aa3184003a1927467d",
+    "summary.json": "00e60161063ff5c459c9fb8caf668b2ab34187828e39eccb36632e44b7f1ff3f",
+    "evidence-index.json": "520536c1529c7b207e13447c4add85b8cfee4ce9383a41d1ea883bc7e464be54",
+    "calibration-session.json": "9d5072d56f811ac05f5b887ff5f4e65c844ba374e252b82e08f81971004600c3"
+  },
+  "trials": [
+    {
+      "case_id": "C01.chat.non_thinking.nonstream",
+      "template_id": "C01",
+      "protocol": "chat",
+      "mode": "non_thinking",
+      "stream": false,
+      "assertion_count": 5,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "chat.output.present",
+        "chat.thinking.disabled"
+      ]
+    },
+    {
+      "case_id": "C01.chat.non_thinking.stream",
+      "template_id": "C01",
+      "protocol": "chat",
+      "mode": "non_thinking",
+      "stream": true,
+      "assertion_count": 7,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "chat.output.present",
+        "chat.thinking.disabled",
+        "chat.stream.done",
+        "chat.stream.usage-final-content"
+      ]
+    },
+    {
+      "case_id": "C03.chat.thinking.nonstream",
+      "template_id": "C03",
+      "protocol": "chat",
+      "mode": "thinking",
+      "stream": false,
+      "assertion_count": 4,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "chat.output.present"
+      ]
+    },
+    {
+      "case_id": "C03.chat.thinking.stream",
+      "template_id": "C03",
+      "protocol": "chat",
+      "mode": "thinking",
+      "stream": true,
+      "assertion_count": 6,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "chat.output.present",
+        "chat.stream.done",
+        "chat.stream.usage-final-content"
+      ]
+    },
+    {
+      "case_id": "C05.chat.non_thinking.nonstream",
+      "template_id": "C05",
+      "protocol": "chat",
+      "mode": "non_thinking",
+      "stream": false,
+      "assertion_count": 4,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "chat.case.c05",
+        "chat.thinking.disabled"
+      ]
+    },
+    {
+      "case_id": "C07.chat.non_thinking.nonstream",
+      "template_id": "C07",
+      "protocol": "chat",
+      "mode": "non_thinking",
+      "stream": false,
+      "assertion_count": 4,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "chat.case.c07",
+        "chat.thinking.disabled"
+      ]
+    },
+    {
+      "case_id": "C07.chat.non_thinking.stream",
+      "template_id": "C07",
+      "protocol": "chat",
+      "mode": "non_thinking",
+      "stream": true,
+      "assertion_count": 6,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "chat.case.c07",
+        "chat.thinking.disabled",
+        "chat.stream.done",
+        "chat.stream.usage-final-content"
+      ]
+    },
+    {
+      "case_id": "C11.chat.non_thinking.nonstream",
+      "template_id": "C11",
+      "protocol": "chat",
+      "mode": "non_thinking",
+      "stream": false,
+      "assertion_count": 9,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "chat.case.c11",
+        "chat.thinking.disabled"
+      ]
+    },
+    {
+      "case_id": "C11.chat.non_thinking.stream",
+      "template_id": "C11",
+      "protocol": "chat",
+      "mode": "non_thinking",
+      "stream": true,
+      "assertion_count": 11,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "chat.case.c11",
+        "chat.thinking.disabled",
+        "chat.stream.done",
+        "chat.stream.usage-final-content"
+      ]
+    },
+    {
+      "case_id": "C13.chat.non_thinking.nonstream",
+      "template_id": "C13",
+      "protocol": "chat",
+      "mode": "non_thinking",
+      "stream": false,
+      "assertion_count": 14,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "chat.case.c13",
+        "chat.thinking.disabled"
+      ]
+    },
+    {
+      "case_id": "C13.chat.non_thinking.stream",
+      "template_id": "C13",
+      "protocol": "chat",
+      "mode": "non_thinking",
+      "stream": true,
+      "assertion_count": 15,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "chat.case.c13",
+        "chat.thinking.disabled",
+        "chat.stream.done",
+        "chat.stream.usage-final-content"
+      ]
+    },
+    {
+      "case_id": "C14.chat.thinking.nonstream",
+      "template_id": "C14",
+      "protocol": "chat",
+      "mode": "thinking",
+      "stream": false,
+      "assertion_count": 15,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "chat.case.c14"
+      ]
+    },
+    {
+      "case_id": "C01.responses.non_thinking.nonstream",
+      "template_id": "C01",
+      "protocol": "responses",
+      "mode": "non_thinking",
+      "stream": false,
+      "assertion_count": 5,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "responses.output.present",
+        "responses.thinking.disabled"
+      ]
+    },
+    {
+      "case_id": "C01.responses.non_thinking.stream",
+      "template_id": "C01",
+      "protocol": "responses",
+      "mode": "non_thinking",
+      "stream": true,
+      "assertion_count": 6,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "responses.output.present",
+        "responses.thinking.disabled",
+        "responses.stream.terminal",
+        "responses.usage.accounting"
+      ]
+    },
+    {
+      "case_id": "C03.responses.thinking.nonstream",
+      "template_id": "C03",
+      "protocol": "responses",
+      "mode": "thinking",
+      "stream": false,
+      "assertion_count": 4,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "responses.output.present"
+      ]
+    },
+    {
+      "case_id": "C03.responses.thinking.stream",
+      "template_id": "C03",
+      "protocol": "responses",
+      "mode": "thinking",
+      "stream": true,
+      "assertion_count": 5,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "responses.output.present",
+        "responses.stream.terminal",
+        "responses.usage.accounting"
+      ]
+    },
+    {
+      "case_id": "C05.responses.non_thinking.nonstream",
+      "template_id": "C05",
+      "protocol": "responses",
+      "mode": "non_thinking",
+      "stream": false,
+      "assertion_count": 4,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "responses.case.c05",
+        "responses.thinking.disabled"
+      ]
+    },
+    {
+      "case_id": "C07.responses.non_thinking.nonstream",
+      "template_id": "C07",
+      "protocol": "responses",
+      "mode": "non_thinking",
+      "stream": false,
+      "assertion_count": 4,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "responses.case.c07",
+        "responses.thinking.disabled"
+      ]
+    },
+    {
+      "case_id": "C07.responses.non_thinking.stream",
+      "template_id": "C07",
+      "protocol": "responses",
+      "mode": "non_thinking",
+      "stream": true,
+      "assertion_count": 5,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "responses.case.c07",
+        "responses.thinking.disabled",
+        "responses.stream.terminal",
+        "responses.usage.accounting"
+      ]
+    },
+    {
+      "case_id": "C11.responses.non_thinking.nonstream",
+      "template_id": "C11",
+      "protocol": "responses",
+      "mode": "non_thinking",
+      "stream": false,
+      "assertion_count": 9,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "responses.case.c11",
+        "responses.thinking.disabled"
+      ]
+    },
+    {
+      "case_id": "C11.responses.non_thinking.stream",
+      "template_id": "C11",
+      "protocol": "responses",
+      "mode": "non_thinking",
+      "stream": true,
+      "assertion_count": 10,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "responses.case.c11",
+        "responses.thinking.disabled",
+        "responses.stream.terminal",
+        "responses.usage.accounting"
+      ]
+    },
+    {
+      "case_id": "C13.responses.non_thinking.nonstream",
+      "template_id": "C13",
+      "protocol": "responses",
+      "mode": "non_thinking",
+      "stream": false,
+      "assertion_count": 15,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "responses.case.c13",
+        "responses.stateless",
+        "responses.thinking.disabled"
+      ]
+    },
+    {
+      "case_id": "C13.responses.non_thinking.stream",
+      "template_id": "C13",
+      "protocol": "responses",
+      "mode": "non_thinking",
+      "stream": true,
+      "assertion_count": 15,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "responses.case.c13",
+        "responses.stateless",
+        "responses.thinking.disabled",
+        "responses.stream.terminal",
+        "responses.usage.accounting"
+      ]
+    },
+    {
+      "case_id": "C14.responses.thinking.nonstream",
+      "template_id": "C14",
+      "protocol": "responses",
+      "mode": "thinking",
+      "stream": false,
+      "assertion_count": 15,
+      "all_measured_assertions_pass": true,
+      "rule_ids": [
+        "responses.case.c14"
+      ]
+    }
+  ],
+  "rule_case_coverage": {
+    "chat.case.c05": [
+      "C05.chat.non_thinking.nonstream"
+    ],
+    "chat.case.c07": [
+      "C07.chat.non_thinking.nonstream",
+      "C07.chat.non_thinking.stream"
+    ],
+    "chat.case.c11": [
+      "C11.chat.non_thinking.nonstream",
+      "C11.chat.non_thinking.stream"
+    ],
+    "chat.case.c13": [
+      "C13.chat.non_thinking.nonstream",
+      "C13.chat.non_thinking.stream"
+    ],
+    "chat.case.c14": [
+      "C14.chat.thinking.nonstream"
+    ],
+    "chat.output.present": [
+      "C01.chat.non_thinking.nonstream",
+      "C01.chat.non_thinking.stream",
+      "C03.chat.thinking.nonstream",
+      "C03.chat.thinking.stream"
+    ],
+    "chat.stream.done": [
+      "C01.chat.non_thinking.stream",
+      "C03.chat.thinking.stream",
+      "C07.chat.non_thinking.stream",
+      "C11.chat.non_thinking.stream",
+      "C13.chat.non_thinking.stream"
+    ],
+    "chat.stream.usage-final-content": [
+      "C01.chat.non_thinking.stream",
+      "C03.chat.thinking.stream",
+      "C07.chat.non_thinking.stream",
+      "C11.chat.non_thinking.stream",
+      "C13.chat.non_thinking.stream"
+    ],
+    "chat.thinking.disabled": [
+      "C01.chat.non_thinking.nonstream",
+      "C01.chat.non_thinking.stream",
+      "C05.chat.non_thinking.nonstream",
+      "C07.chat.non_thinking.nonstream",
+      "C07.chat.non_thinking.stream",
+      "C11.chat.non_thinking.nonstream",
+      "C11.chat.non_thinking.stream",
+      "C13.chat.non_thinking.nonstream",
+      "C13.chat.non_thinking.stream"
+    ],
+    "responses.case.c05": [
+      "C05.responses.non_thinking.nonstream"
+    ],
+    "responses.case.c07": [
+      "C07.responses.non_thinking.nonstream",
+      "C07.responses.non_thinking.stream"
+    ],
+    "responses.case.c11": [
+      "C11.responses.non_thinking.nonstream",
+      "C11.responses.non_thinking.stream"
+    ],
+    "responses.case.c13": [
+      "C13.responses.non_thinking.nonstream",
+      "C13.responses.non_thinking.stream"
+    ],
+    "responses.case.c14": [
+      "C14.responses.thinking.nonstream"
+    ],
+    "responses.output.present": [
+      "C01.responses.non_thinking.nonstream",
+      "C01.responses.non_thinking.stream",
+      "C03.responses.thinking.nonstream",
+      "C03.responses.thinking.stream"
+    ],
+    "responses.stateless": [
+      "C13.responses.non_thinking.nonstream",
+      "C13.responses.non_thinking.stream"
+    ],
+    "responses.stream.terminal": [
+      "C01.responses.non_thinking.stream",
+      "C03.responses.thinking.stream",
+      "C07.responses.non_thinking.stream",
+      "C11.responses.non_thinking.stream",
+      "C13.responses.non_thinking.stream"
+    ],
+    "responses.thinking.disabled": [
+      "C01.responses.non_thinking.nonstream",
+      "C01.responses.non_thinking.stream",
+      "C05.responses.non_thinking.nonstream",
+      "C07.responses.non_thinking.nonstream",
+      "C07.responses.non_thinking.stream",
+      "C11.responses.non_thinking.nonstream",
+      "C11.responses.non_thinking.stream",
+      "C13.responses.non_thinking.nonstream",
+      "C13.responses.non_thinking.stream"
+    ],
+    "responses.usage.accounting": [
+      "C01.responses.non_thinking.stream",
+      "C03.responses.thinking.stream",
+      "C07.responses.non_thinking.stream",
+      "C11.responses.non_thinking.stream",
+      "C13.responses.non_thinking.stream"
+    ]
+  },
+  "limitations": [
+    "Official Flash only; V4 Pro and candidate providers not tested",
+    "Only the planned smoke variants were exercised",
+    "Immutable checkpoint identity is unknown",
+    "Collected using reviewed runner bc3a9cc before later comparison/CLI changes",
+    "Only the exact per-rule variants and deepseek-flash family are promoted in deepseek-flash-smoke-2026-09-21-v1; base profile stays diagnostic",
+    "stream_options.include_usage was omitted; explicit true/false branches and C24 were not calibrated",
+    "Stateless calibration covers tested full-history replay with store=false, not unsupported-option probes",
+    "No reasoning-effort-strength behavioral claim",
+    "Candidate/direct-engine/SMG comparison deferred by operator choice",
+    "Original calibration contains no final installed-CLI live confirmation; any later confirmation requires separate dated evidence"
+  ],
+  "source_captures": [
+    {
+      "name": "chat",
+      "url": "https://api-docs.deepseek.com/api/create-chat-completion/",
+      "final_url": "https://api-docs.deepseek.com/api/create-chat-completion/",
+      "bytes": 147780,
+      "sha256": "4c2384d7ad4e5f1929edb922900b2a96546a7e699e8b067d6e82dcb9a330989d",
+      "status": "captured"
+    },
+    {
+      "name": "responses",
+      "url": "https://api-docs.deepseek.com/api/create-response/",
+      "final_url": "https://api-docs.deepseek.com/api/create-response/",
+      "bytes": 89849,
+      "sha256": "5654c002d08e81b7f366568f988ed19c2f97f7c90118aa24e00a47a922faa3c8",
+      "status": "captured"
+    },
+    {
+      "name": "responses-guide",
+      "url": "https://api-docs.deepseek.com/guides/responses_api/",
+      "final_url": "https://api-docs.deepseek.com/guides/responses_api/",
+      "bytes": 56250,
+      "sha256": "1719ac1b05e29579acd0cbc5ba0bcdb629cf7722eb551b5cd6d6d62c271e3ca2",
+      "status": "captured"
+    },
+    {
+      "name": "thinking",
+      "url": "https://api-docs.deepseek.com/guides/thinking_mode/",
+      "final_url": "https://api-docs.deepseek.com/guides/thinking_mode/",
+      "bytes": 108576,
+      "sha256": "8f7d45a2a97d7a18d480130d24f26a4a4f6f4c8de2b4cc39be86438e9d6da5b3",
+      "status": "captured"
+    },
+    {
+      "name": "tools",
+      "url": "https://api-docs.deepseek.com/guides/tool_calls/",
+      "final_url": "https://api-docs.deepseek.com/guides/tool_calls/",
+      "bytes": 70636,
+      "sha256": "5ee72ac00e5594bffac058cfef8872beb121b97e122f914c114a618f6a2b4027",
+      "status": "captured"
+    }
+  ],
+  "settings": {
+    "schema_version": 1,
+    "repetitions": 1,
+    "execution_order": "sequential",
+    "suite": "smoke",
+    "protocols": [
+      "chat",
+      "responses"
+    ],
+    "max_requests_per_protocol": 17,
+    "max_requests_per_endpoint": 34,
+    "max_total_requests": 68,
+    "max_requests_per_conversation": 4,
+    "max_retries": 0,
+    "retries": 0,
+    "max_concurrency": 1,
+    "concurrency": 1,
+    "max_attempts_per_endpoint": 40,
+    "case_deadline_seconds": 300,
+    "mode_max_output_tokens": {
+      "non_thinking": 512,
+      "thinking": 4096
+    },
+    "case_ids": [
+      "C01",
+      "C03",
+      "C05",
+      "C07",
+      "C11",
+      "C13",
+      "C14"
+    ],
+    "attached_assertion_case_ids": [
+      "C02",
+      "C17",
+      "C20"
+    ]
+  },
+  "response_metadata": [
+    {
+      "case_id": "C01.chat.non_thinking.nonstream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046589,
+      "object": "chat.completion",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_tokens": 512,
+        "model": "deepseek-flash",
+        "stream": false,
+        "thinking": {
+          "type": "disabled"
+        }
+      }
+    },
+    {
+      "case_id": "C01.chat.non_thinking.stream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046590,
+      "object": "chat.completion.chunk",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_tokens": 512,
+        "model": "deepseek-flash",
+        "stream": true,
+        "thinking": {
+          "type": "disabled"
+        }
+      }
+    },
+    {
+      "case_id": "C03.chat.thinking.nonstream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046591,
+      "object": "chat.completion",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_tokens": 4096,
+        "model": "deepseek-flash",
+        "stream": false,
+        "thinking": {
+          "type": "enabled"
+        }
+      }
+    },
+    {
+      "case_id": "C03.chat.thinking.stream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046591,
+      "object": "chat.completion.chunk",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_tokens": 4096,
+        "model": "deepseek-flash",
+        "stream": true,
+        "thinking": {
+          "type": "enabled"
+        }
+      }
+    },
+    {
+      "case_id": "C05.chat.non_thinking.nonstream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046593,
+      "object": "chat.completion",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_tokens": 512,
+        "model": "deepseek-flash",
+        "response_format": {
+          "type": "json_object"
+        },
+        "stream": false,
+        "thinking": {
+          "type": "disabled"
+        }
+      }
+    },
+    {
+      "case_id": "C07.chat.non_thinking.nonstream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046593,
+      "object": "chat.completion",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_tokens": 512,
+        "model": "deepseek-flash",
+        "stream": false,
+        "thinking": {
+          "type": "disabled"
+        },
+        "tool_choice": "none"
+      }
+    },
+    {
+      "case_id": "C07.chat.non_thinking.stream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046594,
+      "object": "chat.completion.chunk",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_tokens": 512,
+        "model": "deepseek-flash",
+        "stream": true,
+        "thinking": {
+          "type": "disabled"
+        },
+        "tool_choice": "none"
+      }
+    },
+    {
+      "case_id": "C11.chat.non_thinking.nonstream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046595,
+      "object": "chat.completion",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_tokens": 512,
+        "model": "deepseek-flash",
+        "stream": false,
+        "thinking": {
+          "type": "disabled"
+        },
+        "tool_choice": {
+          "function": {
+            "name": "record_parcel"
+          },
+          "type": "function"
+        }
+      }
+    },
+    {
+      "case_id": "C11.chat.non_thinking.stream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046596,
+      "object": "chat.completion.chunk",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_tokens": 512,
+        "model": "deepseek-flash",
+        "stream": true,
+        "thinking": {
+          "type": "disabled"
+        },
+        "tool_choice": {
+          "function": {
+            "name": "record_parcel"
+          },
+          "type": "function"
+        }
+      }
+    },
+    {
+      "case_id": "C13.chat.non_thinking.nonstream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046597,
+      "object": "chat.completion",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_tokens": 512,
+        "model": "deepseek-flash",
+        "stream": false,
+        "thinking": {
+          "type": "disabled"
+        },
+        "tool_choice": "auto"
+      }
+    },
+    {
+      "case_id": "C13.chat.non_thinking.nonstream",
+      "step": 1,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046598,
+      "object": "chat.completion",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_tokens": 512,
+        "model": "deepseek-flash",
+        "stream": false,
+        "thinking": {
+          "type": "disabled"
+        },
+        "tool_choice": "auto"
+      }
+    },
+    {
+      "case_id": "C13.chat.non_thinking.stream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046599,
+      "object": "chat.completion.chunk",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_tokens": 512,
+        "model": "deepseek-flash",
+        "stream": true,
+        "thinking": {
+          "type": "disabled"
+        },
+        "tool_choice": "auto"
+      }
+    },
+    {
+      "case_id": "C13.chat.non_thinking.stream",
+      "step": 1,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046600,
+      "object": "chat.completion.chunk",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_tokens": 512,
+        "model": "deepseek-flash",
+        "stream": true,
+        "thinking": {
+          "type": "disabled"
+        },
+        "tool_choice": "auto"
+      }
+    },
+    {
+      "case_id": "C14.chat.thinking.nonstream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046601,
+      "object": "chat.completion",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_tokens": 4096,
+        "model": "deepseek-flash",
+        "stream": false,
+        "thinking": {
+          "type": "enabled"
+        },
+        "tool_choice": "auto"
+      }
+    },
+    {
+      "case_id": "C14.chat.thinking.nonstream",
+      "step": 1,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046602,
+      "object": "chat.completion",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_tokens": 4096,
+        "model": "deepseek-flash",
+        "stream": false,
+        "thinking": {
+          "type": "enabled"
+        },
+        "tool_choice": "auto"
+      }
+    },
+    {
+      "case_id": "C01.responses.non_thinking.nonstream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046603,
+      "object": "response",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_output_tokens": 512,
+        "model": "deepseek-flash",
+        "reasoning": {
+          "effort": "none"
+        },
+        "store": false,
+        "stream": false
+      }
+    },
+    {
+      "case_id": "C01.responses.non_thinking.stream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046604,
+      "object": "response",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_output_tokens": 512,
+        "model": "deepseek-flash",
+        "reasoning": {
+          "effort": "none"
+        },
+        "store": false,
+        "stream": true
+      }
+    },
+    {
+      "case_id": "C03.responses.thinking.nonstream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046604,
+      "object": "response",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_output_tokens": 4096,
+        "model": "deepseek-flash",
+        "reasoning": {
+          "effort": "high"
+        },
+        "store": false,
+        "stream": false
+      }
+    },
+    {
+      "case_id": "C03.responses.thinking.stream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046606,
+      "object": "response",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_output_tokens": 4096,
+        "model": "deepseek-flash",
+        "reasoning": {
+          "effort": "high"
+        },
+        "store": false,
+        "stream": true
+      }
+    },
+    {
+      "case_id": "C05.responses.non_thinking.nonstream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046607,
+      "object": "response",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_output_tokens": 512,
+        "model": "deepseek-flash",
+        "reasoning": {
+          "effort": "none"
+        },
+        "store": false,
+        "stream": false
+      }
+    },
+    {
+      "case_id": "C07.responses.non_thinking.nonstream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046607,
+      "object": "response",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_output_tokens": 512,
+        "model": "deepseek-flash",
+        "reasoning": {
+          "effort": "none"
+        },
+        "store": false,
+        "stream": false,
+        "tool_choice": "none"
+      }
+    },
+    {
+      "case_id": "C07.responses.non_thinking.stream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046608,
+      "object": "response",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_output_tokens": 512,
+        "model": "deepseek-flash",
+        "reasoning": {
+          "effort": "none"
+        },
+        "store": false,
+        "stream": true,
+        "tool_choice": "none"
+      }
+    },
+    {
+      "case_id": "C11.responses.non_thinking.nonstream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046609,
+      "object": "response",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_output_tokens": 512,
+        "model": "deepseek-flash",
+        "reasoning": {
+          "effort": "none"
+        },
+        "store": false,
+        "stream": false,
+        "tool_choice": {
+          "name": "record_parcel",
+          "type": "function"
+        }
+      }
+    },
+    {
+      "case_id": "C11.responses.non_thinking.stream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046610,
+      "object": "response",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_output_tokens": 512,
+        "model": "deepseek-flash",
+        "reasoning": {
+          "effort": "none"
+        },
+        "store": false,
+        "stream": true,
+        "tool_choice": {
+          "name": "record_parcel",
+          "type": "function"
+        }
+      }
+    },
+    {
+      "case_id": "C13.responses.non_thinking.nonstream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046611,
+      "object": "response",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_output_tokens": 512,
+        "model": "deepseek-flash",
+        "reasoning": {
+          "effort": "none"
+        },
+        "store": false,
+        "stream": false,
+        "tool_choice": "auto"
+      }
+    },
+    {
+      "case_id": "C13.responses.non_thinking.nonstream",
+      "step": 1,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046612,
+      "object": "response",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_output_tokens": 512,
+        "model": "deepseek-flash",
+        "reasoning": {
+          "effort": "none"
+        },
+        "store": false,
+        "stream": false,
+        "tool_choice": "auto"
+      }
+    },
+    {
+      "case_id": "C13.responses.non_thinking.stream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046613,
+      "object": "response",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_output_tokens": 512,
+        "model": "deepseek-flash",
+        "reasoning": {
+          "effort": "none"
+        },
+        "store": false,
+        "stream": true,
+        "tool_choice": "auto"
+      }
+    },
+    {
+      "case_id": "C13.responses.non_thinking.stream",
+      "step": 1,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046614,
+      "object": "response",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_output_tokens": 512,
+        "model": "deepseek-flash",
+        "reasoning": {
+          "effort": "none"
+        },
+        "store": false,
+        "stream": true,
+        "tool_choice": "auto"
+      }
+    },
+    {
+      "case_id": "C14.responses.thinking.nonstream",
+      "step": 0,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046615,
+      "object": "response",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_output_tokens": 4096,
+        "model": "deepseek-flash",
+        "reasoning": {
+          "effort": "high"
+        },
+        "store": false,
+        "stream": false,
+        "tool_choice": "auto"
+      }
+    },
+    {
+      "case_id": "C14.responses.thinking.nonstream",
+      "step": 1,
+      "status_code": 200,
+      "model": "deepseek-flash",
+      "created": 1790046616,
+      "object": "response",
+      "terminal_state": "completed",
+      "request_settings": {
+        "max_output_tokens": 4096,
+        "model": "deepseek-flash",
+        "reasoning": {
+          "effort": "high"
+        },
+        "store": false,
+        "stream": false,
+        "tool_choice": "auto"
+      }
+    }
+  ]
+}

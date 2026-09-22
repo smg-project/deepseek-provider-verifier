@@ -1,0 +1,239 @@
+{
+  "$defs": {
+    "ProfilePreset": {
+      "additionalProperties": false,
+      "properties": {
+        "attached_assertion_case_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Attached Assertion Case Ids",
+          "type": "array"
+        },
+        "case_deadline_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Case Deadline Seconds",
+          "type": "integer"
+        },
+        "case_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Case Ids",
+          "type": "array"
+        },
+        "concurrency": {
+          "exclusiveMinimum": 0,
+          "title": "Concurrency",
+          "type": "integer"
+        },
+        "max_requests_per_conversation": {
+          "exclusiveMinimum": 0,
+          "title": "Max Requests Per Conversation",
+          "type": "integer"
+        },
+        "max_requests_per_endpoint": {
+          "exclusiveMinimum": 0,
+          "title": "Max Requests Per Endpoint",
+          "type": "integer"
+        },
+        "max_requests_per_protocol": {
+          "exclusiveMinimum": 0,
+          "title": "Max Requests Per Protocol",
+          "type": "integer"
+        },
+        "max_retries": {
+          "minimum": 0,
+          "title": "Max Retries",
+          "type": "integer"
+        },
+        "max_total_requests": {
+          "exclusiveMinimum": 0,
+          "title": "Max Total Requests",
+          "type": "integer"
+        },
+        "mode_max_output_tokens": {
+          "additionalProperties": {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          "propertyNames": {
+            "enum": [
+              "non_thinking",
+              "thinking"
+            ]
+          },
+          "title": "Mode Max Output Tokens",
+          "type": "object"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "max_requests_per_protocol",
+        "max_requests_per_endpoint",
+        "max_total_requests",
+        "max_requests_per_conversation",
+        "max_retries",
+        "concurrency",
+        "case_deadline_seconds",
+        "mode_max_output_tokens"
+      ],
+      "title": "ProfilePreset",
+      "type": "object"
+    },
+    "Rule": {
+      "additionalProperties": false,
+      "properties": {
+        "assertion_id": {
+          "minLength": 1,
+          "title": "Assertion Id",
+          "type": "string"
+        },
+        "conditions": {
+          "additionalProperties": true,
+          "title": "Conditions",
+          "type": "object"
+        },
+        "evidence_status": {
+          "enum": [
+            "documented",
+            "observed",
+            "project-policy"
+          ],
+          "title": "Evidence Status",
+          "type": "string"
+        },
+        "expectation": {
+          "minLength": 1,
+          "title": "Expectation",
+          "type": "string"
+        },
+        "gating": {
+          "title": "Gating",
+          "type": "boolean"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "maturity": {
+          "default": "diagnostic",
+          "enum": [
+            "diagnostic",
+            "calibrated"
+          ],
+          "title": "Maturity",
+          "type": "string"
+        },
+        "protocol": {
+          "enum": [
+            "chat",
+            "responses"
+          ],
+          "title": "Protocol",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "source_section": {
+          "minLength": 1,
+          "title": "Source Section",
+          "type": "string"
+        },
+        "source_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Sha256"
+        },
+        "source_url": {
+          "format": "uri",
+          "minLength": 1,
+          "title": "Source Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "protocol",
+        "conditions",
+        "expectation",
+        "assertion_id",
+        "source_url",
+        "source_section",
+        "retrieved_at",
+        "evidence_status",
+        "gating"
+      ],
+      "title": "Rule",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "models": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Models",
+      "type": "array"
+    },
+    "presets": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ProfilePreset"
+      },
+      "minProperties": 1,
+      "title": "Presets",
+      "type": "object"
+    },
+    "rules": {
+      "items": {
+        "$ref": "#/$defs/Rule"
+      },
+      "title": "Rules",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "models",
+    "rules",
+    "presets"
+  ],
+  "title": "Profile",
+  "type": "object"
+}

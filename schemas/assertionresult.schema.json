@@ -1,0 +1,53 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "gating": {
+      "default": false,
+      "title": "Gating",
+      "type": "boolean"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "observed": {
+      "default": null,
+      "title": "Observed"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "rule_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Rule Ids",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "ERROR",
+        "SKIP",
+        "INCONCLUSIVE"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "status",
+    "reason"
+  ],
+  "title": "AssertionResult",
+  "type": "object"
+}

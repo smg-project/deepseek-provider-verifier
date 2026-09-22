@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "purpose": "Separate final installed CLI confirmation; no new rule promotion or quality-equivalence claim",
+  "session": {
+    "runner_revision": "8b12f7302081e8934c0950517c06e7f07f90ae7f",
+    "started_at": "2026-09-21T22:35:53.759484-07:00",
+    "maximum_requests": 4,
+    "planned_manifest_hash": "1abeccfab2a686752dae0e1991c12d3b770fe93047fd117e151a6a7b79d08cdd",
+    "window_end": "2026-09-21T22:40:53.461901-07:00",
+    "authorization": "User authorized necessary additional official calls after the original window; four-request cap",
+    "purpose": "Installed CLI confirmation of four calibrated C01 Flash paths; not a quality baseline",
+    "finished_at": "2026-09-21T22:35:59.092812-07:00",
+    "exit_code": 0,
+    "complete": true,
+    "counts": {
+      "ERROR": 0,
+      "FAIL": 0,
+      "INCONCLUSIVE": 0,
+      "PASS": 4,
+      "SKIP": 0
+    },
+    "actual_manifest_hash": "1abeccfab2a686752dae0e1991c12d3b770fe93047fd117e151a6a7b79d08cdd",
+    "recorded_attempts": 4,
+    "reserved_attempts": 4,
+    "http_status_counts": {
+      "200": 4
+    },
+    "credential_scan": "clean"
+  },
+  "api_root": "https://api.deepseek.com",
+  "model": "deepseek-flash",
+  "model_release": "unknown",
+  "profile_hash": "5ca522086c3f77b7d734035dd2518e191896d32783aaa53a39adea75c80dd79b",
+  "dataset_hash": "1f77328c7e31fdf2d32705aa0a3703199e062f75c9d7918e01ffbec04a4d27bc",
+  "derived_from_profile": "deepseek-flash-smoke-2026-09-21-v1",
+  "integrity": "verified",
+  "assertion_counts": {
+    "PASS": 23
+  },
+  "cases": [
+    {
+      "case_id": "C01.chat.non_thinking.nonstream",
+      "status": "PASS",
+      "assertion_count": 5
+    },
+    {
+      "case_id": "C01.chat.non_thinking.stream",
+      "status": "PASS",
+      "assertion_count": 7
+    },
+    {
+      "case_id": "C01.responses.non_thinking.nonstream",
+      "status": "PASS",
+      "assertion_count": 5
+    },
+    {
+      "case_id": "C01.responses.non_thinking.stream",
+      "status": "PASS",
+      "assertion_count": 6
+    }
+  ],
+  "artifact_sha256": {
+    "attempts.jsonl": "d2544336730909f0ddc453eee72488a799d44581bb51f42580a9d15c62a1a9a9",
+    "confirmation-session.json": "73451865b4bd353902a53d7dbd4af7a3b0380c0ce0b0fea6e461357e02e1257b",
+    "evidence-index.json": "bca8aeabf8b854aee9d5f30b2691707ee9c561193fcd0870b6fee1e1277fd442",
+    "junit.xml": "4461282d635c7d81b91879ff4e26512ea32791e71f3cebbacde587c2013c77b3",
+    "manifest.json": "e9f14e1c75217233b3c734e10f2ce8f5063f8bcdfa1e934e6529d80133c5be6f",
+    "results.jsonl": "5bb23ffccd2172f937077892cdac8aa69eb751a8289201008e20dcbe307ed3c5",
+    "summary.json": "4a8834a56d5991d8d10521517b7f54cf723315f13175429a54d21140eb8dd0e6",
+    "summary.md": "eac0cffc237178d81d102e3b056db9a7b09d7c43dba4ff1763907f5d3ba4cffd"
+  },
+  "wheel_sha256": "a48178eaa548bcce3017a4d9eeed48c06b8d37aa8530695ccc9fc850b04e3468",
+  "request_ceiling": 4,
+  "output_token_ceiling": 2048,
+  "source": "Controller-owned isolated wheel outside checkout; four C01 non-thinking variants, both protocols/stream settings; zero retries",
+  "total_session_official_requests": 34,
+  "limitations": [
+    "This is separate historical live confirmation of runner 8b12f7302081e8934c0950517c06e7f07f90ae7f, before the final review fixes.",
+    "Original calibration remains bc3a9cce705aa53161bfbf1037be397b5d05a7e0: 30 requests, 197 passing measured assertions, 24 diagnostic INCONCLUSIVE trials.",
+    "Later streaming-envelope assertion fixes were tested offline only; no new live traffic or rule promotion occurred.",
+    "Offline MockTransport replay under the new scorer matched all 30 original and four confirmation requests exactly and produced 24 and four PASS trials; all original hashes remain unchanged.",
+    "Candidate, direct-engine, SMG, V4 Pro, full matrix, checkpoint authentication and quality equivalence remain untested.",
+    "Raw requests/responses and credentials are not included. Artifact hashes require privately retained originals for independent audit."
+  ]
+}

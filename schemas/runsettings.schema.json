@@ -1,0 +1,79 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "concurrency": {
+      "default": 1,
+      "exclusiveMinimum": 0,
+      "title": "Concurrency",
+      "type": "integer"
+    },
+    "execution_order": {
+      "default": "sequential",
+      "enum": [
+        "sequential",
+        "paired"
+      ],
+      "title": "Execution Order",
+      "type": "string"
+    },
+    "max_attempts_per_endpoint": {
+      "default": 40,
+      "exclusiveMinimum": 0,
+      "title": "Max Attempts Per Endpoint",
+      "type": "integer"
+    },
+    "profile": {
+      "minLength": 1,
+      "title": "Profile",
+      "type": "string"
+    },
+    "protocols": {
+      "items": {
+        "enum": [
+          "chat",
+          "responses"
+        ],
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Protocols",
+      "type": "array"
+    },
+    "repetitions": {
+      "default": 1,
+      "exclusiveMinimum": 0,
+      "title": "Repetitions",
+      "type": "integer"
+    },
+    "retries": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Retries",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "scorer_revision": {
+      "default": "unversioned",
+      "minLength": 1,
+      "title": "Scorer Revision",
+      "type": "string"
+    },
+    "suite": {
+      "minLength": 1,
+      "title": "Suite",
+      "type": "string"
+    }
+  },
+  "required": [
+    "profile",
+    "suite",
+    "protocols"
+  ],
+  "title": "RunSettings",
+  "type": "object"
+}

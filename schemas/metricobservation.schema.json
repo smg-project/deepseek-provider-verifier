@@ -1,0 +1,54 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "denominator": {
+      "default": 1,
+      "title": "Denominator",
+      "type": "integer"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reason"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "scored": {
+      "default": true,
+      "title": "Scored",
+      "type": "boolean"
+    },
+    "value": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Value"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "title": "MetricObservation",
+  "type": "object"
+}

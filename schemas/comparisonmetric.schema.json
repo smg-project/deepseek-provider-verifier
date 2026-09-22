@@ -1,0 +1,170 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "bootstrap_seed": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Bootstrap Seed"
+    },
+    "confidence_level": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Confidence Level"
+    },
+    "counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Counts",
+      "type": "object"
+    },
+    "denominator": {
+      "minimum": 0,
+      "title": "Denominator",
+      "type": "integer"
+    },
+    "difference": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Difference"
+    },
+    "lower_bound": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Lower Bound"
+    },
+    "missing_candidate": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Missing Candidate",
+      "type": "integer"
+    },
+    "missing_reference": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Missing Reference",
+      "type": "integer"
+    },
+    "numerator": {
+      "default": 0,
+      "title": "Numerator",
+      "type": "number"
+    },
+    "paired_distinct_prompts": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Paired Distinct Prompts",
+      "type": "integer"
+    },
+    "paired_observations": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Paired Observations",
+      "type": "integer"
+    },
+    "paired_repetitions": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Paired Repetitions",
+      "type": "integer"
+    },
+    "reference_denominator": {
+      "minimum": 0,
+      "title": "Reference Denominator",
+      "type": "integer"
+    },
+    "reference_numerator": {
+      "default": 0,
+      "title": "Reference Numerator",
+      "type": "number"
+    },
+    "reference_unavailable": {
+      "minimum": 0,
+      "title": "Reference Unavailable",
+      "type": "integer"
+    },
+    "reference_value": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reference Value"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "unavailable": {
+      "minimum": 0,
+      "title": "Unavailable",
+      "type": "integer"
+    },
+    "upper_bound": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Upper Bound"
+    },
+    "value": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Value"
+    }
+  },
+  "required": [
+    "denominator",
+    "unavailable",
+    "reference_denominator",
+    "reference_unavailable"
+  ],
+  "title": "ComparisonMetric",
+  "type": "object"
+}

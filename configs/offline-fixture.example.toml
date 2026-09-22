@@ -1,0 +1,18 @@
+[run]
+profile = "offline-confirmation.example"
+suite = "confirmation"
+protocols = ["chat", "responses"]
+concurrency = 1
+max_attempts_per_endpoint = 4
+retries = 0
+repetitions = 1
+execution_order = "sequential"
+scorer_revision = "offline-fixture-v1"
+
+# This endpoint is intentionally synthetic. Point it only at a local fixture
+# provider that implements the four C01 stream/non-stream protocol requests.
+[endpoints.fixture]
+base_url = "http://127.0.0.1:8765/v1"
+auth_none = true
+model = "synthetic-fixture-model"
+model_release = "synthetic-fixture-v1"
