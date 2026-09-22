@@ -101,6 +101,47 @@
         "R39",
         "R40"
       ]
+    },
+    "workflows-small": {
+      "max_requests_per_protocol": 80,
+      "max_requests_per_endpoint": 160,
+      "max_total_requests": 320,
+      "max_requests_per_conversation": 17,
+      "max_retries": 0,
+      "concurrency": 1,
+      "case_deadline_seconds": 600,
+      "mode_max_output_tokens": {
+        "non_thinking": 512,
+        "thinking": 4096
+      },
+      "case_ids": [
+        "W01",
+        "W04",
+        "W06",
+        "W07"
+      ]
+    },
+    "workflows-full": {
+      "max_requests_per_protocol": 192,
+      "max_requests_per_endpoint": 384,
+      "max_total_requests": 768,
+      "max_requests_per_conversation": 17,
+      "max_retries": 0,
+      "concurrency": 1,
+      "case_deadline_seconds": 600,
+      "mode_max_output_tokens": {
+        "non_thinking": 512,
+        "thinking": 4096
+      },
+      "case_ids": [
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "W05",
+        "W06",
+        "W07"
+      ]
     }
   }
 }

@@ -88,6 +88,7 @@ def _repeatability(descriptor, protocol, prompts):
         )
     steps = [
         {
+            "kind": "user",
             "prompt_id": prompt.id,
             "prompt_hash": prompt.content_hash,
             "content": prompt.content,
@@ -97,6 +98,7 @@ def _repeatability(descriptor, protocol, prompts):
     if family == "repeatability.continuation":
         steps.append(
             {
+                "kind": "user",
                 "content": "Return only the integer result from the tool. Do not call any more tools.",
                 "request": {"tool_choice": "none"},
             }
@@ -130,7 +132,36 @@ def expand_depth_cases(case_ids: list[str], protocols: list[str]) -> list[CaseTe
         raise ValueError(f"Unknown depth cases: {sorted(missing)}")
     prompts = load_depth_prompts()
     return [
-        _repeatability(by_id[id], protocol, prompts)
+        _expand(by_id[id], protocol, prompts)
         for id in case_ids
         for protocol in protocols
     ]
+
+
+def _expand(descriptor, protocol, prompts):
+    if descriptor["family"].startswith("repeatability."):
+        return _repeatability(descriptor, protocol, prompts)
+    if descriptor["family"].startswith("workflow."):
+        from .workflows import workflow_steps
+
+        steps = workflow_steps(descriptor, protocol)
+        return CaseTemplate(
+            id=descriptor["id"],
+            prompt_id=descriptor["id"],
+            dataset_version="depth-v1",
+            protocol=protocol,
+            modes=["non_thinking", "thinking"],
+            streams=[False, True],
+            rule_ids=[f"{protocol}.depth"],
+            steps=steps,
+            required=True,
+            max_requests=len(steps),
+            max_output_tokens={"non_thinking": 512, "thinking": 4096},
+            oracle={
+                "kind": "workflow",
+                "bounded_steps": True,
+                "continue_tools": True,
+                "depth": depth_metadata(descriptor["family"]),
+            },
+        )
+    raise ValueError("Unknown depth family")

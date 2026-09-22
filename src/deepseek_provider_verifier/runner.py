@@ -421,6 +421,7 @@ async def execute_manifest(
                 if (a.endpoint, a.case_id) == key
             ]
             history, options = [], {}
+            recipe_options = []
             deadline = time.monotonic() + manifest.budgets.case_deadline_seconds
             reason = None
             step = 0
@@ -433,6 +434,7 @@ async def execute_manifest(
                     else {"kind": "continue"}
                 )
                 payload = _request(case, endpoint, recipe, history, options)
+                recipe_options.append(copy.deepcopy(options))
                 for retry in range(manifest.budgets.retries + 1):
                     b = manifest.budgets
                     if (
@@ -597,6 +599,8 @@ async def execute_manifest(
                     if follow_recipe and "replay_from" in case.steps[recipe_index + 1]:
                         source = case.steps[recipe_index + 1]["replay_from"]
                         obs = observations[source]
+                        if case.oracle.get("kind") == "workflow":
+                            options = copy.deepcopy(recipe_options[source])
                         history = copy.deepcopy(
                             obs.request_payload[
                                 "messages" if case.protocol == "chat" else "input"

@@ -40,6 +40,10 @@ def evaluate_case(
     case: Case, observations: list[Observation], rules: list[Rule]
 ) -> CaseResult:
     applicable = [r for r in rules if r.id in case.rule_ids and rule_applies(r, case)]
+    if case.oracle.get("kind") == "workflow":
+        from .workflows import evaluate_workflow
+
+        return evaluate_workflow(case, observations, applicable)
     policies = {r.conditions.get("compatibility_policy") for r in applicable} - {None}
     if policies and (
         case.oracle.get("compatibility") or case.template_id in ("C08", "C09")

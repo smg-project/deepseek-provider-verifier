@@ -23,3 +23,26 @@ def validate_depth_oracle(oracle: dict) -> None:
         raise ValueError(
             "depth resource_limits must contain positive integer request and response byte caps"
         )
+
+
+def validate_depth_steps(steps: list[dict], oracle: dict) -> None:
+    if oracle.get("kind") != "workflow":
+        return
+    if "depth" not in oracle or oracle.get("bounded_steps") is not True:
+        raise ValueError("workflow requires bounded depth metadata")
+    from .mock_tools import execute_tool
+
+    for step in steps:
+        expect = step.get("expect")
+        if not isinstance(expect, dict) or set(expect) not in ({"text"}, {"tools"}):
+            raise ValueError("workflow step requires a text or tools expectation")
+        if "text" in expect:
+            if not isinstance(expect["text"], str):
+                raise ValueError("workflow text expectation must be a string")
+        else:
+            if not isinstance(expect["tools"], list) or not expect["tools"]:
+                raise ValueError("workflow tools expectation must be nonempty")
+            for call in expect["tools"]:
+                if not isinstance(call, dict) or set(call) != {"name", "arguments"}:
+                    raise ValueError("invalid workflow tool expectation")
+                execute_tool(call["name"], call["arguments"])

@@ -390,6 +390,46 @@
       "prompt_id": "depth-structured-5",
       "expanded": true,
       "fixture": {}
+    },
+    {
+      "id": "W01",
+      "family": "workflow.chain",
+      "shape": "chain",
+      "depth": 4
+    },
+    {
+      "id": "W02",
+      "family": "workflow.chain",
+      "shape": "chain",
+      "depth": 8
+    },
+    {
+      "id": "W03",
+      "family": "workflow.chain",
+      "shape": "chain",
+      "depth": 16
+    },
+    {
+      "id": "W04",
+      "family": "workflow.parallel",
+      "shape": "parallel",
+      "width": 4
+    },
+    {
+      "id": "W05",
+      "family": "workflow.parallel",
+      "shape": "parallel",
+      "width": 16
+    },
+    {
+      "id": "W06",
+      "family": "workflow.branch",
+      "shape": "branch"
+    },
+    {
+      "id": "W07",
+      "family": "workflow.recall",
+      "shape": "recall"
     }
   ]
 }
