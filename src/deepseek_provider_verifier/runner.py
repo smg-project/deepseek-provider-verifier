@@ -26,6 +26,7 @@ from .protocols.chat import assemble_chat, assemble_chat_json
 from .protocols.responses import assemble_responses, assemble_responses_json
 from .records import (
     Attempt,
+    AttemptMetric,
     Case,
     CaseResult,
     Manifest,
@@ -269,6 +270,37 @@ def _unstarted(case: Case, endpoint: str, reason: str) -> CaseResult:
     )
 
 
+def _attempt_metric(attempt: Attempt) -> AttemptMetric:
+    return AttemptMetric(
+        endpoint=attempt.endpoint,
+        case_id=attempt.case_id,
+        prompt_id=attempt.prompt_id,
+        repetition=attempt.repetition,
+        step=attempt.step,
+        retry=attempt.retry,
+        attempt_number=attempt.attempt_number,
+        status_code=attempt.status_code,
+        timings=attempt.timings,
+        http_exchange_completed=attempt.http_exchange_completed,
+        error_type=attempt.error.get("type") if attempt.error else None,
+    )
+
+
+def _reservation_metric(record: dict, cases: dict[str, Case]) -> AttemptMetric:
+    case = cases[record["case_id"]]
+    return AttemptMetric(
+        endpoint=record["endpoint"],
+        case_id=case.id,
+        prompt_id=record.get("prompt_id", case.prompt_id),
+        repetition=record.get("repetition", case.repetition),
+        step=record.get("step", 0),
+        retry=record.get("retry", 0),
+        attempt_number=record["attempt_number"],
+        error_type="INTERRUPTED_RESERVATION",
+        interrupted_reservation=True,
+    )
+
+
 async def execute_manifest(
     manifest: Manifest,
     clients: dict[str, httpx.AsyncClient],
@@ -322,6 +354,8 @@ async def execute_manifest(
                     {"kind": "manifest", "manifest_hash": manifest.manifest_hash},
                 )
     usage = Counter({name: 0 for name in manifest.endpoints})
+    cases_by_id = {case.id: case for case in manifest.cases}
+    attempt_metrics = [_attempt_metric(attempt) for attempt in state.prior_attempts]
     protocol_usage = Counter()
     numbers = Counter()
     for a in state.prior_attempts:
@@ -339,6 +373,7 @@ async def execute_manifest(
                 numbers[(pending["endpoint"], pending["case_id"])],
                 pending["attempt_number"],
             )
+            attempt_metrics.append(_reservation_metric(pending, cases_by_id))
     results = {(r.endpoint, r.case_id): r for r in state.results if r.completed}
     jobs = (
         [(name, case) for name in manifest.endpoints for case in manifest.cases]
@@ -424,6 +459,10 @@ async def execute_manifest(
                                 "endpoint": name,
                                 "protocol": case.protocol,
                                 "case_id": case.id,
+                                "prompt_id": case.prompt_id,
+                                "repetition": case.repetition,
+                                "step": step,
+                                "retry": retry,
                                 "attempt_number": numbers[key],
                                 "request_hash": content_hash(safe_payload),
                             },
@@ -477,6 +516,7 @@ async def execute_manifest(
                             [e.model_dump(mode="json") for e in events]
                         ),
                         "error": capture.error,
+                        "http_exchange_completed": capture.http_exchange_completed,
                         "capture": capture.model_dump(mode="json"),
                     }
                     attempt = Attempt(**data, evidence_hash="0" * 64)
@@ -498,6 +538,7 @@ async def execute_manifest(
                             },
                         )
                     refs.append(attempt.evidence_hash)
+                    attempt_metrics.append(_attempt_metric(attempt))
                     if retry == 0:
                         first_observations.append(obs)
                     transient = capture.status_code in (
@@ -580,8 +621,7 @@ async def execute_manifest(
                 MetricObservation(
                     name="end_to_end_success",
                     value=float(
-                        available
-                        and result.completed
+                        result.completed
                         and bool(result.assertions)
                         and all(a.status == "PASS" for a in result.assertions)
                     ),
@@ -644,6 +684,7 @@ async def execute_manifest(
         budget_usage=dict(usage),
         enabled_gates=manifest.gates,
         exit_code=exit_code,
+        attempt_metrics=attempt_metrics,
     )
     if out:
         atomic_json(out / "summary.json", run.model_dump(mode="json"))

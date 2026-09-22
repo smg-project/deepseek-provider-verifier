@@ -209,7 +209,7 @@ def test_malformed_arguments_are_not_repaired(tool_case, broken_json_observation
 
 `ComparisonPolicy` defines selected metrics, per-metric allowed drop, minimum distinct prompts, minimum repetitions, confidence level, and bootstrap seed. `ComparisonResult` records comparability, field-level manifest differences, per-category metrics and denominators, intervals, optional gate outcomes, and refusal/inconclusive reasons. With `policy=None`, quality comparison is descriptive only.
 
-- [ ] Define exact metric denominators in `docs/metrics.md`: end-to-end success over all planned attempts, first-attempt availability, conditional schema accuracy over emitted tool calls, and tool-trigger confusion matrix over cases with an explicit trigger oracle. Zero denominators produce unavailable values, never 100%.
+- [ ] Define exact metric denominators in `docs/metrics.md`: end-to-end success over all planned case/repetition trials, first-attempt HTTP 2xx rate over actual logical requests, conditional schema accuracy over emitted tool calls, and tool-trigger confusion matrix over cases with an explicit trigger oracle. Zero denominators produce unavailable values, never 100%.
 - [ ] Add manifest mismatch tests for model release, profile, dataset, thinking mode, output limit, and scorer revision. Endpoint/model label differences pass only when covered by declared addressing/mapping rules. Unknown checkpoint identity permits exploratory reporting but disables equivalence gating.
 
 ```python

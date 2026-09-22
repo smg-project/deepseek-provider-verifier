@@ -1,12 +1,16 @@
 """DeepSeek provider verification records and offline planning."""
 
+from .comparison import compare_runs
 from .config import load_config, load_profile
 from .planner import build_manifest
 from .records import (
     Attempt,
+    AttemptMetric,
     Case,
     CaseResult,
     CaseTemplate,
+    ComparisonPolicy,
+    ComparisonResult,
     Config,
     Endpoint,
     Manifest,
@@ -20,9 +24,12 @@ from .records import (
 
 __all__ = [
     "Attempt",
+    "AttemptMetric",
     "Case",
     "CaseResult",
     "CaseTemplate",
+    "ComparisonPolicy",
+    "ComparisonResult",
     "Config",
     "Endpoint",
     "Manifest",
@@ -33,6 +40,7 @@ __all__ = [
     "RunResult",
     "RunSettings",
     "build_manifest",
+    "compare_runs",
     "load_config",
     "load_profile",
 ]

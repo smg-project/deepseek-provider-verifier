@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from datetime import datetime
 from typing import Any, Literal
 
@@ -257,6 +258,7 @@ class Attempt(Record):
     response: dict[str, Any] | None = None
     events: list[dict[str, Any]]
     error: dict[str, Any] | None = None
+    http_exchange_completed: bool | None = None
     evidence_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
 
 
@@ -275,6 +277,109 @@ class MetricObservation(Record):
     denominator: int = 1
     scored: bool = True
     reason: str | None = None
+
+    @model_validator(mode="after")
+    def validate_numeric_observation(self) -> MetricObservation:
+        if self.value is not None and not math.isfinite(self.value):
+            raise ValueError("metric value must be finite")
+        if self.denominator < 0:
+            raise ValueError("metric denominator must be nonnegative")
+        if self.scored and (self.value is None or self.denominator <= 0):
+            raise ValueError("scored metric requires a value and positive denominator")
+        return self
+
+
+class AttemptMetric(Record):
+    """Content-free HTTP attempt projection retained in run summaries."""
+
+    endpoint: str = Field(min_length=1)
+    case_id: str = Field(min_length=1)
+    prompt_id: str | None = None
+    repetition: int = Field(ge=0)
+    step: int = Field(ge=0)
+    retry: int = Field(ge=0)
+    attempt_number: PositiveInt
+    status_code: int | None = Field(default=None, ge=100, le=599)
+    timings: dict[str, float] = Field(default_factory=dict)
+    http_exchange_completed: bool | None = None
+    error_type: str | None = None
+    interrupted_reservation: bool = False
+
+    @model_validator(mode="after")
+    def validate_timings(self) -> AttemptMetric:
+        if any(
+            not math.isfinite(value) or value < 0 for value in self.timings.values()
+        ):
+            raise ValueError("attempt timings must be finite and nonnegative")
+        if self.interrupted_reservation and (
+            self.status_code is not None or self.http_exchange_completed
+        ):
+            raise ValueError("interrupted reservation cannot be an HTTP completion")
+        return self
+
+
+class ComparisonPolicy(Record):
+    allowed_drops: dict[str, float] = Field(min_length=1)
+    minimum_distinct_prompts: int = Field(ge=2)
+    minimum_repetitions: PositiveInt
+    confidence_level: float
+    bootstrap_samples: PositiveInt = 2000
+    bootstrap_seed: int
+
+    @model_validator(mode="after")
+    def validate_policy(self) -> ComparisonPolicy:
+        if not 0 < self.confidence_level < 1:
+            raise ValueError("confidence level must be between zero and one")
+        if any(
+            not name or not math.isfinite(margin) or margin < 0
+            for name, margin in self.allowed_drops.items()
+        ):
+            raise ValueError("allowed drops require named finite nonnegative margins")
+        return self
+
+
+class ManifestDifference(Record):
+    field: str = Field(min_length=1)
+    reference: Any
+    candidate: Any
+    compatible: bool = False
+    reason: str = Field(min_length=1)
+
+
+class ComparisonMetric(Record):
+    value: float | None = None
+    numerator: float = 0
+    denominator: int = Field(ge=0)
+    unavailable: int = Field(ge=0)
+    reference_value: float | None = None
+    reference_numerator: float = 0
+    reference_denominator: int = Field(ge=0)
+    reference_unavailable: int = Field(ge=0)
+    difference: float | None = None
+    lower_bound: float | None = None
+    upper_bound: float | None = None
+    confidence_level: float | None = None
+    bootstrap_seed: int | None = None
+    paired_observations: int = Field(default=0, ge=0)
+    paired_distinct_prompts: int = Field(default=0, ge=0)
+    paired_repetitions: int = Field(default=0, ge=0)
+    missing_reference: int = Field(default=0, ge=0)
+    missing_candidate: int = Field(default=0, ge=0)
+    counts: dict[str, int] = Field(default_factory=dict)
+
+
+class ComparisonResult(Record):
+    comparable: bool
+    reference_endpoint: str
+    candidate_endpoint: str
+    manifest_differences: list[ManifestDifference]
+    metrics: dict[str, ComparisonMetric]
+    policy: ComparisonPolicy | None = None
+    metric_gates: dict[str, Literal["PASS", "FAIL", "INCONCLUSIVE"]] = Field(
+        default_factory=dict
+    )
+    quality_gate: Literal["PASS", "FAIL", "INCONCLUSIVE"] | None = None
+    reasons: list[str] = Field(default_factory=list)
 
 
 class BehavioralPrompt(Record):
@@ -312,6 +417,7 @@ class RunResult(Record):
     budget_usage: dict[str, int]
     enabled_gates: list[str]
     exit_code: Literal[0, 1, 2]
+    attempt_metrics: list[AttemptMetric] = Field(default_factory=list)
 
 
 class ResumeState(Record):

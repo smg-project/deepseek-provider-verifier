@@ -255,19 +255,41 @@ def evaluate_case(
                         False,
                         "Arguments must be valid original JSON; never repaired",
                     )
+                    metric.append(
+                        MetricObservation(name="tool_argument_schema", value=0.0)
+                    )
                     continue
+                object_arguments = isinstance(args, dict)
                 check(
                     "TOOL_ARGUMENTS_OBJECT",
-                    isinstance(args, dict),
+                    object_arguments,
                     "Function arguments must be an object",
                 )
                 schema = case.oracle.get("argument_schema", TOOL_SCHEMAS.get(t.name))
                 if schema:
+                    schema_valid = object_arguments and Draft202012Validator(
+                        schema
+                    ).is_valid(args)
                     check(
                         "TOOL_ARGUMENTS_SCHEMA",
-                        Draft202012Validator(schema).is_valid(args),
+                        schema_valid,
                         "Arguments satisfy advertised schema",
                         args,
+                    )
+                    metric.append(
+                        MetricObservation(
+                            name="tool_argument_schema", value=float(schema_valid)
+                        )
+                    )
+                else:
+                    metric.append(
+                        MetricObservation(
+                            name="tool_argument_schema",
+                            value=None,
+                            denominator=0,
+                            scored=False,
+                            reason="No declared argument schema for emitted tool",
+                        )
                     )
                 if "expected_arguments" in case.oracle:
                     check(
@@ -369,6 +391,7 @@ def evaluate_case(
             "tool_required",
             "named_tool",
             "nested_tool",
+            "multiple_tools",
             "tool_forbidden",
             "ambiguous",
         ):

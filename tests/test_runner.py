@@ -251,6 +251,42 @@ def test_transient_retry_retains_first_and_eventual_outcome(tmp_path):
     state = load_resume_state(tmp_path / "attempts.jsonl", result.manifest_hash)
     assert [a.attempt_number for a in state.prior_attempts] == [1, 2]
     assert [a.retry for a in state.prior_attempts] == [0, 1]
+    assert [(a.retry, a.http_exchange_completed) for a in result.attempt_metrics] == [
+        (0, True),
+        (1, True),
+    ]
+
+
+def test_run_result_keeps_content_free_attempt_metrics_in_memory_and_summary(tmp_path):
+    result = run(
+        manifest(),
+        lambda r: httpx.Response(200, content=b"not-json"),
+        tmp_path,
+    )
+
+    metric = result.attempt_metrics[0]
+    assert metric.status_code == 200
+    assert metric.http_exchange_completed
+    assert metric.error_type == "INVALID_JSON"
+    serialized = metric.model_dump(mode="json")
+    assert set(serialized) == {
+        "schema_version",
+        "endpoint",
+        "case_id",
+        "prompt_id",
+        "repetition",
+        "step",
+        "retry",
+        "attempt_number",
+        "status_code",
+        "timings",
+        "http_exchange_completed",
+        "error_type",
+        "interrupted_reservation",
+    }
+    summary = json.loads((tmp_path / "summary.json").read_text())
+    assert summary["attempt_metrics"] == [serialized]
+    assert "request" not in serialized and "response" not in serialized
 
 
 def test_resume_skips_completed_trials_and_rejects_changed_profile(tmp_path):
@@ -464,6 +500,23 @@ def test_resume_counts_incomplete_start_and_cannot_pass_a_budget_subset(tmp_path
     assert not result.complete and result.exit_code == 2
     assert len(result.case_results) == 2 and result.budget_usage["candidate"] == 2
     assert all(r.reason == "ATTEMPT_BUDGET" for r in result.case_results)
+    assert len(result.attempt_metrics) == 2
+    assert all(metric.interrupted_reservation for metric in result.attempt_metrics)
+
+
+def test_resume_retains_first_ever_http_attempt_for_availability(tmp_path):
+    from deepseek_provider_verifier.comparison import compare_runs
+
+    m = manifest(max_requests=2)
+    run(m, lambda r: httpx.Response(503, json={"error": "busy"}), tmp_path)
+    resumed = run(
+        m, lambda r: httpx.Response(200, json=response()), tmp_path, resume=True
+    )
+
+    assert [metric.status_code for metric in resumed.attempt_metrics] == [503, 200]
+    compared = compare_runs(resumed, resumed, (m, m), policy=None)
+    assert compared.metrics["first_http_2xx_rate"].value == 0
+    assert compared.metrics["eventual_http_2xx_rate"].value == 1
 
 
 def test_first_attempt_status_measures_entire_conversation():
@@ -659,6 +712,19 @@ def test_diagnostic_success_keeps_measured_end_to_end_success():
         ).value
         == 1
     )
+
+
+def test_expected_http_rejection_is_successful_trial_but_not_2xx_availability():
+    result = run(
+        manifest(oracle={"kind": "structure", "status_class": 4}),
+        lambda r: httpx.Response(400, json={"error": "expected fixture rejection"}),
+    )
+    trial = result.case_results[0]
+    metrics = {metric.name: metric.value for metric in trial.metric_observations}
+
+    assert trial.status == "PASS"
+    assert metrics["end_to_end_success"] == 1
+    assert metrics["available"] == 0
 
 
 def test_unreconciled_torn_tail_is_reported_and_cannot_be_a_passing_subset(tmp_path):

@@ -53,6 +53,120 @@
       "title": "AssertionResult",
       "type": "object"
     },
+    "AttemptMetric": {
+      "additionalProperties": false,
+      "description": "Content-free HTTP attempt projection retained in run summaries.",
+      "properties": {
+        "attempt_number": {
+          "exclusiveMinimum": 0,
+          "title": "Attempt Number",
+          "type": "integer"
+        },
+        "case_id": {
+          "minLength": 1,
+          "title": "Case Id",
+          "type": "string"
+        },
+        "endpoint": {
+          "minLength": 1,
+          "title": "Endpoint",
+          "type": "string"
+        },
+        "error_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Type"
+        },
+        "http_exchange_completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Http Exchange Completed"
+        },
+        "interrupted_reservation": {
+          "default": false,
+          "title": "Interrupted Reservation",
+          "type": "boolean"
+        },
+        "prompt_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt Id"
+        },
+        "repetition": {
+          "minimum": 0,
+          "title": "Repetition",
+          "type": "integer"
+        },
+        "retry": {
+          "minimum": 0,
+          "title": "Retry",
+          "type": "integer"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "status_code": {
+          "anyOf": [
+            {
+              "maximum": 599,
+              "minimum": 100,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Code"
+        },
+        "step": {
+          "minimum": 0,
+          "title": "Step",
+          "type": "integer"
+        },
+        "timings": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Timings",
+          "type": "object"
+        }
+      },
+      "required": [
+        "endpoint",
+        "case_id",
+        "repetition",
+        "step",
+        "retry",
+        "attempt_number"
+      ],
+      "title": "AttemptMetric",
+      "type": "object"
+    },
     "CaseResult": {
       "additionalProperties": false,
       "properties": {
@@ -251,6 +365,13 @@
       "exclusiveMinimum": 0,
       "title": "Actual Concurrency",
       "type": "integer"
+    },
+    "attempt_metrics": {
+      "items": {
+        "$ref": "#/$defs/AttemptMetric"
+      },
+      "title": "Attempt Metrics",
+      "type": "array"
     },
     "budget_usage": {
       "additionalProperties": {

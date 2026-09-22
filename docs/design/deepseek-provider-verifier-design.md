@@ -165,7 +165,7 @@ Case outcomes: `PASS`, `FAIL`, `ERROR`, `SKIP`, `INCONCLUSIVE`.
 
 Report three separate sections: API contract results, task-quality comparison, and availability/latency. Avoid a combined score that allows speed to compensate for broken tool calls.
 
-Required deterministic assertions must all pass for a contract PASS. Behavioral scores include task success, tool-trigger precision/recall/F1, and conditional schema validity, with denominator counts. End-to-end success uses all planned attempts; availability failures remain visible even when a conditional quality metric excludes responses that could not be scored.
+Required deterministic assertions must all pass for a contract PASS. Behavioral scores include task success, tool-trigger precision/recall/F1, and conditional schema validity, with denominator counts. End-to-end success uses all planned case/repetition trials; the maximum HTTP request allowance is only a resource ceiling. Actual first and retry HTTP attempts are reported separately, and availability failures remain visible even when a conditional quality metric excludes responses that could not be scored.
 
 Retries default to zero. If enabled, show both first-attempt and eventual success, bill/count all attempts, and never retry malformed successful responses into a hidden pass. A transient infrastructure failure leaves verification incomplete unless the user-defined policy explicitly permits it. Reports retain original and retry records.
 

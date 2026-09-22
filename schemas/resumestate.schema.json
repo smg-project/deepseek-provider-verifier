@@ -102,6 +102,18 @@
           "title": "Evidence Hash",
           "type": "string"
         },
+        "http_exchange_completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Http Exchange Completed"
+        },
         "prompt_id": {
           "anyOf": [
             {

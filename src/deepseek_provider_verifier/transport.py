@@ -168,6 +168,7 @@ async def send_request(
                 _record_events(
                     result, decoder.finish(), result.chunks[-1].elapsed_seconds
                 )
+            result.http_exchange_completed = True
             if not streaming and not encoded and result.raw_body:
                 try:
                     result.raw_json = strict_json_loads(result.raw_body)

@@ -1,15 +1,11 @@
 {
   "additionalProperties": false,
+  "description": "Content-free HTTP attempt projection retained in run summaries.",
   "properties": {
     "attempt_number": {
       "exclusiveMinimum": 0,
       "title": "Attempt Number",
       "type": "integer"
-    },
-    "capture": {
-      "additionalProperties": true,
-      "title": "Capture",
-      "type": "object"
     },
     "case_id": {
       "minLength": 1,
@@ -21,31 +17,17 @@
       "title": "Endpoint",
       "type": "string"
     },
-    "error": {
+    "error_type": {
       "anyOf": [
         {
-          "additionalProperties": true,
-          "type": "object"
+          "type": "string"
         },
         {
           "type": "null"
         }
       ],
       "default": null,
-      "title": "Error"
-    },
-    "events": {
-      "items": {
-        "additionalProperties": true,
-        "type": "object"
-      },
-      "title": "Events",
-      "type": "array"
-    },
-    "evidence_hash": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Evidence Hash",
-      "type": "string"
+      "title": "Error Type"
     },
     "http_exchange_completed": {
       "anyOf": [
@@ -58,6 +40,11 @@
       ],
       "default": null,
       "title": "Http Exchange Completed"
+    },
+    "interrupted_reservation": {
+      "default": false,
+      "title": "Interrupted Reservation",
+      "type": "boolean"
     },
     "prompt_id": {
       "anyOf": [
@@ -76,31 +63,7 @@
       "title": "Repetition",
       "type": "integer"
     },
-    "request": {
-      "additionalProperties": true,
-      "title": "Request",
-      "type": "object"
-    },
-    "request_hash": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Request Hash",
-      "type": "string"
-    },
-    "response": {
-      "anyOf": [
-        {
-          "additionalProperties": true,
-          "type": "object"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Response"
-    },
     "retry": {
-      "default": 0,
       "minimum": 0,
       "title": "Retry",
       "type": "integer"
@@ -139,17 +102,13 @@
     }
   },
   "required": [
-    "case_id",
     "endpoint",
-    "step",
+    "case_id",
     "repetition",
-    "attempt_number",
-    "request_hash",
-    "request",
-    "timings",
-    "events",
-    "evidence_hash"
+    "step",
+    "retry",
+    "attempt_number"
   ],
-  "title": "Attempt",
+  "title": "AttemptMetric",
   "type": "object"
 }

@@ -230,6 +230,7 @@ class AttemptPayload(CaptureRecord):
     body_omission_reason: str | None = None
     decoded_json: Any = None
     error: dict[str, Any] | None = None
+    http_exchange_completed: bool = False
     timings: dict[str, float | None] = Field(default_factory=dict)
     raw_chunks: list[bytes] = Field(default_factory=list, exclude=True, repr=False)
     raw_json: Any = Field(default=None, exclude=True, repr=False)

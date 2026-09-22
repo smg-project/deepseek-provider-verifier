@@ -111,6 +111,65 @@ def test_malformed_arguments_are_not_repaired():
     )
     assert result.status == "FAIL"
     assert any(a.id == "TOOL_ARGUMENTS_INVALID_JSON" for a in result.assertions)
+    schema = [
+        metric
+        for metric in result.metric_observations
+        if metric.name == "tool_argument_schema"
+    ]
+    assert [(metric.value, metric.scored, metric.denominator) for metric in schema] == [
+        (0.0, True, 1)
+    ]
+
+
+def test_each_emitted_tool_call_has_an_individual_schema_observation():
+    tools = {
+        "valid": ToolCall(
+            identity="valid",
+            index=0,
+            call_id="valid",
+            name="add_integers",
+            arguments='{"a":2,"b":3}',
+            complete=True,
+        ),
+        "invalid": ToolCall(
+            identity="invalid",
+            index=1,
+            call_id="invalid",
+            name="add_integers",
+            arguments='{"a":"2","b":3}',
+            complete=True,
+        ),
+        "unscored": ToolCall(
+            identity="unscored",
+            index=2,
+            call_id="unscored",
+            name="unadvertised",
+            arguments='{"value":1}',
+            complete=True,
+        ),
+    }
+
+    result = evaluate(
+        case(oracle={"kind": "multiple_tools", "min_calls": 3}),
+        [observation(tools=tools)],
+    )
+
+    metrics = [
+        metric
+        for metric in result.metric_observations
+        if metric.name == "tool_argument_schema"
+    ]
+    assert [(m.value, m.scored, m.denominator) for m in metrics] == [
+        (1.0, True, 1),
+        (0.0, True, 1),
+        (None, False, 0),
+    ]
+    triggers = {
+        metric.name: metric.value
+        for metric in result.metric_observations
+        if metric.name in {"tool_trigger", "expected_tool_trigger"}
+    }
+    assert triggers == {"tool_trigger": 1.0, "expected_tool_trigger": 1.0}
 
 
 def test_ignored_tool_prohibition_fails():
