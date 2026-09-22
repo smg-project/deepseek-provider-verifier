@@ -1,0 +1,83 @@
+name: Manual bounded live verification
+on:
+  workflow_dispatch:
+    inputs:
+      endpoint:
+        description: Credential route (official reference or separately configured candidate)
+        type: choice
+        options: [reference, candidate]
+        default: reference
+        required: true
+      profile:
+        description: Versioned contract scope
+        type: choice
+        options: [deepseek-flash-smoke-2026-09-21-v1, deepseek-api-2026-09-21]
+        default: deepseek-flash-smoke-2026-09-21-v1
+        required: true
+      protocols:
+        description: Required API protocols
+        type: choice
+        options: [both, chat, responses]
+        default: both
+        required: true
+      candidate_url:
+        description: Candidate HTTPS API root (ignored for official reference)
+        type: string
+        required: false
+      candidate_model:
+        description: Candidate served alias explicitly mapped to the Flash contract family
+        type: string
+        default: deepseek-flash
+        required: false
+permissions:
+  contents: read
+concurrency:
+  group: manual-live-verification
+  cancel-in-progress: false
+jobs:
+  live:
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    environment: live-verification
+    timeout-minutes: 15
+    env:
+      DPV_ENDPOINT: ${{ inputs.endpoint }}
+      DPV_PROFILE: ${{ inputs.profile }}
+      DPV_PROTOCOLS: ${{ inputs.protocols }}
+      DPV_CANDIDATE_URL: ${{ inputs.candidate_url }}
+      DPV_CANDIDATE_MODEL: ${{ inputs.candidate_model }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: '0.8.8'
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.14'
+      - run: uv sync --locked --python 3.14
+      - name: Prepare bounded workload without credentials
+        run: |
+          uv run --locked python scripts/ci_live.py prepare
+          uv run --locked dpv plan --config runs/live-provider.toml --endpoint "$DPV_ENDPOINT" > runs/live-plan.json
+      - name: Run official reference (fixed official root)
+        if: inputs.endpoint == 'reference'
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: uv run --locked dpv run --config runs/live-provider.toml --endpoint reference --out runs/live
+      - name: Run candidate (candidate credential only)
+        if: inputs.endpoint == 'candidate'
+        env:
+          CANDIDATE_API_KEY: ${{ secrets.CANDIDATE_API_KEY }}
+        run: uv run --locked dpv run --config runs/live-provider.toml --endpoint candidate --out runs/live
+      - name: Project content-free summary
+        if: always() && hashFiles('runs/live/summary.json') != ''
+        run: uv run --locked python scripts/ci_live.py summarize
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        if: always() && hashFiles('runs/sanitized/summary.json') != ''
+        with:
+          name: sanitized-live-summary
+          path: runs/sanitized/summary.json
+          retention-days: 7
+          if-no-files-found: error

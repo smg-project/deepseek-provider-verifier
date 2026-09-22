@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import copy
+import re
 import time
 from collections import Counter
 from pathlib import Path
@@ -404,6 +405,11 @@ async def execute_manifest(
                 or (
                     r.conditions.get("model_releases")
                     and endpoint.model_release not in r.conditions["model_releases"]
+                )
+                or (
+                    "calibrated_variants" in r.conditions
+                    and re.sub(r"\.r[0-9]+$", "", case.id)
+                    not in r.conditions["calibrated_variants"]
                 )
                 else r
                 for r in manifest.profile_snapshot.rules

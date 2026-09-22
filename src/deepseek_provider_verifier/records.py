@@ -108,6 +108,17 @@ class Rule(Record):
 
     @model_validator(mode="after")
     def diagnostic_rules_are_not_gates(self) -> Rule:
+        if "calibrated_variants" in self.conditions:
+            variants = self.conditions["calibrated_variants"]
+            if (
+                not isinstance(variants, list)
+                or not variants
+                or any(not isinstance(v, str) or not v.strip() for v in variants)
+                or len(variants) != len(set(variants))
+            ):
+                raise ValueError(
+                    "calibrated_variants must be a nonempty list of unique nonempty strings"
+                )
         if self.maturity == "diagnostic" and self.gating:
             raise ValueError("diagnostic rule cannot be gating")
         return self

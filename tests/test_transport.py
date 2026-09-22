@@ -357,12 +357,16 @@ def test_malformed_escaped_event_data_keeps_secret_safe_without_repair():
         json.loads(safe[0]["data"])
 
 
-def test_json_parser_recursion_failure_preserves_status_and_omits_body():
-    # Exceed the interpreter's JSON parser depth, independently of redactor depth.
+def test_json_parser_recursion_failure_preserves_status_and_omits_body(monkeypatch):
+    # Parser depth varies across Python versions; inject its resource failure.
+    from deepseek_provider_verifier import transport
+
+    def depth_failure(value):
+        raise RecursionError("synthetic parser depth limit")
+
+    monkeypatch.setattr(transport, "strict_json_loads", depth_failure)
     depth = 10000
     body = b"[" * depth + b'{"api_key":"hidden-credential"}' + b"]" * depth
-    with pytest.raises(RecursionError):
-        json.loads(body)
     attempt = run(lambda req: httpx.Response(200, content=body))
     assert attempt.status_code == 200
     assert attempt.raw_body == body

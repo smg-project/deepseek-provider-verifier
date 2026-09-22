@@ -108,3 +108,79 @@ Never mutate the shipped smoke ceiling to make a larger run fit.
 Store the two manifests, run summaries, comparison policy, bootstrap seed, scorer
 revision, and verifier commit together. Do not reuse a mutable reference alias as a
 later baseline without rerunning and timestamping it beside the candidate.
+
+## Release artifact checks
+
+From a clean checkout, use the committed lock and the supported CI interpreters
+(Python 3.11 and 3.14):
+
+```sh
+uv sync --locked --python 3.14
+uv run --locked ruff check .
+uv run --locked ruff format --check .
+uv run --locked pytest -q
+uv build
+uv run --locked python scripts/check_release.py
+```
+
+The full suite includes generated-schema equality checks and named report-level
+fault detection. The release script inspects actual wheel and sdist entries,
+including bundled cases/profiles/schemas, calibration provenance, lockfile,
+docs, example configuration, and test fixtures. It installs the wheel and locked
+runtime dependencies into a fresh temporary environment outside the checkout,
+checks `dpv --help`, and runs the packaged four-request loopback example. Package
+installation may access package indexes; verification HTTP traffic is exclusively
+local. Nothing in offline CI receives inference credentials.
+
+Seeded fault coverage includes lost reasoning history (`HISTORY_REPLAY`), wrong
+call IDs (`TOOL_RESULT_PAIRING`), malformed arguments
+(`TOOL_ARGUMENTS_INVALID_JSON`), mixed Chat tool indices (`CONFLICTING_TOOL_ID`)
+and Responses item indices (`ITEM_INDEX_MISMATCH`), wrong usage arithmetic
+(`usage_accounting` in the synthetic profile), ignored required/prohibited tool
+choice (`TOOL_REQUIRED`, `TOOL_PROHIBITION`), swallowed failed terminals
+(`TERMINAL_STATE`), and premature EOF (`MISSING_TERMINAL`). Valid fixtures must
+also PASS. These fixture gates are synthetic policy, not extra live calibration.
+
+## Optional manual live workflow
+
+Only `workflow_dispatch` can start live verification, and the job runs only from
+the repository's default branch. Configure the GitHub environment
+`live-verification` with required reviewers and a default-branch deployment rule
+before using it. **The repository files do not install those protection rules or
+any secrets.** No evening calibration credential was copied into GitHub.
+
+The official route requires that environment's `DEEPSEEK_API_KEY`, and its API
+root and requested model are fixed to `https://api.deepseek.com` and
+`deepseek-flash`. The candidate route requires its own `CANDIDATE_API_KEY`, a
+HTTPS API root without userinfo/query/fragment, and its served alias. It explicitly
+maps that alias to the Flash contract family and declares the release unknown.
+There is no fallback between keys; missing selected credentials fail clearly.
+Do not configure a secret for a route you do not intend to authorize.
+
+Inputs select only the shipped diagnostic or calibrated Flash profile and
+Chat/Responses/both. Inputs pass through environment variables into a validating
+config writer, never raw shell interpolation. Every invocation selects one
+endpoint with at most 17 requests per protocol / 34 overall, four per
+conversation, zero retries, one repetition, concurrency one, 300-second case
+deadlines, and 512/4096 non-thinking/thinking output-token ceilings. The job has a
+15-minute wall-clock limit and no scheduled trigger. Candidate comparison stays
+deferred until an operator chooses to run it separately under matched conditions.
+
+The upload step accepts only `runs/sanitized/summary.json`: a separate allowlisted
+projection of manifest hash, completion, exit code, status counts, and attempt
+count. It deliberately omits arbitrary strings, prompt/response bodies, reasoning,
+assertion observations, endpoint URLs, credentials, and raw evidence links. Raw
+run data stays on the ephemeral runner and is not uploaded; the artifact cannot
+reconstruct a full evidence bundle. Retention is seven days. A failed or
+inconclusive run retains its nonzero status and never becomes a PASS because an
+artifact upload succeeded.
+
+## Calibration provenance retention
+
+The committed [sanitized calibration record](calibration/official-flash-2026-09-21.json)
+identifies the original runner and six hashed artifacts. It records only safe
+metadata, original project-authored case identifiers, source URLs/hashes, and
+settings. Preserve raw evidence privately for an authorized audit; hashes alone
+do not let a third party independently reproduce the historical observations.
+The final installed CLI was not live-confirmed. Repeating a reference later is a
+new, timestamped measurement, never a silent replacement of that original run.

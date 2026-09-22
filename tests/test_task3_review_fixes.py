@@ -250,7 +250,15 @@ def test_fully_received_invalid_body_is_a_format_finding_not_transport_error(
         )
 
 
-def test_parser_resource_limit_remains_error_without_claiming_invalid_syntax():
+def test_parser_resource_limit_remains_error_without_claiming_invalid_syntax(
+    monkeypatch,
+):
+    from deepseek_provider_verifier import transport
+
+    def depth_failure(value):
+        raise RecursionError("synthetic parser depth limit")
+
+    monkeypatch.setattr(transport, "strict_json_loads", depth_failure)
     body = b"[" * 10000 + b"0" + b"]" * 10000
     result = run(manifest(), lambda r: httpx.Response(200, content=body))
     trial = result.case_results[0]

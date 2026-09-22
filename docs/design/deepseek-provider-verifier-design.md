@@ -1,6 +1,6 @@
 # DeepSeek Provider Verifier — proposed design
 
-Date: 2026-09-21. Status: design proposal, ready for review. The user has created the private repository; implementation has not started.
+Date: 2026-09-21. Historical design proposal. Current status: the CLI and offline verifier are implemented; official Flash smoke calibration is recorded in [contract sources](../contract-sources.md). Candidate/direct-engine/SMG comparison is untested and deferred by operator choice. Release review remains separate from implementation.
 
 ## 1. Name and purpose
 
@@ -81,7 +81,7 @@ An SMG deployment may intentionally expose functionality beyond DeepSeek's nativ
 - DeepSeek's Responses guide describes a stateless service, ignored options, and always-enabled parallel tool calling. Do not import every OpenAI capability as a DeepSeek requirement. [Responses guide](https://api-docs.deepseek.com/guides/responses_api/)
 - The thinking guide requires reasoning history to be retained for requests carrying tools. Include successful replay and an intentionally incomplete-history counterpart. [Thinking guide](https://api-docs.deepseek.com/guides/thinking_mode/)
 
-Research limitation: the Chat reference was available through official-site search extraction during planning, while direct retrieval repeatedly timed out. Before promoting its detailed rules to a release gate, capture a reviewable reference snapshot and calibrate the disputed/conditional cases against an official endpoint. No live endpoint calls have been performed for this proposal.
+Historical research limitation: direct Chat-reference retrieval timed out during initial planning. This was resolved by the dated capture and hash recorded in [contract sources](../contract-sources.md). Subsequent official Flash smoke observations calibrate only their enumerated rule/variant scope; other proposed cases remain diagnostic.
 
 ## 5. Architecture
 

@@ -16,7 +16,9 @@ from .records import AssertionResult, Case, CaseResult, MetricObservation, Rule
 def rule_applies(rule: Rule, case: Case) -> bool:
     """Supported scope keys: case_ids, mode/modes, stream/streams, models, model_releases.
 
-    Model and release scope are checked by the runner using operator-declared
+    Calibration variant scope is checked by the runner, downgrading unmatched
+    rules to diagnostic without dropping their measurements. Model and release
+    scope are checked by the runner using operator-declared
     contract_model (falling back to model) and model_release metadata. Other condition keys are descriptive, never automatic gate expansion.
     """
     condition = rule.conditions

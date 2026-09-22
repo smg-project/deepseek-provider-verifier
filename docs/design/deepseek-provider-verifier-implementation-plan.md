@@ -10,7 +10,7 @@
 
 **Spec:** [DeepSeek Provider Verifier — proposed design](deepseek-provider-verifier-design.md).
 
-**Status:** Proposed implementation sequence targeting the existing private [smg-project/deepseek-provider-verifier](https://github.com/smg-project/deepseek-provider-verifier) repository. Initial state: `main`, commit `5c8154da3d7d1a6accc575785f186907b2e61254`, and MIT `LICENSE` only. The package and CLI do not exist yet. Exact official-contract gates must be calibrated as specified below before release.
+**Status:** Tasks 1–5 implemented and reviewed through `351a0c2`; Task 6 integrates scoped official Flash calibration, CI, and release checks. The original repository baseline was `5c8154da3d7d1a6accc575785f186907b2e61254` (MIT license only). Candidate/direct-engine/SMG live comparison is explicitly deferred by operator choice. Final branch review and private PR are separate; no release publication or visibility change is authorized here.
 
 ## Global Constraints
 
@@ -110,10 +110,10 @@ Timestamps and run IDs do not affect the comparable workload hash. Credentials n
 
 **Produces:** `load_config(path: Path) -> Config`; `load_profile(path: Path) -> Profile`; `build_manifest(config: Config, profile: Profile, cases: list[CaseTemplate]) -> Manifest`. `Config` contains `run` settings and named `Endpoint` records; `Profile` contains an ID, rules, model applicability, and preset definitions. No function in this task creates an HTTP client. The planner resolves each `CaseTemplate` into concrete `Case` records.
 
-- [ ] Create the Python package with the declared version floor and dependencies, plus a locked development environment.
-- [ ] Capture official contract sources with retrieval dates and provenance. The Chat reference still requires a reviewable capture; keep unresolved assertions marked diagnostic. Record each conflict as a rule-level entry, not a comment buried in a test.
-- [ ] Define the shared records above and reject unknown configuration keys, duplicate case IDs, missing rule references, invalid protocol names, negative budgets, and conflicting authentication settings.
-- [ ] Add planner regression tests before implementing expansion. A cases/profile/config fixture is JSON/TOML loaded through the public record constructors; fixtures contain a single text case with two modes and two streaming variants.
+- [x] Create the Python package with the declared version floor and dependencies, plus a locked development environment.
+- [x] Capture official contract sources with retrieval dates and provenance. The Chat reference capture and hash are available; unresolved assertions remain diagnostic. Record each conflict as a rule-level entry, not a comment buried in a test.
+- [x] Define the shared records above and reject unknown configuration keys, duplicate case IDs, missing rule references, invalid protocol names, negative budgets, and conflicting authentication settings.
+- [x] Add planner regression tests before implementing expansion. A cases/profile/config fixture is JSON/TOML loaded through the public record constructors; fixtures contain a single text case with two modes and two streaming variants.
 
 ```python
 def test_planner_counts_every_variant(config, profile, one_text_template):
@@ -127,10 +127,10 @@ def test_planner_rejects_budget_overflow(config, profile, oversized_cases):
         build_manifest(config, profile, oversized_cases)
 ```
 
-- [ ] Implement expansion as a pure transformation: expand declared variants, reject duplicate IDs, sum maximum conversation requests and allowed retries, check each endpoint and aggregate limits, then compute stable hashes. For a multi-step case, count every possible step even when a live run may terminate earlier.
-- [ ] Encode the design's exact smoke preset: at most 17 requests per protocol, 34 per endpoint for both protocols with no retries. C02/C17/C20 attach assertions to existing smoke attempts. Test these ceilings; the full matrix must fail under the smoke budget until a larger budget is explicitly configured.
-- [ ] Prove planning does not access the network by patching `socket.create_connection` to raise in the planner test process. Verify the plan output contains the API-key environment variable name, never its value.
-- [ ] Run `uv run pytest tests/test_planner.py -q`, then commit `feat: add versioned profiles and verification planner`.
+- [x] Implement expansion as a pure transformation: expand declared variants, reject duplicate IDs, sum maximum conversation requests and allowed retries, check each endpoint and aggregate limits, then compute stable hashes. For a multi-step case, count every possible step even when a live run may terminate earlier.
+- [x] Encode the design's exact smoke preset: at most 17 requests per protocol, 34 per endpoint for both protocols with no retries. C02/C17/C20 attach assertions to existing smoke attempts. Test these ceilings; the full matrix must fail under the smoke budget until a larger budget is explicitly configured.
+- [x] Prove planning does not access the network by patching `socket.create_connection` to raise in the planner test process. Verify the plan output contains the API-key environment variable name, never its value.
+- [x] Run `uv run pytest tests/test_planner.py -q`, then commit `feat: add versioned profiles and verification planner`.
 
 **Acceptance:** A user can inspect precisely which checks and maximum attempts will run. An over-budget matrix fails before making a request. Unknown or unresolved requirements cannot silently become satisfied requirements.
 
@@ -144,7 +144,7 @@ def test_planner_rejects_budget_overflow(config, profile, oversized_cases):
 
 `AttemptPayload` holds HTTP status, response headers after redaction, timestamped byte chunks, decoded JSON when applicable, and transport errors. `SSEEvent` holds `event`, `data`, and source positions. `Observation` holds text/reasoning segments, tools keyed by identity, usage, terminal state, and structural violations. Implementations retain access to source evidence for each violation.
 
-- [ ] Write independent valid and faulty stream fixtures. Include a Unicode character split across byte chunks and two tool-call argument streams interleaved by index/ID. Expected decoded events and arguments are hand-authored, not generated by the implementation under test.
+- [x] Write independent valid and faulty stream fixtures. Include a Unicode character split across byte chunks and two tool-call argument streams interleaved by index/ID. Expected decoded events and arguments are hand-authored, not generated by the implementation under test.
 
 ```python
 def test_sse_preserves_fragmented_utf8():
@@ -157,11 +157,11 @@ def test_eof_does_not_invent_success(chat_without_terminal):
     assert "MISSING_TERMINAL" in observed.violations
 ```
 
-- [ ] Implement incremental UTF-8 decoding and SSE framing, including CRLF, comments, multi-line data, and delimiters split across reads. Preserve an incomplete final frame as an error; do not append an invented terminator.
-- [ ] Implement protocol-specific assembly. Chat tool deltas join by tool index; Responses items join by item/output identity. Track terminal state, missing/duplicate identities, argument completion, and usage separately. Do not repair invalid JSON or relabel a failed terminal event.
-- [ ] Implement the HTTP layer with explicit timeouts, no automatic SDK retries, and exact path joining. Use one async client per endpoint/run. Capture first-event and first-meaningful-output timing with distinct definitions.
-- [ ] Inject 401, 429, 500, timeout, and partial-stream responses through HTTPX test transports. Assert no retry occurs when retries are zero, no credentials appear in persisted payloads, and headers/status survive normalization.
-- [ ] Run `uv run pytest tests/test_transport.py tests/test_sse.py tests/test_protocols.py -q`, then commit `feat: capture and validate chat and responses streams`.
+- [x] Implement incremental UTF-8 decoding and SSE framing, including CRLF, comments, multi-line data, and delimiters split across reads. Preserve an incomplete final frame as an error; do not append an invented terminator.
+- [x] Implement protocol-specific assembly. Chat tool deltas join by tool index; Responses items join by item/output identity. Track terminal state, missing/duplicate identities, argument completion, and usage separately. Do not repair invalid JSON or relabel a failed terminal event.
+- [x] Implement the HTTP layer with explicit timeouts, no automatic SDK retries, and exact path joining. Use one async client per endpoint/run. Capture first-event and first-meaningful-output timing with distinct definitions.
+- [x] Inject 401, 429, 500, timeout, and partial-stream responses through HTTPX test transports. Assert no retry occurs when retries are zero, no credentials appear in persisted payloads, and headers/status survive normalization.
+- [x] Run `uv run pytest tests/test_transport.py tests/test_sse.py tests/test_protocols.py -q`, then commit `feat: capture and validate chat and responses streams`.
 
 **Acceptance:** Deliberately malformed streams are detected. Chunk boundaries do not change a valid result, and normalization does not erase transport or schema defects.
 
@@ -175,9 +175,9 @@ def test_eof_does_not_invent_success(chat_without_terminal):
 
 `ResumeState` contains completed case IDs, prior attempts, incomplete records, and the validated manifest hash. Assertions return structured IDs and reasons, not only booleans. Mock tools expose `lookup_fixture(key: str) -> str` and `add_integers(a: int, b: int) -> int`, with fixed fixture values and strict argument validation.
 
-- [ ] Author templates C01–C24 from the design. Each case names its official rule or project policy, mode, applicability, bounded number of steps, and observable oracle. Exclude unverified rules from release gates while retaining them as visible diagnostics.
-- [ ] Author original behavioral prompts for tool-required, tool-forbidden, ambiguous, schema, and follow-up tasks. Record dataset version, content hash, intended answer, and licensing. Do not copy the Kimi/MiniMax corpus as an implicit shortcut.
-- [ ] Write failure-injection tests for lost reasoning history, mismatched call IDs, malformed arguments, ignored tool prohibition, and a required protocol returning 404. Test positive fixtures as well as negative ones.
+- [x] Author templates C01–C24 from the design. Each case names its official rule or project policy, mode, applicability, bounded number of steps, and observable oracle. Exclude unverified rules from release gates while retaining them as visible diagnostics.
+- [x] Author original behavioral prompts for tool-required, tool-forbidden, ambiguous, schema, and follow-up tasks. Record dataset version, content hash, intended answer, and licensing. Do not copy the Kimi/MiniMax corpus as an implicit shortcut.
+- [x] Write failure-injection tests for lost reasoning history, mismatched call IDs, malformed arguments, ignored tool prohibition, and a required protocol returning 404. Test positive fixtures as well as negative ones.
 
 ```python
 def test_required_missing_protocol_fails(required_responses_case, http_404_observation, rules):
@@ -190,12 +190,12 @@ def test_malformed_arguments_are_not_repaired(tool_case, broken_json_observation
     assert any(a.id == "TOOL_ARGUMENTS_INVALID_JSON" for a in result.assertions)
 ```
 
-- [ ] Implement case execution as an explicit step loop. Before each outbound attempt, debit the attempt budget; before a follow-up, check the conversation-step and case-deadline limits. Retain original returned assistant items needed for replay. Only registered mock tools may be executed.
-- [ ] Make retry behavior explicit in records. A retry receives a new attempt number and consumes budget. Do not retry assertion failures; retain first-attempt metrics when transient HTTP retry policy is enabled.
-- [ ] Persist append-only JSONL attempts/results and hashes. Flush completed records before marking a case complete; use atomic replacement for manifests/summaries. Detect incomplete final lines on resume and record their disposition rather than quietly dropping them.
-- [ ] Add cancellation/budget tests proving queued attempts stop and the run becomes incomplete. Add a no-progress conversation fixture that must stop after four requests.
-- [ ] Add a resume test that rejects different profile/dataset hashes and does not repeat completed cases. Add sentinel-secret tests across every stored output, including error paths and URLs.
-- [ ] Run `uv run pytest tests/test_assertions.py tests/test_runner.py tests/test_evidence.py -q`, then commit `feat: add bounded verification cases and reproducible evidence`.
+- [x] Implement case execution as an explicit step loop. Before each outbound attempt, debit the attempt budget; before a follow-up, check the conversation-step and case-deadline limits. Retain original returned assistant items needed for replay. Only registered mock tools may be executed.
+- [x] Make retry behavior explicit in records. A retry receives a new attempt number and consumes budget. Do not retry assertion failures; retain first-attempt metrics when transient HTTP retry policy is enabled.
+- [x] Persist append-only JSONL attempts/results and hashes. Flush completed records before marking a case complete; use atomic replacement for manifests/summaries. Detect incomplete final lines on resume and record their disposition rather than quietly dropping them.
+- [x] Add cancellation/budget tests proving queued attempts stop and the run becomes incomplete. Add a no-progress conversation fixture that must stop after four requests.
+- [x] Add a resume test that rejects different profile/dataset hashes and does not repeat completed cases. Add sentinel-secret tests across every stored output, including error paths and URLs.
+- [x] Run `uv run pytest tests/test_assertions.py tests/test_runner.py tests/test_evidence.py -q`, then commit `feat: add bounded verification cases and reproducible evidence`.
 
 **Acceptance:** A candidate run yields a useful contract report. Missing support, exhausted budgets, and malformed output remain distinguishable; none becomes a passing subset.
 
@@ -209,8 +209,8 @@ def test_malformed_arguments_are_not_repaired(tool_case, broken_json_observation
 
 `ComparisonPolicy` defines selected metrics, per-metric allowed drop, minimum distinct prompts, minimum repetitions, confidence level, and bootstrap seed. `ComparisonResult` records comparability, field-level manifest differences, per-category metrics and denominators, intervals, optional gate outcomes, and refusal/inconclusive reasons. With `policy=None`, quality comparison is descriptive only.
 
-- [ ] Define exact metric denominators in `docs/metrics.md`: end-to-end success over all planned case/repetition trials, first-attempt HTTP 2xx rate over actual logical requests, conditional schema accuracy over emitted tool calls, and tool-trigger confusion matrix over cases with an explicit trigger oracle. Zero denominators produce unavailable values, never 100%.
-- [ ] Add manifest mismatch tests for model release, profile, dataset, thinking mode, output limit, and scorer revision. Endpoint/model label differences pass only when covered by declared addressing/mapping rules. Unknown checkpoint identity permits exploratory reporting but disables equivalence gating.
+- [x] Define exact metric denominators in `docs/metrics.md`: end-to-end success over all planned case/repetition trials, first-attempt HTTP 2xx rate over actual logical requests, conditional schema accuracy over emitted tool calls, and tool-trigger confusion matrix over cases with an explicit trigger oracle. Zero denominators produce unavailable values, never 100%.
+- [x] Add manifest mismatch tests for model release, profile, dataset, thinking mode, output limit, and scorer revision. Endpoint/model label differences pass only when covered by declared addressing/mapping rules. Unknown checkpoint identity permits exploratory reporting but disables equivalence gating.
 
 ```python
 def test_unknown_checkpoint_cannot_receive_quality_pass(unknown_release_pair, strict_policy):
@@ -225,11 +225,11 @@ def test_empty_metric_is_not_perfect(no_tool_calls_pair):
 
 In these fixtures, `*_pair` is a tuple of reference run, candidate run, and the two manifests, matching the public signature.
 
-- [ ] Compute first-attempt and eventual metrics separately and retain provider errors in end-to-end results. A conditional quality chart must also display the number of unavailable/unscored responses.
-- [ ] Implement prompt-cluster bootstrap intervals for repeated behavioral observations. Resample independent prompt IDs with replacement, retaining each prompt's repetitions; compute candidate-minus-reference differences on paired prompt clusters. Report the bootstrap seed and confidence level.
-- [ ] Implement an optional non-inferiority verdict: with enough evidence, PASS only when the lower confidence bound is above the negative allowed-drop margin; FAIL when the upper bound is below it; otherwise INCONCLUSIVE. Margins and sample floors are explicit operator policy. Test threshold boundary equality as inconclusive, not pass.
-- [ ] Add synthetic tests for a clear regression, a narrow acceptable difference, wide uncertainty, correlated repetitions, and unequal missingness. Use fixed seeds and cases with analytically obvious ordering, not exact snapshots of every random quantile.
-- [ ] Run `uv run pytest tests/test_comparison.py -q`, then commit `feat: compare deployment behavior with explicit uncertainty`.
+- [x] Compute first-attempt and eventual metrics separately and retain provider errors in end-to-end results. A conditional quality chart must also display the number of unavailable/unscored responses.
+- [x] Implement prompt-cluster bootstrap intervals for repeated behavioral observations. Resample independent prompt IDs with replacement, retaining each prompt's repetitions; compute candidate-minus-reference differences on paired prompt clusters. Report the bootstrap seed and confidence level.
+- [x] Implement an optional non-inferiority verdict: with enough evidence, PASS only when the lower confidence bound is above the negative allowed-drop margin; FAIL when the upper bound is below it; otherwise INCONCLUSIVE. Margins and sample floors are explicit operator policy. Test threshold boundary equality as inconclusive, not pass.
+- [x] Add synthetic tests for a clear regression, a narrow acceptable difference, wide uncertainty, correlated repetitions, and unequal missingness. Use fixed seeds and cases with analytically obvious ordering, not exact snapshots of every random quantile.
+- [x] Run `uv run pytest tests/test_comparison.py -q`, then commit `feat: compare deployment behavior with explicit uncertainty`.
 
 **Acceptance:** The comparison cannot certify mismatched releases or manufacture confidence from repeated copies of one prompt. Descriptive reporting works without a quality acceptance policy.
 
@@ -241,10 +241,10 @@ In these fixtures, `*_pair` is a tuple of reference run, candidate run, and the 
 
 **Produces:** `dpv plan`, `dpv run`, `dpv compare`, and `dpv report`; `render_report(result: RunResult | ComparisonResult, format: str) -> str`; `exit_status(result: RunResult) -> int`.
 
-- [ ] Add argparse command interfaces matching the design. `plan` never sends traffic. `run` requires a named configured endpoint; `compare` reads stored runs; `report` only renders stored evidence.
-- [ ] Add black-box CLI tests using subprocesses and local fixture servers. Verify `--help`, missing config, invalid protocol, absent credentials, request budgets, interruption, and output directory behavior. Do not put literal credentials in command-line arguments.
-- [ ] Implement `summary.json` as the authoritative aggregate and render Markdown/JUnit from it. Every summary displays endpoint/model/profile/dataset, actual case counts, all status categories, gates enabled, dates, and links to per-case evidence.
-- [ ] Implement exit precedence: incomplete/configuration/error/inconclusive required gate gives 2; otherwise required failures give 1; otherwise 0. Optional report-only quality observations do not imply a quality PASS.
+- [x] Add argparse command interfaces matching the design. `plan` never sends traffic. `run` requires a named configured endpoint; `compare` reads stored runs; `report` only renders stored evidence.
+- [x] Add black-box CLI tests using subprocesses and local fixture servers. Verify `--help`, missing config, invalid protocol, absent credentials, request budgets, interruption, and output directory behavior. Do not put literal credentials in command-line arguments.
+- [x] Implement `summary.json` as the authoritative aggregate and render Markdown/JUnit from it. Every summary displays endpoint/model/profile/dataset, actual case counts, all status categories, gates enabled, dates, and links to per-case evidence.
+- [x] Implement exit precedence: incomplete/configuration/error/inconclusive required gate gives 2; otherwise required failures give 1; otherwise 0. Optional report-only quality observations do not imply a quality PASS.
 
 ```python
 def test_incomplete_run_cannot_exit_success(incomplete_run):
@@ -257,9 +257,9 @@ def test_reports_keep_skipped_and_failed_counts(mixed_run):
     assert "Required gates" in markdown
 ```
 
-- [ ] Escape server-controlled text in Markdown and XML. Link optional raw evidence without embedding every prompt or reasoning trace in default summaries. Verify Unicode and XML control-character handling with fixtures.
-- [ ] Write README quickstart with an offline fixture example and explicit live setup. Include the community ownership statement, cost/budget behavior, source/provenance policy, and boundaries of verification claims. Describe fresh reference capture and the consequences of mutable model aliases.
-- [ ] Run `uv run pytest tests/test_cli_reports.py -q`, then commit `feat: expose verifier CLI and auditable reports`.
+- [x] Escape server-controlled text in Markdown and XML. Link optional raw evidence without embedding every prompt or reasoning trace in default summaries. Verify Unicode and XML control-character handling with fixtures.
+- [x] Write README quickstart with an offline fixture example and explicit live setup. Include the community ownership statement, cost/budget behavior, source/provenance policy, and boundaries of verification claims. Describe fresh reference capture and the consequences of mutable model aliases.
+- [x] Run `uv run pytest tests/test_cli_reports.py -q`, then commit `feat: expose verifier CLI and auditable reports`.
 
 **Acceptance:** A user can plan, run one endpoint, compare two stored runs, and render reports without editing Python. All formats agree on counts and verdicts.
 
@@ -271,14 +271,14 @@ def test_reports_keep_skipped_and_failed_counts(mixed_run):
 
 **Produces:** A tested repository, an evidence-backed coverage statement, and a v0.1 release candidate in the existing private repository. Public package publication and repository visibility changes remain separate decisions; do not make the repository public as part of implementation.
 
-- [ ] Configure offline CI on Python 3.11 and the current supported stable Python chosen at implementation time. Lock dependencies, run Ruff and pytest, build wheel/sdist, and install the wheel in a fresh environment for `dpv --help` and an offline fixture run.
-- [ ] Configure a manually triggered live workflow with endpoint/profile inputs, a small fixed budget, protected credentials, and sanitized artifacts. Pull-request workflows must not use live provider credentials. No automatic scheduled paid runs in v0.1.
-- [ ] Run targeted official calibration for each prospective gating rule in both protocols. Record exact model alias, response metadata, source capture, settings, date, and observed result. If official behavior contradicts a source, preserve both and keep the rule diagnostic or issue a reviewed profile revision.
-- [ ] Run the same required capability subset against a candidate deployment. If both routes are available, compare direct engine and SMG paths under matched conditions to localize gateway-only differences. A missing Responses implementation remains a declared coverage gap or required-feature failure, depending on the selected manifest.
-- [ ] Execute all seeded-fault fixtures and verify they trigger their intended assertion IDs. A test suite that accepts the valid fixture but misses a seeded corruption does not meet release acceptance.
-- [ ] Inspect generated evidence for secrets and misleading PASS/coverage claims. Confirm every referenced case and assertion exists and every released gate has documented provenance.
-- [ ] Run `uv run ruff check .`, `uv run pytest -q`, and `uv build`. After any live-driven rule change, rerun its affected offline tests and full required checks once.
-- [ ] Commit `ci: validate verifier contracts and release artifacts`. Publish only the tested combinations in the initial results table. Keep unsupported/unexercised combinations explicit.
+- [x] Configure offline CI on Python 3.11 and the current supported stable Python chosen at implementation time. Lock dependencies, run Ruff and pytest, build wheel/sdist, and install the wheel in a fresh environment for `dpv --help` and an offline fixture run.
+- [x] Configure a manually triggered live workflow with endpoint/profile inputs, a small fixed budget, protected credentials, and sanitized artifacts. Pull-request workflows must not use live provider credentials. No automatic scheduled paid runs in v0.1.
+- [x] Run targeted official calibration for each prospective gating rule in both protocols. Record exact model alias, response metadata, source capture, settings, date, and observed result. If official behavior contradicts a source, preserve both and keep the rule diagnostic or issue a reviewed profile revision.
+- [ ] Run the same required capability subset against a candidate deployment. If both routes are available, compare direct engine and SMG paths under matched conditions to localize gateway-only differences. A missing Responses implementation remains a declared coverage gap or required-feature failure, depending on the selected manifest. **Deferred by operator choice; not a blocker for official-only scope.**
+- [x] Execute all seeded-fault fixtures and verify they trigger their intended assertion IDs. A test suite that accepts the valid fixture but misses a seeded corruption does not meet release acceptance.
+- [x] Inspect generated evidence for secrets and misleading PASS/coverage claims. Confirm every referenced case and assertion exists and every released gate has documented provenance.
+- [x] Run `uv run ruff check .`, `uv run pytest -q`, and `uv build`. After any live-driven rule change, rerun its affected offline tests and full required checks once.
+- [x] Commit `ci: validate verifier contracts and release artifacts`. Publish only the tested combinations in the initial results table. Keep unsupported/unexercised combinations explicit.
 
 **Acceptance:** A clean installation works; offline tests include both compliant and corrupted endpoints; actual live evidence supports the advertised subset. No claim is made for unavailable model/protocol combinations.
 

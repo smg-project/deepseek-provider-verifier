@@ -89,3 +89,33 @@ Rules record their source URL, section, retrieval date, and optional source hash
 Capture a fresh reference with the same profile, dataset, scorer revision, budgets, and date window as the candidate. Treat mutable model aliases as time-dependent labels: timestamp them, record the declared release, and remeasure them with the candidate. Never silently reuse an older alias baseline as current evidence.
 
 Exit status `0` means all selected required gates completed and passed. Status `1` means completed evidence contains a required failure. Status `2` takes precedence for invalid setup, interruption, incomplete work, required execution errors, or an inconclusive required gate.
+
+## Initial measured results
+
+Version 0.1.0 is a release candidate with scoped official calibration. Select
+`profile = "deepseek-flash-smoke-2026-09-21-v1"` to use the calibrated Flash smoke
+rules. The example's `deepseek-api-2026-09-21` base profile remains diagnostic.
+
+| Endpoint/model | Protocol and observed settings | Evidence and limits |
+| --- | --- | --- |
+| Official `deepseek-flash` | Chat: 12 smoke trials, 15 requests; selected thinking/non-thinking and stream/non-stream variants | Measured assertions passed; exact per-rule scope recorded |
+| Official `deepseek-flash` | Responses: 12 smoke trials, 15 requests; same selected smoke matrix | Measured assertions passed; exact per-rule scope recorded |
+| Official V4 Pro / other models | No live coverage | Untested; no calibrated claim |
+| Candidate / direct engine / SMG | No live coverage | Deferred by operator choice |
+| Installed final CLI | Both protocols, C01 stream/non-stream, four loopback requests | Synthetic fixture only; final live CLI confirmation skipped |
+
+The official observations comprise **30 HTTP 200 responses and 197 passing
+measured assertions across 24 trials**, collected on September 21, 2026 at
+20:09–20:10 America/Los_Angeles using runner `bc3a9cc`. Their original diagnostic
+results remain INCONCLUSIVE. The new profile promotes only the 19 observed rules
+within their enumerated variants; it does not imply full protocol conformance.
+Usage option branches, reasoning-effort strength, unknown checkpoint identity,
+and quality equivalence remain outside the claim. See [calibration provenance
+and exact limitations](docs/contract-sources.md).
+
+Offline CI tests Python 3.11 and 3.14, checks schemas against runtime records,
+exercises valid and seeded-fault fixtures, and checks wheel/sdist contents plus
+a fresh installed CLI outside the checkout. The [manual live workflow](.github/workflows/live.yml)
+is separate, unscheduled, and requires operator-managed environment protection
+and credentials. It uploads only an allowlisted content-free summary. See
+[reproducibility and CI setup](docs/reproducibility.md).

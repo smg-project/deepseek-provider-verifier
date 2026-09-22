@@ -5,8 +5,8 @@ build-backend = "hatchling.build"
 [project]
 name = "deepseek-provider-verifier"
 version = "0.1.0"
-description = "Offline-first contract planning for DeepSeek-compatible providers"
-readme = "docs/contract-sources.md"
+description = "Evidence-based API contract verification for DeepSeek-compatible providers"
+readme = "README.md"
 requires-python = ">=3.11"
 license = { file = "LICENSE" }
 dependencies = [
@@ -34,8 +34,13 @@ include = [
   "/cases",
   "/schemas",
   "/configs",
-  "/docs/contract-sources.md",
-  "/docs/sources",
+  "/docs",
+  "/scripts",
+  "/.github/workflows",
+  "/README.md",
+  "/CONTRIBUTING.md",
+  "/AGENTS.md",
+  "/uv.lock",
   "/tests",
   "/LICENSE",
 ]
@@ -50,3 +55,8 @@ packages = ["src/deepseek_provider_verifier"]
 "configs" = "deepseek_provider_verifier/configs"
 "docs/contract-sources.md" = "deepseek_provider_verifier/docs/contract-sources.md"
 "docs/sources" = "deepseek_provider_verifier/docs/sources"
+"docs/calibration" = "deepseek_provider_verifier/docs/calibration"
+
+[tool.ruff.format]
+# Historical design examples are prose, not executable Python modules.
+exclude = ["*.md"]
