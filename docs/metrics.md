@@ -75,8 +75,11 @@ Any zero denominator produces an unavailable value.
 Behavioral differences are candidate minus reference. The bootstrap resamples
 independent prompt IDs with replacement and retains all case variants and
 repetitions belonging to each sampled prompt. It uses only paired scored
-observations and reports excluded reference/candidate observations, paired prompt
-count, retained repetition count, confidence level, and seed. Duplicate result
+trials and reports excluded reference/candidate observations, paired prompt count,
+retained repetition count, confidence level, and seed. For conditional metrics with
+multiple observations in one trial, such as emitted-call schema accuracy, every
+endpoint keeps its own complete numerator and denominator when the paired trial is
+resampled; calls are not paired or truncated by list position. Duplicate result
 identities are rejected. Repeating one prompt cannot satisfy the minimum distinct
 prompt floor.
 

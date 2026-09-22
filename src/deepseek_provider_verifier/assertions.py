@@ -247,6 +247,7 @@ def evaluate_case(
                         "Only registered deterministic mock functions may execute",
                         t.name,
                     )
+                schema = case.oracle.get("argument_schema", TOOL_SCHEMAS.get(t.name))
                 try:
                     args = strict_json_loads(t.arguments)
                 except (ValueError, RecursionError):
@@ -257,6 +258,14 @@ def evaluate_case(
                     )
                     metric.append(
                         MetricObservation(name="tool_argument_schema", value=0.0)
+                        if schema is not None
+                        else MetricObservation(
+                            name="tool_argument_schema",
+                            value=None,
+                            denominator=0,
+                            scored=False,
+                            reason="No declared argument schema for emitted tool",
+                        )
                     )
                     continue
                 object_arguments = isinstance(args, dict)
@@ -265,8 +274,7 @@ def evaluate_case(
                     object_arguments,
                     "Function arguments must be an object",
                 )
-                schema = case.oracle.get("argument_schema", TOOL_SCHEMAS.get(t.name))
-                if schema:
+                if schema is not None:
                     schema_valid = object_arguments and Draft202012Validator(
                         schema
                     ).is_valid(args)

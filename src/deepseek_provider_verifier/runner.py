@@ -296,6 +296,7 @@ def _reservation_metric(record: dict, cases: dict[str, Case]) -> AttemptMetric:
         step=record.get("step", 0),
         retry=record.get("retry", 0),
         attempt_number=record["attempt_number"],
+        http_exchange_completed=False,
         error_type="INTERRUPTED_RESERVATION",
         interrupted_reservation=True,
     )

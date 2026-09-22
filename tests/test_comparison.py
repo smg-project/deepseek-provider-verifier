@@ -260,6 +260,54 @@ def test_schema_accuracy_counts_each_emitted_call_and_unscored_calls():
     assert schema.reference_denominator == 2
 
 
+def test_schema_bootstrap_retains_each_endpoint_full_call_denominator():
+    m = endpoint_manifest(prompts=2)
+    reference = run_result(m, "candidate", [{}, {}])
+    candidate = run_result(m, "candidate", [{}, {}])
+    reference = reference.model_copy(
+        update={
+            "case_results": [
+                result.model_copy(
+                    update={
+                        "metric_observations": [
+                            MetricObservation(name="tool_argument_schema", value=1.0)
+                        ]
+                    }
+                )
+                for result in reference.case_results
+            ]
+        }
+    )
+    candidate = candidate.model_copy(
+        update={
+            "case_results": [
+                result.model_copy(
+                    update={
+                        "metric_observations": [
+                            MetricObservation(name="tool_argument_schema", value=1.0),
+                            MetricObservation(name="tool_argument_schema", value=0.0),
+                        ]
+                    }
+                )
+                for result in candidate.case_results
+            ]
+        }
+    )
+
+    result = compare_runs(
+        reference,
+        candidate,
+        (m, m),
+        policy=policy(allowed_drops={"schema_accuracy": 0.1}),
+    )
+
+    metric = result.metrics["schema_accuracy"]
+    assert (metric.reference_value, metric.value, metric.difference) == (1.0, 0.5, -0.5)
+    assert metric.lower_bound == -0.5 and metric.upper_bound == -0.5
+    assert metric.paired_observations == 2
+    assert result.metric_gates["schema_accuracy"] == "FAIL"
+
+
 def test_tool_trigger_confusion_matrix_has_exact_oracle_denominators_and_interval():
     m = endpoint_manifest(prompts=4)
     observations = [
@@ -416,6 +464,25 @@ def test_aggregate_observation_denominator_cannot_inflate_independent_coverage()
 
     with pytest.raises(ValueError, match="denominator one"):
         compare_runs(inflated_run, run, (m, m), policy=None)
+
+
+def test_duplicate_singleton_task_observations_are_rejected():
+    m = endpoint_manifest(prompts=2)
+    run = run_result(m, "candidate", [{"task_success": 1.0}, {}])
+    duplicated = run.case_results[0].model_copy(
+        update={
+            "metric_observations": [
+                MetricObservation(name="task_success", value=1.0),
+                MetricObservation(name="task_success", value=1.0),
+            ]
+        }
+    )
+    duplicated_run = run.model_copy(
+        update={"case_results": [duplicated, run.case_results[1]]}
+    )
+
+    with pytest.raises(ValueError, match="duplicate task_success"):
+        compare_runs(duplicated_run, run, (m, m), policy=None)
 
 
 def test_paired_prompt_bootstrap_detects_clear_regression():

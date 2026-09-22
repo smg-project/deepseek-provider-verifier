@@ -230,6 +230,7 @@ def _case_values(
     name: str,
     *,
     planned_denominator: bool = False,
+    singleton_observation: bool = False,
 ) -> tuple[float, int, int, dict[str, list[float]]]:
     numerator = 0.0
     denominator = 0
@@ -237,6 +238,8 @@ def _case_values(
     values: dict[str, list[float]] = {}
     for case in cases:
         observed = _observations(results.get(case.id), name)
+        if singleton_observation and len(observed) > 1:
+            raise ValueError(f"Trial {case.id} has duplicate {name} observations")
         scored = [_finite_unit(item) for item in observed]
         scored = [item for item in scored if item is not None]
         if planned_denominator:
@@ -376,38 +379,43 @@ def _quantile(values: list[float], probability: float) -> float:
     return ordered[lower] + (ordered[upper] - ordered[lower]) * (position - lower)
 
 
-def _paired_mean_values(
+def _paired_ratio_values(
     cases: list[Case],
     reference: dict[str, list[float]],
     candidate: dict[str, list[float]],
-) -> tuple[dict[str, list[tuple[float, float, int]]], int, int]:
-    clusters: dict[str, list[tuple[float, float, int]]] = defaultdict(list)
+) -> tuple[dict[str, list[tuple[float, int, float, int, int]]], int, int]:
+    clusters: dict[str, list[tuple[float, int, float, int, int]]] = defaultdict(list)
     missing_reference = 0
     missing_candidate = 0
     for case in cases:
         ref_values = reference.get(case.id, [])
         cand_values = candidate.get(case.id, [])
-        size = max(len(ref_values), len(cand_values), 1)
-        for index in range(size):
-            ref = ref_values[index] if index < len(ref_values) else None
-            cand = cand_values[index] if index < len(cand_values) else None
-            if ref is None:
-                missing_reference += 1
-            if cand is None:
-                missing_candidate += 1
-            if ref is not None and cand is not None and case.prompt_id is not None:
-                clusters[case.prompt_id].append((ref, cand, case.repetition))
+        if not ref_values:
+            missing_reference += 1
+        if not cand_values:
+            missing_candidate += 1
+        if ref_values and cand_values and case.prompt_id is not None:
+            clusters[case.prompt_id].append(
+                (
+                    sum(ref_values),
+                    len(ref_values),
+                    sum(cand_values),
+                    len(cand_values),
+                    case.repetition,
+                )
+            )
     return dict(clusters), missing_reference, missing_candidate
 
 
 def _bootstrap(
-    clusters: dict[str, list[tuple[float, float, int]]], policy: ComparisonPolicy
+    clusters: dict[str, list[tuple[float, int, float, int, int]]],
+    policy: ComparisonPolicy,
 ) -> tuple[float, float] | None:
     prompt_ids = sorted(clusters)
     if len(prompt_ids) < policy.minimum_distinct_prompts:
         return None
     if any(
-        len({repetition for _, _, repetition in clusters[prompt_id]})
+        len({repetition for *_, repetition in clusters[prompt_id]})
         < policy.minimum_repetitions
         for prompt_id in prompt_ids
     ):
@@ -417,9 +425,13 @@ def _bootstrap(
     for _ in range(policy.bootstrap_samples):
         sample = [rng.choice(prompt_ids) for _ in prompt_ids]
         observations = [item for prompt_id in sample for item in clusters[prompt_id]]
+        reference_numerator = sum(item[0] for item in observations)
+        reference_denominator = sum(item[1] for item in observations)
+        candidate_numerator = sum(item[2] for item in observations)
+        candidate_denominator = sum(item[3] for item in observations)
         differences.append(
-            sum(candidate - reference for reference, candidate, _ in observations)
-            / len(observations)
+            candidate_numerator / candidate_denominator
+            - reference_numerator / reference_denominator
         )
     alpha = (1 - policy.confidence_level) / 2
     return _quantile(differences, alpha), _quantile(differences, 1 - alpha)
@@ -484,13 +496,13 @@ def _comparison_metric(
     cand_num, cand_den, cand_missing, cand_values = candidate_summary
     ref_value = ref_num / ref_den if ref_den else None
     cand_value = cand_num / cand_den if cand_den else None
-    clusters, missing_ref_pairs, missing_cand_pairs = _paired_mean_values(
+    clusters, missing_ref_pairs, missing_cand_pairs = _paired_ratio_values(
         cases, ref_values, cand_values
     )
     interval = _bootstrap(clusters, policy) if policy else None
     paired = sum(len(items) for items in clusters.values())
     repetitions = min(
-        (len({item[2] for item in items}) for items in clusters.values()), default=0
+        (len({item[4] for item in items}) for items in clusters.values()), default=0
     )
     return ComparisonMetric(
         value=cand_value,
@@ -621,8 +633,12 @@ def compare_runs(
             policy,
         ),
         "task_success": _comparison_metric(
-            _case_values(cases, ref_results, "task_success"),
-            _case_values(cases, cand_results, "task_success"),
+            _case_values(
+                cases, ref_results, "task_success", singleton_observation=True
+            ),
+            _case_values(
+                cases, cand_results, "task_success", singleton_observation=True
+            ),
             cases,
             policy,
         ),

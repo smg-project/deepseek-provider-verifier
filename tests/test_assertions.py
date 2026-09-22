@@ -172,6 +172,33 @@ def test_each_emitted_tool_call_has_an_individual_schema_observation():
     assert triggers == {"tool_trigger": 1.0, "expected_tool_trigger": 1.0}
 
 
+def test_malformed_arguments_without_declared_schema_are_unscored():
+    unknown = ToolCall(
+        identity="unknown",
+        index=0,
+        call_id="unknown",
+        name="unadvertised",
+        arguments='{"value":',
+        complete=True,
+    )
+
+    result = evaluate(
+        case(oracle={"kind": "multiple_tools", "min_calls": 1}),
+        [observation(tools={"unknown": unknown})],
+    )
+
+    assert any(
+        assertion.id == "TOOL_ARGUMENTS_INVALID_JSON" and assertion.status == "FAIL"
+        for assertion in result.assertions
+    )
+    metric = next(
+        metric
+        for metric in result.metric_observations
+        if metric.name == "tool_argument_schema"
+    )
+    assert (metric.value, metric.denominator, metric.scored) == (None, 0, False)
+
+
 def test_ignored_tool_prohibition_fails():
     o = observation(
         tools={

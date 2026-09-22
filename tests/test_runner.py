@@ -478,14 +478,18 @@ def test_resume_counts_incomplete_start_and_cannot_pass_a_budget_subset(tmp_path
         append_record(
             tmp_path / filename, {"kind": "manifest", "manifest_hash": m.manifest_hash}
         )
-    for number in [1, 2]:
+    for number, case in enumerate(m.cases, start=1):
         append_record(
             tmp_path / "attempts.jsonl",
             {
                 "kind": "attempt_start",
                 "endpoint": "candidate",
                 "protocol": "chat",
-                "case_id": m.cases[0].id,
+                "case_id": case.id,
+                "prompt_id": case.prompt_id,
+                "repetition": case.repetition,
+                "step": 0,
+                "retry": 0,
                 "attempt_number": number,
                 "request_hash": "a" * 64,
             },
@@ -502,6 +506,55 @@ def test_resume_counts_incomplete_start_and_cannot_pass_a_budget_subset(tmp_path
     assert all(r.reason == "ATTEMPT_BUDGET" for r in result.case_results)
     assert len(result.attempt_metrics) == 2
     assert all(metric.interrupted_reservation for metric in result.attempt_metrics)
+    assert all(
+        metric.http_exchange_completed is False for metric in result.attempt_metrics
+    )
+    from deepseek_provider_verifier.comparison import compare_runs
+
+    comparison = compare_runs(result, result, (m, m), policy=None)
+    for name in ("first_http_2xx_rate", "eventual_http_2xx_rate"):
+        metric = comparison.metrics[name]
+        assert (metric.value, metric.numerator, metric.denominator) == (0.0, 0, 2)
+
+
+def test_resume_keeps_interrupted_first_attempt_and_eventual_http_success(tmp_path):
+    from deepseek_provider_verifier.comparison import compare_runs
+    from deepseek_provider_verifier.evidence import append_record, atomic_json
+
+    m = manifest(max_requests=2)
+    case = m.cases[0]
+    atomic_json(tmp_path / "manifest.json", m.model_dump(mode="json"))
+    for filename in ("attempts.jsonl", "results.jsonl"):
+        append_record(
+            tmp_path / filename, {"kind": "manifest", "manifest_hash": m.manifest_hash}
+        )
+    append_record(
+        tmp_path / "attempts.jsonl",
+        {
+            "kind": "attempt_start",
+            "endpoint": "candidate",
+            "protocol": case.protocol,
+            "case_id": case.id,
+            "prompt_id": case.prompt_id,
+            "repetition": case.repetition,
+            "step": 0,
+            "retry": 0,
+            "attempt_number": 1,
+            "request_hash": "a" * 64,
+        },
+    )
+
+    resumed = run(
+        m, lambda r: httpx.Response(200, json=response()), tmp_path, resume=True
+    )
+    comparison = compare_runs(resumed, resumed, (m, m), policy=None)
+
+    assert [metric.http_exchange_completed for metric in resumed.attempt_metrics] == [
+        False,
+        True,
+    ]
+    assert comparison.metrics["first_http_2xx_rate"].value == 0
+    assert comparison.metrics["eventual_http_2xx_rate"].value == 1
 
 
 def test_resume_retains_first_ever_http_attempt_for_availability(tmp_path):
