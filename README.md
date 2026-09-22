@@ -90,7 +90,37 @@ Capture a fresh reference with the same profile, dataset, scorer revision, budge
 
 Exit status `0` means all selected required gates completed and passed. Status `1` means completed evidence contains a required failure. Status `2` takes precedence for invalid setup, interruption, incomplete work, required execution errors, or an inconclusive required gate.
 
-## Initial measured results
+## Measured results
+
+The September 22 follow-up tested official `deepseek-flash` and
+`deepseek-v4-pro`: **696 inference requests** across both protocols, plus three
+metadata/file-lifecycle requests. The frozen live run used merged revision
+`a97566f`; the request and expectation corrections below were verified offline.
+
+Select `deepseek-official-full-2026-09-22-v1` with the supplied two-model config:
+
+```sh
+uv run dpv plan --config configs/official-full.example.toml
+```
+
+The `full` preset means all shipped C01–C24 variants: 86 trials per model and a
+212-request total ceiling. Exact-request replay of **198 saved responses** with
+the corrected fixtures yields **154 PASS, 14 INCONCLUSIVE, 4 SKIP**, with 786
+passing assertions and zero failed assertions. This fix made no additional live
+calls. Both models have the same result: 77 PASS, 7 INCONCLUSIVE, 2 SKIP.
+
+The profile enables 41 rules only within their recorded model/variant scopes.
+Ambiguous tool choice (C10), reasoning omission (C15), and Responses option
+effects (C24) stay diagnostic; Chat C06/C23 are inapplicable. A full run therefore
+returns **exit 2**, even when all calibrated assertions pass. This is not a claim
+of complete API conformance. Supplementary instruction-following mismatches,
+validation differences, budget exhaustion, and lack of demonstrated vision
+remain recorded limitations; acceptance alone never establishes capability.
+See the [two-model calibration record](docs/calibration/official-both-models-2026-09-22.json)
+and [scope and replay instructions](docs/contract-sources.md#official-two-model-catalog-calibration-september-22).
+Candidate deployments remain untested.
+
+### Historical Flash smoke calibration
 
 Version 0.1.0 is a release candidate with scoped official calibration. Select
 `profile = "deepseek-flash-smoke-2026-09-21-v1"` to use the calibrated Flash smoke
@@ -100,7 +130,7 @@ rules. The example's `deepseek-api-2026-09-21` base profile remains diagnostic.
 | --- | --- | --- |
 | Official `deepseek-flash` | Chat: 12 smoke trials, 15 requests; selected thinking/non-thinking and stream/non-stream variants | Measured assertions passed; exact per-rule scope recorded |
 | Official `deepseek-flash` | Responses: 12 smoke trials, 15 requests; same selected smoke matrix | Measured assertions passed; exact per-rule scope recorded |
-| Official V4 Pro / other models | No live coverage | Untested; no calibrated claim |
+| Official V4 Pro / other models | Not covered by this September 21 smoke run | V4 Pro follow-up is recorded separately above |
 | Candidate / direct engine / SMG | No live coverage | Deferred by operator choice |
 | Installed CLI at `8b12f73` | Official Flash C01, both protocols and stream settings, four requests | Separate live confirmation: 4 HTTP 200, 4 PASS, 23 passing assertions |
 | Current scorer after final review fixes | Both protocols; synthetic fixtures and exact-request replay of the 34 captured responses | Offline verification only; no additional live calls |
@@ -116,7 +146,7 @@ and exact limitations](docs/contract-sources.md).
 
 A [separate CLI confirmation](docs/calibration/official-flash-cli-confirmation-2026-09-21.json)
 ran at **22:35:53–22:35:59 PDT on September 21** using immutable `8b12f73`,
-with exit 0 and verified evidence integrity. Total session traffic was **34
+with exit 0 and verified evidence integrity. Total September 21 session traffic was **34
 requests**. This predates the final streaming-envelope fixes; those changes
 were checked offline against synthetic corruption tests and both captured runs.
 The original calibration record and hashes remain unchanged.
