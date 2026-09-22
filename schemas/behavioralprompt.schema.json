@@ -1,0 +1,57 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "category": {
+      "enum": [
+        "required",
+        "forbidden",
+        "ambiguous",
+        "schema",
+        "follow_up"
+      ],
+      "title": "Category",
+      "type": "string"
+    },
+    "content": {
+      "title": "Content",
+      "type": "string"
+    },
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "dataset_version": {
+      "title": "Dataset Version",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "intended_answer": {
+      "title": "Intended Answer"
+    },
+    "license": {
+      "title": "License",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "dataset_version",
+    "category",
+    "content",
+    "intended_answer",
+    "license",
+    "content_hash"
+  ],
+  "title": "BehavioralPrompt",
+  "type": "object"
+}

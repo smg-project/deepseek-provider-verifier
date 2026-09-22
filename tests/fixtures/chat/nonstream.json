@@ -1,0 +1,1 @@
+{"id":"chat3","choices":[{"index":0,"message":{"role":"assistant","content":"hello","reasoning_content":"thought","vendor":{"opaque":true}},"finish_reason":"stop"}],"usage":{"completion_tokens":2}}

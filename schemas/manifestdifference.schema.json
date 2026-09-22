@@ -1,0 +1,40 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "candidate": {
+      "title": "Candidate"
+    },
+    "compatible": {
+      "default": false,
+      "title": "Compatible",
+      "type": "boolean"
+    },
+    "field": {
+      "minLength": 1,
+      "title": "Field",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "reference": {
+      "title": "Reference"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "field",
+    "reference",
+    "candidate",
+    "reason"
+  ],
+  "title": "ManifestDifference",
+  "type": "object"
+}

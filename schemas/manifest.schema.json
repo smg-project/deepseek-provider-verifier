@@ -1,0 +1,676 @@
+{
+  "$defs": {
+    "Case": {
+      "additionalProperties": false,
+      "properties": {
+        "attached_assertion_case_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Attached Assertion Case Ids",
+          "type": "array"
+        },
+        "dataset_version": {
+          "default": "original-v1",
+          "title": "Dataset Version",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "max_output_tokens": {
+          "exclusiveMinimum": 0,
+          "title": "Max Output Tokens",
+          "type": "integer"
+        },
+        "max_requests": {
+          "exclusiveMinimum": 0,
+          "title": "Max Requests",
+          "type": "integer"
+        },
+        "mode": {
+          "enum": [
+            "non_thinking",
+            "thinking"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "oracle": {
+          "additionalProperties": true,
+          "title": "Oracle",
+          "type": "object"
+        },
+        "prompt_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt Id"
+        },
+        "protocol": {
+          "enum": [
+            "chat",
+            "responses"
+          ],
+          "title": "Protocol",
+          "type": "string"
+        },
+        "repetition": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Repetition",
+          "type": "integer"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "rule_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Rule Ids",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "steps": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "minItems": 1,
+          "title": "Steps",
+          "type": "array"
+        },
+        "stream": {
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "template_id": {
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "protocol",
+        "template_id",
+        "mode",
+        "stream",
+        "rule_ids",
+        "steps",
+        "required",
+        "max_requests",
+        "max_output_tokens",
+        "oracle"
+      ],
+      "title": "Case",
+      "type": "object"
+    },
+    "Endpoint": {
+      "additionalProperties": false,
+      "properties": {
+        "api_key_env": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Api Key Env"
+        },
+        "auth_none": {
+          "default": false,
+          "title": "Auth None",
+          "type": "boolean"
+        },
+        "base_url": {
+          "format": "uri",
+          "minLength": 1,
+          "title": "Base Url",
+          "type": "string"
+        },
+        "contract_model": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contract Model"
+        },
+        "model": {
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "model_release": {
+          "minLength": 1,
+          "title": "Model Release",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "base_url",
+        "model",
+        "model_release"
+      ],
+      "title": "Endpoint",
+      "type": "object"
+    },
+    "PlanBudgets": {
+      "additionalProperties": false,
+      "properties": {
+        "attached_assertion_case_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Attached Assertion Case Ids",
+          "type": "array"
+        },
+        "case_deadline_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Case Deadline Seconds",
+          "type": "integer"
+        },
+        "case_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Case Ids",
+          "type": "array"
+        },
+        "concurrency": {
+          "exclusiveMinimum": 0,
+          "title": "Concurrency",
+          "type": "integer"
+        },
+        "execution_order": {
+          "default": "sequential",
+          "enum": [
+            "sequential",
+            "paired"
+          ],
+          "title": "Execution Order",
+          "type": "string"
+        },
+        "max_attempts_per_endpoint": {
+          "exclusiveMinimum": 0,
+          "title": "Max Attempts Per Endpoint",
+          "type": "integer"
+        },
+        "max_concurrency": {
+          "exclusiveMinimum": 0,
+          "title": "Max Concurrency",
+          "type": "integer"
+        },
+        "max_requests_per_conversation": {
+          "exclusiveMinimum": 0,
+          "title": "Max Requests Per Conversation",
+          "type": "integer"
+        },
+        "max_requests_per_endpoint": {
+          "exclusiveMinimum": 0,
+          "title": "Max Requests Per Endpoint",
+          "type": "integer"
+        },
+        "max_requests_per_protocol": {
+          "exclusiveMinimum": 0,
+          "title": "Max Requests Per Protocol",
+          "type": "integer"
+        },
+        "max_retries": {
+          "minimum": 0,
+          "title": "Max Retries",
+          "type": "integer"
+        },
+        "max_total_requests": {
+          "exclusiveMinimum": 0,
+          "title": "Max Total Requests",
+          "type": "integer"
+        },
+        "mode_max_output_tokens": {
+          "additionalProperties": {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          "propertyNames": {
+            "enum": [
+              "non_thinking",
+              "thinking"
+            ]
+          },
+          "title": "Mode Max Output Tokens",
+          "type": "object"
+        },
+        "protocols": {
+          "items": {
+            "enum": [
+              "chat",
+              "responses"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Protocols",
+          "type": "array"
+        },
+        "repetitions": {
+          "default": 1,
+          "exclusiveMinimum": 0,
+          "title": "Repetitions",
+          "type": "integer"
+        },
+        "retries": {
+          "minimum": 0,
+          "title": "Retries",
+          "type": "integer"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "suite": {
+          "minLength": 1,
+          "title": "Suite",
+          "type": "string"
+        }
+      },
+      "required": [
+        "suite",
+        "protocols",
+        "max_requests_per_protocol",
+        "max_requests_per_endpoint",
+        "max_total_requests",
+        "max_requests_per_conversation",
+        "max_retries",
+        "retries",
+        "max_concurrency",
+        "concurrency",
+        "max_attempts_per_endpoint",
+        "case_deadline_seconds",
+        "mode_max_output_tokens",
+        "case_ids",
+        "attached_assertion_case_ids"
+      ],
+      "title": "PlanBudgets",
+      "type": "object"
+    },
+    "Profile": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "models": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Models",
+          "type": "array"
+        },
+        "presets": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ProfilePreset"
+          },
+          "minProperties": 1,
+          "title": "Presets",
+          "type": "object"
+        },
+        "rules": {
+          "items": {
+            "$ref": "#/$defs/Rule"
+          },
+          "title": "Rules",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "models",
+        "rules",
+        "presets"
+      ],
+      "title": "Profile",
+      "type": "object"
+    },
+    "ProfilePreset": {
+      "additionalProperties": false,
+      "properties": {
+        "attached_assertion_case_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Attached Assertion Case Ids",
+          "type": "array"
+        },
+        "case_deadline_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Case Deadline Seconds",
+          "type": "integer"
+        },
+        "case_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Case Ids",
+          "type": "array"
+        },
+        "concurrency": {
+          "exclusiveMinimum": 0,
+          "title": "Concurrency",
+          "type": "integer"
+        },
+        "max_requests_per_conversation": {
+          "exclusiveMinimum": 0,
+          "title": "Max Requests Per Conversation",
+          "type": "integer"
+        },
+        "max_requests_per_endpoint": {
+          "exclusiveMinimum": 0,
+          "title": "Max Requests Per Endpoint",
+          "type": "integer"
+        },
+        "max_requests_per_protocol": {
+          "exclusiveMinimum": 0,
+          "title": "Max Requests Per Protocol",
+          "type": "integer"
+        },
+        "max_retries": {
+          "minimum": 0,
+          "title": "Max Retries",
+          "type": "integer"
+        },
+        "max_total_requests": {
+          "exclusiveMinimum": 0,
+          "title": "Max Total Requests",
+          "type": "integer"
+        },
+        "mode_max_output_tokens": {
+          "additionalProperties": {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          "propertyNames": {
+            "enum": [
+              "non_thinking",
+              "thinking"
+            ]
+          },
+          "title": "Mode Max Output Tokens",
+          "type": "object"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "max_requests_per_protocol",
+        "max_requests_per_endpoint",
+        "max_total_requests",
+        "max_requests_per_conversation",
+        "max_retries",
+        "concurrency",
+        "case_deadline_seconds",
+        "mode_max_output_tokens"
+      ],
+      "title": "ProfilePreset",
+      "type": "object"
+    },
+    "Rule": {
+      "additionalProperties": false,
+      "properties": {
+        "assertion_id": {
+          "minLength": 1,
+          "title": "Assertion Id",
+          "type": "string"
+        },
+        "conditions": {
+          "additionalProperties": true,
+          "title": "Conditions",
+          "type": "object"
+        },
+        "evidence_status": {
+          "enum": [
+            "documented",
+            "observed",
+            "project-policy"
+          ],
+          "title": "Evidence Status",
+          "type": "string"
+        },
+        "expectation": {
+          "minLength": 1,
+          "title": "Expectation",
+          "type": "string"
+        },
+        "gating": {
+          "title": "Gating",
+          "type": "boolean"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "maturity": {
+          "default": "diagnostic",
+          "enum": [
+            "diagnostic",
+            "calibrated"
+          ],
+          "title": "Maturity",
+          "type": "string"
+        },
+        "protocol": {
+          "enum": [
+            "chat",
+            "responses"
+          ],
+          "title": "Protocol",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "source_section": {
+          "minLength": 1,
+          "title": "Source Section",
+          "type": "string"
+        },
+        "source_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Sha256"
+        },
+        "source_url": {
+          "format": "uri",
+          "minLength": 1,
+          "title": "Source Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "protocol",
+        "conditions",
+        "expectation",
+        "assertion_id",
+        "source_url",
+        "source_section",
+        "retrieved_at",
+        "evidence_status",
+        "gating"
+      ],
+      "title": "Rule",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "budgets": {
+      "$ref": "#/$defs/PlanBudgets"
+    },
+    "cases": {
+      "items": {
+        "$ref": "#/$defs/Case"
+      },
+      "title": "Cases",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "dataset_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Dataset Hash",
+      "type": "string"
+    },
+    "endpoints": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Endpoint"
+      },
+      "minProperties": 1,
+      "title": "Endpoints",
+      "type": "object"
+    },
+    "gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Gates",
+      "type": "array"
+    },
+    "manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manifest Hash",
+      "type": "string"
+    },
+    "output_token_ceiling": {
+      "minimum": 0,
+      "title": "Output Token Ceiling",
+      "type": "integer"
+    },
+    "profile_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Profile Hash",
+      "type": "string"
+    },
+    "profile_snapshot": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Profile"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "request_ceiling": {
+      "minimum": 0,
+      "title": "Request Ceiling",
+      "type": "integer"
+    },
+    "run_id": {
+      "minLength": 1,
+      "title": "Run Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "scorer_revision": {
+      "minLength": 1,
+      "title": "Scorer Revision",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "created_at",
+    "profile_hash",
+    "dataset_hash",
+    "scorer_revision",
+    "endpoints",
+    "cases",
+    "budgets",
+    "request_ceiling",
+    "output_token_ceiling",
+    "gates",
+    "manifest_hash"
+  ],
+  "title": "Manifest",
+  "type": "object"
+}

@@ -1,0 +1,157 @@
+{
+  "additionalProperties": false,
+  "description": "Portable provenance needed to render a stored comparison result.",
+  "properties": {
+    "case_count": {
+      "minimum": 0,
+      "title": "Case Count",
+      "type": "integer"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "dataset_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dataset Hash"
+    },
+    "enabled_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Enabled Gates",
+      "type": "array"
+    },
+    "endpoint_models": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Endpoint Models",
+      "type": "object"
+    },
+    "evidence_links": {
+      "additionalProperties": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Evidence Links",
+      "type": "object"
+    },
+    "exit_code": {
+      "anyOf": [
+        {
+          "enum": [
+            0,
+            1,
+            2
+          ],
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Exit Code"
+    },
+    "integrity": {
+      "default": "unavailable",
+      "enum": [
+        "verified",
+        "summary-only",
+        "unavailable"
+      ],
+      "title": "Integrity",
+      "type": "string"
+    },
+    "profile": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Profile"
+    },
+    "profile_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Profile Hash"
+    },
+    "quality_verdict": {
+      "anyOf": [
+        {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "INCONCLUSIVE",
+            "REPORT_ONLY"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Quality Verdict"
+    },
+    "required_case_count": {
+      "minimum": 0,
+      "title": "Required Case Count",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "status_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "propertyNames": {
+        "enum": [
+          "PASS",
+          "FAIL",
+          "ERROR",
+          "SKIP",
+          "INCONCLUSIVE"
+        ]
+      },
+      "title": "Status Counts",
+      "type": "object"
+    }
+  },
+  "required": [
+    "created_at",
+    "case_count",
+    "required_case_count"
+  ],
+  "title": "ComparisonReportContext",
+  "type": "object"
+}

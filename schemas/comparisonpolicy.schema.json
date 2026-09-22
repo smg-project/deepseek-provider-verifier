@@ -1,0 +1,52 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "allowed_drops": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "minProperties": 1,
+      "title": "Allowed Drops",
+      "type": "object"
+    },
+    "bootstrap_samples": {
+      "default": 2000,
+      "exclusiveMinimum": 0,
+      "title": "Bootstrap Samples",
+      "type": "integer"
+    },
+    "bootstrap_seed": {
+      "title": "Bootstrap Seed",
+      "type": "integer"
+    },
+    "confidence_level": {
+      "title": "Confidence Level",
+      "type": "number"
+    },
+    "minimum_distinct_prompts": {
+      "minimum": 2,
+      "title": "Minimum Distinct Prompts",
+      "type": "integer"
+    },
+    "minimum_repetitions": {
+      "exclusiveMinimum": 0,
+      "title": "Minimum Repetitions",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "allowed_drops",
+    "minimum_distinct_prompts",
+    "minimum_repetitions",
+    "confidence_level",
+    "bootstrap_seed"
+  ],
+  "title": "ComparisonPolicy",
+  "type": "object"
+}
