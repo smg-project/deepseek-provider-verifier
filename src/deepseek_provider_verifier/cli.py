@@ -12,6 +12,7 @@ from contextlib import AsyncExitStack
 from datetime import UTC, datetime
 from importlib.resources import files
 from pathlib import Path
+from urllib.parse import quote
 
 import httpx
 from pydantic import ValidationError
@@ -248,7 +249,7 @@ def _compare(args) -> int:
             )
             if selected:
                 links.extend(
-                    str(directory / "attempts.jsonl") + f"#sha256-{ref}"
+                    _relative_evidence_link(directory / "attempts.jsonl", args.out, ref)
                     for ref in selected.attempt_refs
                 )
         evidence[case.id] = links
@@ -288,6 +289,11 @@ def _compare(args) -> int:
     write_report_bundle(args.out, result)
     print(args.out)
     return comparison_exit_status(result)
+
+
+def _relative_evidence_link(path: Path, report_directory: Path, digest: str) -> str:
+    relative = os.path.relpath(path.resolve(), report_directory.resolve())
+    return f"{quote(Path(relative).as_posix(), safe='/')}#sha256-{digest}"
 
 
 def _report(args) -> int:

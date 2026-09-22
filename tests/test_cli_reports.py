@@ -10,6 +10,8 @@ import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import unquote, urlsplit
+from xml.etree import ElementTree as ET
 
 import pytest
 
@@ -18,6 +20,7 @@ from deepseek_provider_verifier.records import (
     AttemptMetric,
     CaseResult,
     ComparisonMetric,
+    ComparisonPolicy,
     ComparisonReportContext,
     ComparisonResult,
     RunReportContext,
@@ -332,9 +335,51 @@ def test_comparison_report_marks_report_only_quality_as_inconclusive():
     )
 
     markdown = render_report(result, "markdown")
+    junit = ET.fromstring(render_report(result, "junit"))
 
     assert "Quality gate | INCONCLUSIVE (report only)" in markdown
     assert "| PASS | 2 |" in markdown
+    assert junit.attrib["errors"] == "0"
+    assert junit.attrib["skipped"] == "1"
+    assert junit.find("testcase/skipped").attrib["message"] == "report-only observation"
+
+
+def test_required_inconclusive_comparison_is_a_junit_error():
+    result = ComparisonResult(
+        comparable=True,
+        reference_endpoint="reference",
+        candidate_endpoint="candidate",
+        manifest_differences=[],
+        metrics={
+            "task_success": ComparisonMetric(
+                value=1,
+                numerator=1,
+                denominator=1,
+                unavailable=0,
+                reference_value=1,
+                reference_numerator=1,
+                reference_denominator=1,
+                reference_unavailable=0,
+                difference=0,
+            )
+        },
+        policy=ComparisonPolicy(
+            allowed_drops={"task_success": 0.1},
+            minimum_distinct_prompts=2,
+            minimum_repetitions=1,
+            confidence_level=0.95,
+            bootstrap_samples=100,
+            bootstrap_seed=7,
+        ),
+        metric_gates={"task_success": "INCONCLUSIVE"},
+        quality_gate="INCONCLUSIVE",
+    )
+
+    junit = ET.fromstring(render_report(result, "junit"))
+
+    assert junit.attrib["errors"] == "1"
+    assert junit.attrib.get("skipped", "0") == "0"
+    assert junit.find("testcase/error").attrib["message"] == "quality gate inconclusive"
 
 
 def test_legacy_sparse_counts_keep_http_completion_unavailable():
@@ -505,7 +550,7 @@ def test_run_repeated_endpoints_writes_consistent_reports_without_overwrite(
 
 def test_compare_and_report_load_verified_stored_evidence(tmp_path, fixture_server):
     config, profile = _write_fixture_inputs(tmp_path, fixture_server)
-    run_dir = tmp_path / "paired"
+    run_dir = tmp_path / "paired evidence #1"
     completed = _cli(
         "run",
         "--config",
@@ -520,18 +565,20 @@ def test_compare_and_report_load_verified_stored_evidence(tmp_path, fixture_serv
         str(run_dir),
     )
     assert completed.returncode == 0, completed.stderr
-    comparison_dir = tmp_path / "comparison"
+    comparison_dir = tmp_path / "comparison output"
+    relative_run = os.path.relpath(run_dir, ROOT)
+    relative_comparison = os.path.relpath(comparison_dir, ROOT)
 
     compared = _cli(
         "compare",
-        str(run_dir),
-        str(run_dir),
+        relative_run,
+        relative_run,
         "--reference-endpoint",
         "reference",
         "--candidate-endpoint",
         "candidate",
         "--out",
-        str(comparison_dir),
+        relative_comparison,
     )
     rendered = _cli("report", str(comparison_dir), "--format", "markdown")
 
@@ -548,6 +595,18 @@ def test_compare_and_report_load_verified_stored_evidence(tmp_path, fixture_serv
     comparison_summary = json.loads((comparison_dir / "summary.json").read_text())
     assert comparison_summary["report"]["quality_verdict"] == "REPORT_ONLY"
     assert comparison_summary["report"]["exit_code"] == 0
+    evidence_links = [
+        link
+        for links in comparison_summary["report"]["evidence_links"].values()
+        for link in links
+    ]
+    assert "%20" in evidence_links[0] and "%23" in evidence_links[0]
+    assert all(
+        (comparison_dir / unquote(urlsplit(link).path)).resolve().is_file()
+        for link in evidence_links
+    )
+    junit = (comparison_dir / "junit.xml").read_text()
+    assert all(link in junit for link in evidence_links)
 
     summary = json.loads((run_dir / "summary.json").read_text())
     summary["counts"]["PASS"] = 999
@@ -794,3 +853,50 @@ def test_packaged_synthetic_fixture_serves_the_four_request_example(tmp_path):
     assert json.loads((tmp_path / "run" / "summary.json").read_text())[
         "counts"
     ] == dict(ALL_COUNTS, PASS=4)
+
+
+def test_synthetic_fixture_rejects_non_loopback_bind():
+    rejected = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "deepseek_provider_verifier.synthetic_fixture",
+            "--host",
+            "0.0.0.0",
+        ],
+        cwd=ROOT,
+        env=CLI_ENV,
+        capture_output=True,
+        text=True,
+        timeout=10,
+        check=False,
+    )
+
+    assert rejected.returncode == 2
+    assert "--host" in rejected.stderr
+
+
+def test_run_loader_rejects_checkpoint_with_deleted_journals(tmp_path, fixture_server):
+    from deepseek_provider_verifier.reports import load_run_evidence
+
+    config, profile = _write_fixture_inputs(tmp_path, fixture_server)
+    run_dir = tmp_path / "damaged"
+    completed = _cli(
+        "run",
+        "--config",
+        str(config),
+        "--profile",
+        str(profile),
+        "--endpoint",
+        "candidate",
+        "--out",
+        str(run_dir),
+    )
+    assert completed.returncode == 0
+    (run_dir / "attempts.jsonl").unlink()
+    (run_dir / "results.jsonl").unlink()
+
+    with pytest.raises(
+        (FileNotFoundError, ValueError), match="checkpoint|No such file"
+    ):
+        load_run_evidence(run_dir)

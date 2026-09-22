@@ -3,6 +3,30 @@ import json
 import pytest
 
 
+def _legacy_attempt():
+    from deepseek_provider_verifier.catalog import content_hash
+
+    value = {
+        "schema_version": 1,
+        "prompt_id": "C01",
+        "retry": 0,
+        "capture": {},
+        "case_id": "C01.chat.non_thinking.nonstream",
+        "endpoint": "reference",
+        "step": 0,
+        "repetition": 0,
+        "attempt_number": 1,
+        "request_hash": "b" * 64,
+        "request": {},
+        "status_code": 200,
+        "timings": {"total_seconds": 0.1},
+        "response": {},
+        "events": [],
+        "error": None,
+    }
+    return value | {"evidence_hash": content_hash(value)}
+
+
 def test_append_hashes_redacted_records_and_detects_tampering(tmp_path):
     from deepseek_provider_verifier.evidence import append_record, load_resume_state
 
@@ -68,3 +92,30 @@ def test_secret_bearing_url_components_are_removed_even_without_a_known_key(tmp_
         },
     )
     assert "opaque-" not in path.read_text()
+
+
+def test_legacy_attempt_hash_uses_original_payload_before_additive_defaults(tmp_path):
+    from deepseek_provider_verifier.evidence import append_record, load_resume_state
+
+    path = tmp_path / "attempts.jsonl"
+    append_record(path, {"kind": "manifest", "manifest_hash": "a" * 64})
+    append_record(path, {"kind": "attempt", "attempt": _legacy_attempt()})
+
+    state = load_resume_state(path, "a" * 64)
+
+    assert len(state.prior_attempts) == 1
+    assert state.prior_attempts[0].status_code == 200
+    assert state.prior_attempts[0].http_exchange_completed is None
+
+
+def test_legacy_attempt_hash_still_rejects_tampered_original_payload(tmp_path):
+    from deepseek_provider_verifier.evidence import append_record, load_resume_state
+
+    attempt = _legacy_attempt()
+    attempt["status_code"] = 201
+    path = tmp_path / "attempts.jsonl"
+    append_record(path, {"kind": "manifest", "manifest_hash": "a" * 64})
+    append_record(path, {"kind": "attempt", "attempt": attempt})
+
+    with pytest.raises(ValueError, match="Attempt evidence hash mismatch"):
+        load_resume_state(path, "a" * 64)

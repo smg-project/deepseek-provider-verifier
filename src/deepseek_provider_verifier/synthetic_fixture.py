@@ -229,15 +229,15 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Synthetic local provider for the dpv four-request offline example"
     )
-    parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--max-requests", type=int, default=4)
     args = parser.parse_args(argv)
     if not 1 <= args.port <= 65535 or args.max_requests < 1:
         parser.error("port and max-requests must be positive and bounded")
-    server = _Server((args.host, args.port), args.max_requests)
+    host = "127.0.0.1"
+    server = _Server((host, args.port), args.max_requests)
     print(
-        f"Synthetic fixture listening on http://{args.host}:{args.port}/v1 "
+        f"Synthetic fixture listening on http://{host}:{args.port}/v1 "
         f"for {args.max_requests} request(s)",
         flush=True,
     )

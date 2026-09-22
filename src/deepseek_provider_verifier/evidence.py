@@ -142,14 +142,18 @@ def load_resume_state(path: Path, manifest_hash: str) -> ResumeState:
                     raise ValueError("Duplicate attempt reservation")
                 starts[key] = record
             elif record.get("kind") == "attempt":
-                attempt = Attempt.model_validate(record["attempt"])
-                if (
-                    content_hash(
-                        attempt.model_dump(mode="json", exclude={"evidence_hash"})
-                    )
-                    != attempt.evidence_hash
-                ):
+                serialized = record["attempt"]
+                if not isinstance(serialized, dict):
+                    raise ValueError("Attempt record must be an object")
+                evidence_hash = serialized.get("evidence_hash")
+                exact_payload = {
+                    key: value
+                    for key, value in serialized.items()
+                    if key != "evidence_hash"
+                }
+                if content_hash(exact_payload) != evidence_hash:
                     raise ValueError("Attempt evidence hash mismatch")
+                attempt = Attempt.model_validate(serialized)
                 attempts.append(attempt)
             elif record.get("kind") == "result":
                 results.append(CaseResult.model_validate(record["result"]))

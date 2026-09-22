@@ -97,12 +97,13 @@ def load_run_evidence(directory: Path) -> tuple[Manifest, RunResult]:
     if run.manifest_hash != manifest.manifest_hash:
         raise ValueError("Run summary manifest hash mismatch")
     _run_counts(run)
+    if (directory / "evidence-index.json").exists():
+        validate_checkpoint(directory)
     journals = [directory / "attempts.jsonl", directory / "results.jsonl"]
     integrity = "summary-only"
     if any(path.exists() for path in journals):
         if not all(path.exists() for path in journals):
             raise ValueError("Incomplete evidence journal set")
-        validate_checkpoint(directory)
         state = load_resume_state(directory, manifest.manifest_hash)
         summary_results = {
             (item.endpoint, item.case_id): item.model_dump(mode="json")
@@ -515,13 +516,19 @@ def _run_junit(result: RunResult) -> str:
 
 
 def _comparison_junit(result: ComparisonResult) -> str:
-    metrics = result.metric_gates or {name: "INCONCLUSIVE" for name in result.metrics}
+    report_only = result.policy is None
+    metrics = (
+        {name: "REPORT_ONLY" for name in result.metrics}
+        if report_only
+        else result.metric_gates
+    )
     suite = ET.Element(
         "testsuite",
         name="deepseek-provider-verifier-comparison",
         tests=str(len(metrics)),
         failures=str(sum(value == "FAIL" for value in metrics.values())),
         errors=str(sum(value == "INCONCLUSIVE" for value in metrics.values())),
+        skipped=str(sum(value == "REPORT_ONLY" for value in metrics.values())),
     )
     properties = ET.SubElement(suite, "properties")
     context = result.report
@@ -555,6 +562,15 @@ def _comparison_junit(result: ComparisonResult) -> str:
             ET.SubElement(case, "failure", message="quality gate failed")
         elif verdict == "INCONCLUSIVE":
             ET.SubElement(case, "error", message="quality gate inconclusive")
+        elif verdict == "REPORT_ONLY":
+            ET.SubElement(case, "skipped", message="report-only observation")
+    if context and context.evidence_links:
+        evidence = [
+            f"{case_id}\t{link}"
+            for case_id, links in context.evidence_links.items()
+            for link in links
+        ]
+        ET.SubElement(suite, "system-out").text = _xml("\n".join(evidence))
     return ET.tostring(suite, encoding="unicode", xml_declaration=True) + "\n"
 
 
