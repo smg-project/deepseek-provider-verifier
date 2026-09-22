@@ -164,4 +164,8 @@ def _expand(descriptor, protocol, prompts):
                 "depth": depth_metadata(descriptor["family"]),
             },
         )
+    if descriptor["family"].startswith("schema."):
+        from .schema_cases import schema_template
+
+        return schema_template(descriptor, protocol)
     raise ValueError("Unknown depth family")

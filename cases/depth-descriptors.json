@@ -430,6 +430,454 @@
       "id": "W07",
       "family": "workflow.recall",
       "shape": "recall"
+    },
+    {
+      "id": "S01",
+      "family": "schema.required",
+      "feature": "required",
+      "target": "tool",
+      "strict": false
+    },
+    {
+      "id": "S02",
+      "family": "schema.required",
+      "feature": "required",
+      "target": "tool",
+      "strict": true
+    },
+    {
+      "id": "S03",
+      "family": "schema.required",
+      "feature": "required",
+      "target": "output",
+      "strict": false
+    },
+    {
+      "id": "S04",
+      "family": "schema.required",
+      "feature": "required",
+      "target": "output",
+      "strict": true
+    },
+    {
+      "id": "S05",
+      "family": "schema.optional_absent",
+      "feature": "optional_absent",
+      "target": "tool",
+      "strict": false
+    },
+    {
+      "id": "S06",
+      "family": "schema.optional_absent",
+      "feature": "optional_absent",
+      "target": "tool",
+      "strict": true
+    },
+    {
+      "id": "S07",
+      "family": "schema.optional_absent",
+      "feature": "optional_absent",
+      "target": "output",
+      "strict": false
+    },
+    {
+      "id": "S08",
+      "family": "schema.optional_absent",
+      "feature": "optional_absent",
+      "target": "output",
+      "strict": true
+    },
+    {
+      "id": "S09",
+      "family": "schema.optional_present",
+      "feature": "optional_present",
+      "target": "tool",
+      "strict": false
+    },
+    {
+      "id": "S10",
+      "family": "schema.optional_present",
+      "feature": "optional_present",
+      "target": "tool",
+      "strict": true
+    },
+    {
+      "id": "S11",
+      "family": "schema.optional_present",
+      "feature": "optional_present",
+      "target": "output",
+      "strict": false
+    },
+    {
+      "id": "S12",
+      "family": "schema.optional_present",
+      "feature": "optional_present",
+      "target": "output",
+      "strict": true
+    },
+    {
+      "id": "S13",
+      "family": "schema.nullable_null",
+      "feature": "nullable_null",
+      "target": "tool",
+      "strict": false
+    },
+    {
+      "id": "S14",
+      "family": "schema.nullable_null",
+      "feature": "nullable_null",
+      "target": "tool",
+      "strict": true
+    },
+    {
+      "id": "S15",
+      "family": "schema.nullable_null",
+      "feature": "nullable_null",
+      "target": "output",
+      "strict": false
+    },
+    {
+      "id": "S16",
+      "family": "schema.nullable_null",
+      "feature": "nullable_null",
+      "target": "output",
+      "strict": true
+    },
+    {
+      "id": "S17",
+      "family": "schema.nullable_nonnull",
+      "feature": "nullable_nonnull",
+      "target": "tool",
+      "strict": false
+    },
+    {
+      "id": "S18",
+      "family": "schema.nullable_nonnull",
+      "feature": "nullable_nonnull",
+      "target": "tool",
+      "strict": true
+    },
+    {
+      "id": "S19",
+      "family": "schema.nullable_nonnull",
+      "feature": "nullable_nonnull",
+      "target": "output",
+      "strict": false
+    },
+    {
+      "id": "S20",
+      "family": "schema.nullable_nonnull",
+      "feature": "nullable_nonnull",
+      "target": "output",
+      "strict": true
+    },
+    {
+      "id": "S21",
+      "family": "schema.enum",
+      "feature": "enum",
+      "target": "tool",
+      "strict": false
+    },
+    {
+      "id": "S22",
+      "family": "schema.enum",
+      "feature": "enum",
+      "target": "tool",
+      "strict": true
+    },
+    {
+      "id": "S23",
+      "family": "schema.enum",
+      "feature": "enum",
+      "target": "output",
+      "strict": false
+    },
+    {
+      "id": "S24",
+      "family": "schema.enum",
+      "feature": "enum",
+      "target": "output",
+      "strict": true
+    },
+    {
+      "id": "S25",
+      "family": "schema.const",
+      "feature": "const",
+      "target": "tool",
+      "strict": false
+    },
+    {
+      "id": "S26",
+      "family": "schema.const",
+      "feature": "const",
+      "target": "tool",
+      "strict": true
+    },
+    {
+      "id": "S27",
+      "family": "schema.const",
+      "feature": "const",
+      "target": "output",
+      "strict": false
+    },
+    {
+      "id": "S28",
+      "family": "schema.const",
+      "feature": "const",
+      "target": "output",
+      "strict": true
+    },
+    {
+      "id": "S29",
+      "family": "schema.array",
+      "feature": "array",
+      "target": "tool",
+      "strict": false
+    },
+    {
+      "id": "S30",
+      "family": "schema.array",
+      "feature": "array",
+      "target": "tool",
+      "strict": true
+    },
+    {
+      "id": "S31",
+      "family": "schema.array",
+      "feature": "array",
+      "target": "output",
+      "strict": false
+    },
+    {
+      "id": "S32",
+      "family": "schema.array",
+      "feature": "array",
+      "target": "output",
+      "strict": true
+    },
+    {
+      "id": "S33",
+      "family": "schema.numeric",
+      "feature": "numeric",
+      "target": "tool",
+      "strict": false
+    },
+    {
+      "id": "S34",
+      "family": "schema.numeric",
+      "feature": "numeric",
+      "target": "tool",
+      "strict": true
+    },
+    {
+      "id": "S35",
+      "family": "schema.numeric",
+      "feature": "numeric",
+      "target": "output",
+      "strict": false
+    },
+    {
+      "id": "S36",
+      "family": "schema.numeric",
+      "feature": "numeric",
+      "target": "output",
+      "strict": true
+    },
+    {
+      "id": "S37",
+      "family": "schema.string",
+      "feature": "string",
+      "target": "tool",
+      "strict": false
+    },
+    {
+      "id": "S38",
+      "family": "schema.string",
+      "feature": "string",
+      "target": "tool",
+      "strict": true
+    },
+    {
+      "id": "S39",
+      "family": "schema.string",
+      "feature": "string",
+      "target": "output",
+      "strict": false
+    },
+    {
+      "id": "S40",
+      "family": "schema.string",
+      "feature": "string",
+      "target": "output",
+      "strict": true
+    },
+    {
+      "id": "S41",
+      "family": "schema.nesting_2",
+      "feature": "nesting_2",
+      "target": "tool",
+      "strict": false
+    },
+    {
+      "id": "S42",
+      "family": "schema.nesting_2",
+      "feature": "nesting_2",
+      "target": "tool",
+      "strict": true
+    },
+    {
+      "id": "S43",
+      "family": "schema.nesting_2",
+      "feature": "nesting_2",
+      "target": "output",
+      "strict": false
+    },
+    {
+      "id": "S44",
+      "family": "schema.nesting_2",
+      "feature": "nesting_2",
+      "target": "output",
+      "strict": true
+    },
+    {
+      "id": "S45",
+      "family": "schema.nesting_4",
+      "feature": "nesting_4",
+      "target": "tool",
+      "strict": false
+    },
+    {
+      "id": "S46",
+      "family": "schema.nesting_4",
+      "feature": "nesting_4",
+      "target": "tool",
+      "strict": true
+    },
+    {
+      "id": "S47",
+      "family": "schema.nesting_4",
+      "feature": "nesting_4",
+      "target": "output",
+      "strict": false
+    },
+    {
+      "id": "S48",
+      "family": "schema.nesting_4",
+      "feature": "nesting_4",
+      "target": "output",
+      "strict": true
+    },
+    {
+      "id": "S49",
+      "family": "schema.nesting_8",
+      "feature": "nesting_8",
+      "target": "tool",
+      "strict": false
+    },
+    {
+      "id": "S50",
+      "family": "schema.nesting_8",
+      "feature": "nesting_8",
+      "target": "tool",
+      "strict": true
+    },
+    {
+      "id": "S51",
+      "family": "schema.nesting_8",
+      "feature": "nesting_8",
+      "target": "output",
+      "strict": false
+    },
+    {
+      "id": "S52",
+      "family": "schema.nesting_8",
+      "feature": "nesting_8",
+      "target": "output",
+      "strict": true
+    },
+    {
+      "id": "S53",
+      "family": "schema.anyOf",
+      "feature": "anyOf",
+      "target": "tool",
+      "strict": false
+    },
+    {
+      "id": "S54",
+      "family": "schema.anyOf",
+      "feature": "anyOf",
+      "target": "tool",
+      "strict": true
+    },
+    {
+      "id": "S55",
+      "family": "schema.anyOf",
+      "feature": "anyOf",
+      "target": "output",
+      "strict": false
+    },
+    {
+      "id": "S56",
+      "family": "schema.anyOf",
+      "feature": "anyOf",
+      "target": "output",
+      "strict": true
+    },
+    {
+      "id": "S57",
+      "family": "schema.oneOf",
+      "feature": "oneOf",
+      "target": "tool",
+      "strict": false
+    },
+    {
+      "id": "S58",
+      "family": "schema.oneOf",
+      "feature": "oneOf",
+      "target": "tool",
+      "strict": true
+    },
+    {
+      "id": "S59",
+      "family": "schema.oneOf",
+      "feature": "oneOf",
+      "target": "output",
+      "strict": false
+    },
+    {
+      "id": "S60",
+      "family": "schema.oneOf",
+      "feature": "oneOf",
+      "target": "output",
+      "strict": true
+    },
+    {
+      "id": "S61",
+      "family": "schema.local_ref",
+      "feature": "local_ref",
+      "target": "tool",
+      "strict": false
+    },
+    {
+      "id": "S62",
+      "family": "schema.local_ref",
+      "feature": "local_ref",
+      "target": "tool",
+      "strict": true
+    },
+    {
+      "id": "S63",
+      "family": "schema.local_ref",
+      "feature": "local_ref",
+      "target": "output",
+      "strict": false
+    },
+    {
+      "id": "S64",
+      "family": "schema.local_ref",
+      "feature": "local_ref",
+      "target": "output",
+      "strict": true
     }
   ]
 }

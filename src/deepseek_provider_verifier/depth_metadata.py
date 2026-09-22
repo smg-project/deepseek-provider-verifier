@@ -26,6 +26,18 @@ def validate_depth_oracle(oracle: dict) -> None:
 
 
 def validate_depth_steps(steps: list[dict], oracle: dict) -> None:
+    if oracle.get("kind") == "schema_probe":
+        from .schema_cases import schema_matches, validate_local_schema
+
+        if (
+            oracle.get("target") not in ("tool", "output")
+            or type(oracle.get("required_support")) is not bool
+            or ("strict" in oracle and type(oracle["strict"]) is not bool)
+        ):
+            raise ValueError("invalid schema probe metadata")
+        validate_local_schema(oracle.get("schema"))
+        if not schema_matches(oracle["schema"], oracle.get("expected_value")):
+            raise ValueError("schema fixture does not satisfy its schema")
     if oracle.get("kind") != "workflow":
         return
     if "depth" not in oracle or oracle.get("bounded_steps") is not True:
