@@ -1,0 +1,58 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "api_key_env": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Api Key Env"
+    },
+    "auth_none": {
+      "default": false,
+      "title": "Auth None",
+      "type": "boolean"
+    },
+    "base_url": {
+      "format": "uri",
+      "minLength": 1,
+      "title": "Base Url",
+      "type": "string"
+    },
+    "model": {
+      "minLength": 1,
+      "title": "Model",
+      "type": "string"
+    },
+    "model_release": {
+      "minLength": 1,
+      "title": "Model Release",
+      "type": "string"
+    },
+    "name": {
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "name",
+    "base_url",
+    "model",
+    "model_release"
+  ],
+  "title": "Endpoint",
+  "type": "object"
+}

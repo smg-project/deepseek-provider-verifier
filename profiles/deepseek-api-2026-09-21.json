@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "id": "deepseek-api-2026-09-21",
+  "models": [
+    "deepseek-chat",
+    "deepseek-reasoner"
+  ],
+  "rules": [
+    {
+      "schema_version": 1,
+      "id": "chat.output.present",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": ["C01", "C03"],
+        "mode": "any"
+      },
+      "expectation": "A successful Chat response exposes assistant output in the documented choice shape.",
+      "assertion_id": "chat_output_present",
+      "source_url": "https://api-docs.deepseek.com/api/create-chat-completion/",
+      "source_section": "Responses / 200",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "source_sha256": "4c2384d7ad4e5f1929edb922900b2a96546a7e699e8b067d6e82dcb9a330989d",
+      "evidence_status": "documented",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.stream.done",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": ["C17"],
+        "stream": true
+      },
+      "expectation": "A Chat stream is data-only SSE and terminates with the documented [DONE] marker.",
+      "assertion_id": "chat_stream_terminal",
+      "source_url": "https://api-docs.deepseek.com/api/create-chat-completion/",
+      "source_section": "Streaming response",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "source_sha256": "4c2384d7ad4e5f1929edb922900b2a96546a7e699e8b067d6e82dcb9a330989d",
+      "evidence_status": "documented",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.stream.usage-final-content",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": ["C20"],
+        "stream": true,
+        "conflict": "The DeepSeek reference places usage on the final content chunk; clients modeled on a separate usage-only chunk require distinct handling."
+      },
+      "expectation": "When requested, stream usage appears on the final content chunk with finish_reason and no separate usage-only chunk.",
+      "assertion_id": "chat_stream_usage_placement",
+      "source_url": "https://api-docs.deepseek.com/api/create-chat-completion/",
+      "source_section": "stream_options.include_usage",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "source_sha256": "4c2384d7ad4e5f1929edb922900b2a96546a7e699e8b067d6e82dcb9a330989d",
+      "evidence_status": "documented",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.thinking.tool-choice-restriction",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": ["C02"],
+        "mode": "thinking",
+        "conflict": "Generic OpenAI-compatible behavior may accept required or named tool choice, while the DeepSeek reference rejects them in thinking mode."
+      },
+      "expectation": "Thinking mode rejects required and named function tool_choice values.",
+      "assertion_id": "chat_thinking_tool_choice_rejected",
+      "source_url": "https://api-docs.deepseek.com/api/create-chat-completion/",
+      "source_section": "tool_choice",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "source_sha256": "4c2384d7ad4e5f1929edb922900b2a96546a7e699e8b067d6e82dcb9a330989d",
+      "evidence_status": "documented",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.output.present",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": ["C01", "C03"],
+        "mode": "any"
+      },
+      "expectation": "A successful Responses result exposes typed output items.",
+      "assertion_id": "responses_output_present",
+      "source_url": "https://api-docs.deepseek.com/api/create-response/",
+      "source_section": "Responses / 200",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "source_sha256": "5654c002d08e81b7f366568f988ed19c2f97f7c90118aa24e00a47a922faa3c8",
+      "evidence_status": "documented",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.stream.terminal",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": ["C17"],
+        "stream": true
+      },
+      "expectation": "A Responses stream emits typed events and a terminal response event.",
+      "assertion_id": "responses_stream_terminal",
+      "source_url": "https://api-docs.deepseek.com/api/create-response/",
+      "source_section": "Streaming events",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "source_sha256": "5654c002d08e81b7f366568f988ed19c2f97f7c90118aa24e00a47a922faa3c8",
+      "evidence_status": "documented",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.stateless",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": ["C13"],
+        "conflict": "Stateful OpenAI Responses assumptions do not apply to the documented DeepSeek service."
+      },
+      "expectation": "Conversation continuation replays complete history because the Responses service is stateless.",
+      "assertion_id": "responses_stateless_replay",
+      "source_url": "https://api-docs.deepseek.com/guides/responses_api/",
+      "source_section": "Key differences from OpenAI",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "source_sha256": "1719ac1b05e29579acd0cbc5ba0bcdb629cf7722eb551b5cd6d6d62c271e3ca2",
+      "evidence_status": "documented",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.ignored-options",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": ["C02"],
+        "conflict": "Accepted fields may be ignored and therefore cannot be inferred as supported behavior from HTTP success."
+      },
+      "expectation": "Fields documented as ignored remain diagnostic and are not reported as behaviorally verified from request acceptance.",
+      "assertion_id": "responses_ignored_options",
+      "source_url": "https://api-docs.deepseek.com/guides/responses_api/",
+      "source_section": "Unsupported parameters",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "source_sha256": "1719ac1b05e29579acd0cbc5ba0bcdb629cf7722eb551b5cd6d6d62c271e3ca2",
+      "evidence_status": "documented",
+      "maturity": "diagnostic",
+      "gating": false
+    }
+  ],
+  "presets": {
+    "smoke": {
+      "schema_version": 1,
+      "max_requests_per_protocol": 17,
+      "max_requests_per_endpoint": 34,
+      "max_total_requests": 68,
+      "max_requests_per_conversation": 4,
+      "max_retries": 0,
+      "concurrency": 1,
+      "case_deadline_seconds": 300,
+      "mode_max_output_tokens": {
+        "non_thinking": 512,
+        "thinking": 4096
+      },
+      "case_ids": ["C01", "C03", "C05", "C07", "C11", "C13", "C14"],
+      "attached_assertion_case_ids": ["C02", "C17", "C20"]
+    }
+  }
+}

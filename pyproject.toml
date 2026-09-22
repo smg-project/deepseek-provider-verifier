@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "deepseek-provider-verifier"
+version = "0.1.0"
+description = "Offline-first contract planning for DeepSeek-compatible providers"
+readme = "docs/contract-sources.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+dependencies = [
+  "httpx>=0.28,<1",
+  "jsonschema>=4.25,<5",
+  "pydantic>=2.11,<3",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.4,<9",
+  "ruff>=0.13,<1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src/deepseek_provider_verifier",
+  "/profiles",
+  "/schemas",
+  "/configs",
+  "/docs/contract-sources.md",
+  "/tests",
+  "/LICENSE",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/deepseek_provider_verifier"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"profiles" = "deepseek_provider_verifier/profiles"
+"schemas" = "deepseek_provider_verifier/schemas"
+"configs" = "deepseek_provider_verifier/configs"
+"docs/contract-sources.md" = "deepseek_provider_verifier/docs/contract-sources.md"

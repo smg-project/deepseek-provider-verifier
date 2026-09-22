@@ -1,0 +1,103 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "max_output_tokens": {
+      "additionalProperties": {
+        "exclusiveMinimum": 0,
+        "type": "integer"
+      },
+      "propertyNames": {
+        "enum": [
+          "non_thinking",
+          "thinking"
+        ]
+      },
+      "title": "Max Output Tokens",
+      "type": "object"
+    },
+    "max_requests": {
+      "exclusiveMinimum": 0,
+      "title": "Max Requests",
+      "type": "integer"
+    },
+    "modes": {
+      "items": {
+        "enum": [
+          "non_thinking",
+          "thinking"
+        ],
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Modes",
+      "type": "array"
+    },
+    "oracle": {
+      "additionalProperties": true,
+      "title": "Oracle",
+      "type": "object"
+    },
+    "protocol": {
+      "enum": [
+        "chat",
+        "responses"
+      ],
+      "title": "Protocol",
+      "type": "string"
+    },
+    "required": {
+      "title": "Required",
+      "type": "boolean"
+    },
+    "rule_ids": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Rule Ids",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "steps": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "minItems": 1,
+      "title": "Steps",
+      "type": "array"
+    },
+    "streams": {
+      "items": {
+        "type": "boolean"
+      },
+      "minItems": 1,
+      "title": "Streams",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "protocol",
+    "modes",
+    "streams",
+    "rule_ids",
+    "steps",
+    "required",
+    "max_requests",
+    "max_output_tokens",
+    "oracle"
+  ],
+  "title": "CaseTemplate",
+  "type": "object"
+}

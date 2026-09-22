@@ -1,0 +1,147 @@
+{
+  "$defs": {
+    "CaseResult": {
+      "additionalProperties": false,
+      "properties": {
+        "assertions": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Assertions",
+          "type": "array"
+        },
+        "attempt_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Attempt Refs",
+          "type": "array"
+        },
+        "case_id": {
+          "minLength": 1,
+          "title": "Case Id",
+          "type": "string"
+        },
+        "endpoint": {
+          "minLength": 1,
+          "title": "Endpoint",
+          "type": "string"
+        },
+        "metric_observations": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Metric Observations",
+          "type": "array"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "ERROR",
+            "SKIP",
+            "INCONCLUSIVE"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "case_id",
+        "endpoint",
+        "status",
+        "assertions",
+        "metric_observations",
+        "attempt_refs"
+      ],
+      "title": "CaseResult",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "budget_usage": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Budget Usage",
+      "type": "object"
+    },
+    "case_results": {
+      "items": {
+        "$ref": "#/$defs/CaseResult"
+      },
+      "title": "Case Results",
+      "type": "array"
+    },
+    "complete": {
+      "title": "Complete",
+      "type": "boolean"
+    },
+    "counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Counts",
+      "type": "object"
+    },
+    "enabled_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Enabled Gates",
+      "type": "array"
+    },
+    "exit_code": {
+      "enum": [
+        0,
+        1,
+        2
+      ],
+      "title": "Exit Code",
+      "type": "integer"
+    },
+    "manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manifest Hash",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "manifest_hash",
+    "complete",
+    "case_results",
+    "counts",
+    "budget_usage",
+    "enabled_gates",
+    "exit_code"
+  ],
+  "title": "RunResult",
+  "type": "object"
+}

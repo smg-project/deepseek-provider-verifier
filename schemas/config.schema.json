@@ -1,0 +1,152 @@
+{
+  "$defs": {
+    "Endpoint": {
+      "additionalProperties": false,
+      "properties": {
+        "api_key_env": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Api Key Env"
+        },
+        "auth_none": {
+          "default": false,
+          "title": "Auth None",
+          "type": "boolean"
+        },
+        "base_url": {
+          "format": "uri",
+          "minLength": 1,
+          "title": "Base Url",
+          "type": "string"
+        },
+        "model": {
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "model_release": {
+          "minLength": 1,
+          "title": "Model Release",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "base_url",
+        "model",
+        "model_release"
+      ],
+      "title": "Endpoint",
+      "type": "object"
+    },
+    "RunSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "concurrency": {
+          "default": 1,
+          "exclusiveMinimum": 0,
+          "title": "Concurrency",
+          "type": "integer"
+        },
+        "max_attempts_per_endpoint": {
+          "default": 40,
+          "exclusiveMinimum": 0,
+          "title": "Max Attempts Per Endpoint",
+          "type": "integer"
+        },
+        "profile": {
+          "minLength": 1,
+          "title": "Profile",
+          "type": "string"
+        },
+        "protocols": {
+          "items": {
+            "enum": [
+              "chat",
+              "responses"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Protocols",
+          "type": "array"
+        },
+        "retries": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Retries",
+          "type": "integer"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "scorer_revision": {
+          "default": "unversioned",
+          "minLength": 1,
+          "title": "Scorer Revision",
+          "type": "string"
+        },
+        "suite": {
+          "minLength": 1,
+          "title": "Suite",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile",
+        "suite",
+        "protocols"
+      ],
+      "title": "RunSettings",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "endpoints": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Endpoint"
+      },
+      "minProperties": 1,
+      "title": "Endpoints",
+      "type": "object"
+    },
+    "run": {
+      "$ref": "#/$defs/RunSettings"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "run",
+    "endpoints"
+  ],
+  "title": "Config",
+  "type": "object"
+}

@@ -1,0 +1,20 @@
+[run]
+profile = "deepseek-api-2026-09-21"
+suite = "smoke"
+protocols = ["chat", "responses"]
+concurrency = 1
+max_attempts_per_endpoint = 40
+retries = 0
+scorer_revision = "unversioned"
+
+[endpoints.reference]
+base_url = "https://api.deepseek.com"
+api_key_env = "DEEPSEEK_API_KEY"
+model = "deepseek-chat"
+model_release = "unknown"
+
+[endpoints.candidate]
+base_url = "http://localhost:30000/v1"
+api_key_env = "CANDIDATE_API_KEY"
+model = "your-deployed-model-id"
+model_release = "unknown"
