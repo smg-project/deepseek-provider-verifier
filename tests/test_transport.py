@@ -241,3 +241,47 @@ def test_explicit_identity_encoding_overrides_client_defaults():
 
     result = run(handler)
     assert result.decoded_json == {"ok": True}
+
+
+def test_safe_events_redacts_encoded_and_nested_credentials():
+    from deepseek_provider_verifier.sse import decode_sse
+
+    wire = b'data: {"text":"a\\"b","api_key":"other-secret","nested":"{\\"password\\":\\"nested-secret\\"}","extra":1}\n\n'
+    attempt = run(
+        lambda req: httpx.Response(
+            200, headers={"content-type": "text/event-stream"}, stream=Chunks([wire])
+        ),
+        secret='a"b',
+    )
+    events = decode_sse(attempt.raw_chunks)
+    safe_events = attempt.safe_evidence(
+        [event.model_dump(mode="json") for event in events]
+    )
+    decoded = json.loads(safe_events[0]["data"])
+    assert decoded["text"] == "[REDACTED]"
+    assert decoded["api_key"] == "[REDACTED]"
+    assert json.loads(decoded["nested"])["password"] == "[REDACTED]"
+    assert decoded["extra"] == 1
+    assert attempt.raw_body == wire
+    assert json.loads(events[0].data)["text"] == 'a"b'
+
+
+@pytest.mark.parametrize("stream", [False, True])
+def test_lone_surrogate_credential_keeps_capture_and_redacts_wire_escape(stream):
+    body = b'{"api_key":"\\ud800","extra":1}'
+    wire = b"data: " + body + b"\n\n" if stream else body
+    attempt = run(
+        lambda req: httpx.Response(
+            200,
+            headers={
+                "content-type": "text/event-stream" if stream else "application/json"
+            },
+            stream=Chunks([wire]),
+        )
+    )
+    assert attempt.status_code == 200
+    assert attempt.raw_body == wire
+    assert b"\\ud800" not in base64.b64decode(attempt.body_base64)
+    assert "[REDACTED]" in base64.b64decode(attempt.body_base64).decode()
+    assert attempt.error is None
+    assert attempt.model_dump_json()

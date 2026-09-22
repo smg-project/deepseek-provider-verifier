@@ -91,6 +91,8 @@ completion marker, and sources. Done snapshots never append to accumulated delta
 `complete=True` means finalization was observed; consult violations before using
 arguments. A terminal can be `missing`, `completed`, `incomplete`, `failed`, or
 `unknown`. Failed/incomplete events are never upgraded by later terminal events.
+Content events after `response.content_part.done` produce `DATA_AFTER_PART_DONE`
+with each offending source, even when their later text/item snapshots match.
 
 Streaming Chat `assistant_messages` are assembled in `choice_indices` order and
 include reasoning, tools sorted by tool index, and additive delta fields. Raw
@@ -108,8 +110,16 @@ safe_capture = attempt.model_dump(mode='json')
 ```
 
 `safe_evidence(value)` recursively removes the supplied secret and credential-shaped
-keys. Raw body persistence also removes detected credential values and standard JSON
+keys, including JSON encoded inside SSE `data`, tool argument strings, or further
+nested JSON strings. A changed encoded value is re-encoded with JSON escapes;
+unchanged strings retain their original formatting. Invalid JSON is not repaired:
+only literal or escaped supplied-secret occurrences are removed. The input event
+and raw replay data are never mutated by this operation.
+
+Raw body persistence also removes detected credential values and standard JSON
 encodings of the supplied secret, including secret echoes split across chunks.
+An escaped lone-surrogate credential has no UTF-8 representation; its ASCII JSON
+escape is still redacted safely while status and raw evidence remain available.
 Never persist/repr raw replay fields or serialize a standalone observation/event
 before applying `safe_evidence`. Redaction can change byte lengths: all byte spans
 reference **raw in-memory bytes**, not positions in the sanitized body. Store the

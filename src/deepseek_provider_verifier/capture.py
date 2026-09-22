@@ -13,6 +13,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
 
+from .json_utils import strict_json_loads
+
 
 class CaptureRecord(BaseModel):
     schema_version: Literal[1] = 1
@@ -113,9 +115,33 @@ _SENSITIVE = re.compile(
 
 
 def redact(value: Any, secret: str | None = None) -> Any:
-    """Redact credential-shaped keys and exact supplied-secret echoes recursively."""
+    """Redact structured values and JSON-encoded values without mutating inputs.
+
+    SSE data and tool argument strings can themselves contain JSON. Decode those
+    layers for redaction, re-encoding only strings whose contents changed. Invalid
+    JSON stays invalid; it only receives literal/escaped supplied-secret removal.
+    """
     if isinstance(value, str):
-        return value.replace(secret, "[REDACTED]") if secret else value
+        try:
+            decoded = strict_json_loads(value)
+        except ValueError:
+            decoded = None
+        if isinstance(decoded, (dict, list, str)):
+            safe = redact(decoded, secret)
+            if safe != decoded:
+                return json.dumps(safe, ensure_ascii=True)
+        if secret:
+            for encoded in sorted(
+                {
+                    secret,
+                    json.dumps(secret)[1:-1],
+                    json.dumps(secret, ensure_ascii=False)[1:-1],
+                },
+                key=len,
+                reverse=True,
+            ):
+                value = value.replace(encoded, "[REDACTED]")
+        return value
     if isinstance(value, dict):
         return {
             redact(str(k), secret): "[REDACTED]"
@@ -186,9 +212,15 @@ class AttemptPayload(CaptureRecord):
         safe = self.raw_body
         encodings = set()
         for secret in secrets:
-            encodings.add(secret.encode())
+            # Escaped lone surrogates are legal input to the JSON decoder but
+            # have no UTF-8 representation. Their ASCII JSON escape can still
+            # be removed from the original wire body without losing the capture.
             encodings.add(json.dumps(secret, ensure_ascii=True)[1:-1].encode())
-            encodings.add(json.dumps(secret, ensure_ascii=False)[1:-1].encode())
+            for candidate in (secret, json.dumps(secret, ensure_ascii=False)[1:-1]):
+                try:
+                    encodings.add(candidate.encode())
+                except UnicodeEncodeError:
+                    continue
         for encoded in sorted(encodings, key=len, reverse=True):
             safe = safe.replace(encoded, b"[REDACTED]")
         self.body_base64 = base64.b64encode(safe).decode("ascii")

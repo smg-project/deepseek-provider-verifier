@@ -355,3 +355,44 @@ def test_malformed_responses_content_type_is_evidence(part_type):
         }
     )
     assert "INVALID_CONTENT_PART" in observed.violations
+
+
+def test_responses_content_after_part_done_retains_offending_source():
+    # The part is finalized with the correct current (empty) snapshot, followed
+    # by text and text.done. Every sequence number increases and all later full
+    # snapshots match, so only lifecycle validation can detect the defect.
+    wire = b"""event: response.created
+data: {"type":"response.created","sequence_number":0,"response":{"id":"r","status":"in_progress"}}
+
+event: response.output_item.added
+data: {"type":"response.output_item.added","sequence_number":1,"output_index":0,"item":{"id":"m","type":"message","content":[]}}
+
+event: response.content_part.added
+data: {"type":"response.content_part.added","sequence_number":2,"output_index":0,"item_id":"m","content_index":0,"part":{"type":"output_text","text":""}}
+
+event: response.content_part.done
+data: {"type":"response.content_part.done","sequence_number":3,"output_index":0,"item_id":"m","content_index":0,"part":{"type":"output_text","text":""}}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","sequence_number":4,"output_index":0,"item_id":"m","content_index":0,"delta":"late"}
+
+event: response.output_text.done
+data: {"type":"response.output_text.done","sequence_number":5,"output_index":0,"item_id":"m","content_index":0,"text":"late"}
+
+event: response.output_item.done
+data: {"type":"response.output_item.done","sequence_number":6,"output_index":0,"item":{"id":"m","type":"message","content":[{"type":"output_text","text":"late"}]}}
+
+event: response.completed
+data: {"type":"response.completed","sequence_number":7,"response":{"id":"r","status":"completed","output":[{"id":"m","type":"message","content":[{"type":"output_text","text":"late"}]}]}}
+
+"""
+    observed = assemble_responses(decode_sse([wire]))
+    assert "DATA_AFTER_PART_DONE" in observed.violations
+    assert [
+        source.event_index for source in observed.evidence["DATA_AFTER_PART_DONE"]
+    ] == [4, 5]
+    assert observed.evidence["DATA_AFTER_PART_DONE"][0].start_byte == wire.index(
+        b"event: response.output_text.delta"
+    )
+    assert observed.text == "late"
+    assert observed.terminal_state == "completed"

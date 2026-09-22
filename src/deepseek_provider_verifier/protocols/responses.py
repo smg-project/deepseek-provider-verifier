@@ -189,6 +189,8 @@ class _Assembly:
         if not is_index(index):
             self.o.flag("MISSING_CONTENT_INDEX", source)
             return
+        if any(done[:3] == ("part", identity, index) for done in self.done):
+            self.o.flag("DATA_AFTER_PART_DONE", source)
         if kind.startswith("response.content_part."):
             part = data.get("part")
             if not isinstance(part, dict):
