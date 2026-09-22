@@ -253,6 +253,9 @@ class Case(Record):
 
 
 def _validate_probe(steps: list[dict], oracle: dict) -> None:
+    from .depth_metadata import validate_depth_oracle
+
+    validate_depth_oracle(oracle)
     for index, step in enumerate(steps):
         if "replay_from" in step:
             source = step["replay_from"]

@@ -1,0 +1,395 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "R01",
+      "family": "repeatability.instruction",
+      "prompt_id": "depth-instruction-1",
+      "expanded": false,
+      "fixture": {}
+    },
+    {
+      "id": "R02",
+      "family": "repeatability.instruction",
+      "prompt_id": "depth-instruction-2",
+      "expanded": false,
+      "fixture": {}
+    },
+    {
+      "id": "R03",
+      "family": "repeatability.instruction",
+      "prompt_id": "depth-instruction-3",
+      "expanded": false,
+      "fixture": {}
+    },
+    {
+      "id": "R04",
+      "family": "repeatability.instruction",
+      "prompt_id": "depth-instruction-4",
+      "expanded": false,
+      "fixture": {}
+    },
+    {
+      "id": "R05",
+      "family": "repeatability.instruction",
+      "prompt_id": "depth-instruction-5",
+      "expanded": false,
+      "fixture": {}
+    },
+    {
+      "id": "R06",
+      "family": "repeatability.lookup",
+      "prompt_id": "depth-lookup-1",
+      "expanded": false,
+      "fixture": {
+        "name": "lookup_fixture",
+        "arguments": {
+          "key": "harbor"
+        }
+      }
+    },
+    {
+      "id": "R07",
+      "family": "repeatability.lookup",
+      "prompt_id": "depth-lookup-2",
+      "expanded": false,
+      "fixture": {
+        "name": "lookup_fixture",
+        "arguments": {
+          "key": "orchard"
+        }
+      }
+    },
+    {
+      "id": "R08",
+      "family": "repeatability.lookup",
+      "prompt_id": "depth-lookup-3",
+      "expanded": false,
+      "fixture": {
+        "name": "lookup_fixture",
+        "arguments": {
+          "key": "station"
+        }
+      }
+    },
+    {
+      "id": "R09",
+      "family": "repeatability.lookup",
+      "prompt_id": "depth-lookup-4",
+      "expanded": false,
+      "fixture": {
+        "name": "lookup_fixture",
+        "arguments": {
+          "key": "harbor"
+        }
+      }
+    },
+    {
+      "id": "R10",
+      "family": "repeatability.lookup",
+      "prompt_id": "depth-lookup-5",
+      "expanded": false,
+      "fixture": {
+        "name": "lookup_fixture",
+        "arguments": {
+          "key": "orchard"
+        }
+      }
+    },
+    {
+      "id": "R11",
+      "family": "repeatability.continuation",
+      "prompt_id": "depth-continuation-1",
+      "expanded": false,
+      "fixture": {
+        "name": "add_integers",
+        "arguments": {
+          "a": 17,
+          "b": 25
+        }
+      }
+    },
+    {
+      "id": "R12",
+      "family": "repeatability.continuation",
+      "prompt_id": "depth-continuation-2",
+      "expanded": false,
+      "fixture": {
+        "name": "add_integers",
+        "arguments": {
+          "a": 6,
+          "b": 8
+        }
+      }
+    },
+    {
+      "id": "R13",
+      "family": "repeatability.continuation",
+      "prompt_id": "depth-continuation-3",
+      "expanded": false,
+      "fixture": {
+        "name": "add_integers",
+        "arguments": {
+          "a": 9,
+          "b": 4
+        }
+      }
+    },
+    {
+      "id": "R14",
+      "family": "repeatability.continuation",
+      "prompt_id": "depth-continuation-4",
+      "expanded": false,
+      "fixture": {
+        "name": "add_integers",
+        "arguments": {
+          "a": 12,
+          "b": 31
+        }
+      }
+    },
+    {
+      "id": "R15",
+      "family": "repeatability.continuation",
+      "prompt_id": "depth-continuation-5",
+      "expanded": false,
+      "fixture": {
+        "name": "add_integers",
+        "arguments": {
+          "a": 24,
+          "b": 18
+        }
+      }
+    },
+    {
+      "id": "R16",
+      "family": "repeatability.structured",
+      "prompt_id": "depth-structured-1",
+      "expanded": false,
+      "fixture": {}
+    },
+    {
+      "id": "R17",
+      "family": "repeatability.structured",
+      "prompt_id": "depth-structured-2",
+      "expanded": false,
+      "fixture": {}
+    },
+    {
+      "id": "R18",
+      "family": "repeatability.structured",
+      "prompt_id": "depth-structured-3",
+      "expanded": false,
+      "fixture": {}
+    },
+    {
+      "id": "R19",
+      "family": "repeatability.structured",
+      "prompt_id": "depth-structured-4",
+      "expanded": false,
+      "fixture": {}
+    },
+    {
+      "id": "R20",
+      "family": "repeatability.structured",
+      "prompt_id": "depth-structured-5",
+      "expanded": false,
+      "fixture": {}
+    },
+    {
+      "id": "R21",
+      "family": "repeatability.instruction",
+      "prompt_id": "depth-instruction-1",
+      "expanded": true,
+      "fixture": {}
+    },
+    {
+      "id": "R22",
+      "family": "repeatability.instruction",
+      "prompt_id": "depth-instruction-2",
+      "expanded": true,
+      "fixture": {}
+    },
+    {
+      "id": "R23",
+      "family": "repeatability.instruction",
+      "prompt_id": "depth-instruction-3",
+      "expanded": true,
+      "fixture": {}
+    },
+    {
+      "id": "R24",
+      "family": "repeatability.instruction",
+      "prompt_id": "depth-instruction-4",
+      "expanded": true,
+      "fixture": {}
+    },
+    {
+      "id": "R25",
+      "family": "repeatability.instruction",
+      "prompt_id": "depth-instruction-5",
+      "expanded": true,
+      "fixture": {}
+    },
+    {
+      "id": "R26",
+      "family": "repeatability.lookup",
+      "prompt_id": "depth-lookup-1",
+      "expanded": true,
+      "fixture": {
+        "name": "lookup_fixture",
+        "arguments": {
+          "key": "harbor"
+        }
+      }
+    },
+    {
+      "id": "R27",
+      "family": "repeatability.lookup",
+      "prompt_id": "depth-lookup-2",
+      "expanded": true,
+      "fixture": {
+        "name": "lookup_fixture",
+        "arguments": {
+          "key": "orchard"
+        }
+      }
+    },
+    {
+      "id": "R28",
+      "family": "repeatability.lookup",
+      "prompt_id": "depth-lookup-3",
+      "expanded": true,
+      "fixture": {
+        "name": "lookup_fixture",
+        "arguments": {
+          "key": "station"
+        }
+      }
+    },
+    {
+      "id": "R29",
+      "family": "repeatability.lookup",
+      "prompt_id": "depth-lookup-4",
+      "expanded": true,
+      "fixture": {
+        "name": "lookup_fixture",
+        "arguments": {
+          "key": "harbor"
+        }
+      }
+    },
+    {
+      "id": "R30",
+      "family": "repeatability.lookup",
+      "prompt_id": "depth-lookup-5",
+      "expanded": true,
+      "fixture": {
+        "name": "lookup_fixture",
+        "arguments": {
+          "key": "orchard"
+        }
+      }
+    },
+    {
+      "id": "R31",
+      "family": "repeatability.continuation",
+      "prompt_id": "depth-continuation-1",
+      "expanded": true,
+      "fixture": {
+        "name": "add_integers",
+        "arguments": {
+          "a": 17,
+          "b": 25
+        }
+      }
+    },
+    {
+      "id": "R32",
+      "family": "repeatability.continuation",
+      "prompt_id": "depth-continuation-2",
+      "expanded": true,
+      "fixture": {
+        "name": "add_integers",
+        "arguments": {
+          "a": 6,
+          "b": 8
+        }
+      }
+    },
+    {
+      "id": "R33",
+      "family": "repeatability.continuation",
+      "prompt_id": "depth-continuation-3",
+      "expanded": true,
+      "fixture": {
+        "name": "add_integers",
+        "arguments": {
+          "a": 9,
+          "b": 4
+        }
+      }
+    },
+    {
+      "id": "R34",
+      "family": "repeatability.continuation",
+      "prompt_id": "depth-continuation-4",
+      "expanded": true,
+      "fixture": {
+        "name": "add_integers",
+        "arguments": {
+          "a": 12,
+          "b": 31
+        }
+      }
+    },
+    {
+      "id": "R35",
+      "family": "repeatability.continuation",
+      "prompt_id": "depth-continuation-5",
+      "expanded": true,
+      "fixture": {
+        "name": "add_integers",
+        "arguments": {
+          "a": 24,
+          "b": 18
+        }
+      }
+    },
+    {
+      "id": "R36",
+      "family": "repeatability.structured",
+      "prompt_id": "depth-structured-1",
+      "expanded": true,
+      "fixture": {}
+    },
+    {
+      "id": "R37",
+      "family": "repeatability.structured",
+      "prompt_id": "depth-structured-2",
+      "expanded": true,
+      "fixture": {}
+    },
+    {
+      "id": "R38",
+      "family": "repeatability.structured",
+      "prompt_id": "depth-structured-3",
+      "expanded": true,
+      "fixture": {}
+    },
+    {
+      "id": "R39",
+      "family": "repeatability.structured",
+      "prompt_id": "depth-structured-4",
+      "expanded": true,
+      "fixture": {}
+    },
+    {
+      "id": "R40",
+      "family": "repeatability.structured",
+      "prompt_id": "depth-structured-5",
+      "expanded": true,
+      "fixture": {}
+    }
+  ]
+}
