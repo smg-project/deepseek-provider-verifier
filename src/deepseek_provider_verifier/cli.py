@@ -127,6 +127,8 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def _plan(args) -> int:
+    from .depth_metadata import plan_resource_summary
+
     config, profile = _load_configuration(args.config, args.profile)
     if args.endpoint:
         config = _select_endpoints(config, args.endpoint)
@@ -144,6 +146,7 @@ def _plan(args) -> int:
                 "schema_version": 1,
                 "manifest": manifest.model_dump(mode="json"),
                 "missing_prerequisites": missing,
+                "resource_summary": plan_resource_summary(manifest),
             },
             indent=2,
             ensure_ascii=False,
