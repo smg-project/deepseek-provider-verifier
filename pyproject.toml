@@ -15,6 +15,9 @@ dependencies = [
   "pydantic>=2.11,<3",
 ]
 
+[project.scripts]
+dpv = "deepseek_provider_verifier.cli:main"
+
 [dependency-groups]
 dev = [
   "pytest>=8.4,<9",

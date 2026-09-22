@@ -1,0 +1,91 @@
+# DeepSeek Provider Verifier
+
+DeepSeek Provider Verifier (`dpv`) is a community-owned, MIT-licensed project for collecting reproducible evidence from DeepSeek-compatible HTTP providers. It is independent of DeepSeek and provider vendors. A passing result establishes only the behavior observed for the declared endpoint, model label, profile, dataset, and capture date. It does not authenticate model weights, prove quantization, certify a vendor, or predict production-load performance.
+
+## Quickstart
+
+Install the project with Python 3.11 or newer, then inspect the bundled smoke workload without credentials or network traffic:
+
+```sh
+uv sync
+uv run dpv plan --config configs/providers.example.toml
+```
+
+`plan` expands the cases and prints missing environment-variable names, request ceilings, output-token ceilings, concurrency, and deadlines. It never creates an HTTP client. The bundled smoke preset is fixed at 17 possible requests per protocol, 34 per endpoint, 68 total across the two example endpoints, zero retries, concurrency one, and at most four requests in a conversation. These are hard ceilings rather than cost predictions. `dpv` makes no monetary estimate unless an operator independently supplies pricing.
+
+For a live run, copy the example configuration, set only the named environment variable, select the endpoint explicitly, and choose a new output directory:
+
+```sh
+cp configs/providers.example.toml providers.toml
+export DEEPSEEK_API_KEY='set-this-outside-shell-history'
+uv run dpv run --config providers.toml --endpoint reference --out runs/reference
+```
+
+Credentials are read from environment variables, never command-line values, manifests, reports, or evidence records. Existing evidence directories are refused unless `--resume` is explicit and the newly planned workload matches the stored manifest.
+
+## Four-request offline fixture example
+
+The installed distribution includes `configs/offline-fixture.example.toml`, `profiles/offline-confirmation.example.json`, and a small standard-library fixture provider. The profile selects C01 for Chat and Responses in streaming and non-streaming modes: exactly four requests to one endpoint. C02, C17, and C20 attach assertions to those requests without increasing the budget.
+
+From a source checkout, start the explicitly synthetic provider in the background, run the example, and wait for it to stop automatically after its fourth request:
+
+```sh
+python -m deepseek_provider_verifier.synthetic_fixture --max-requests 4 &
+FIXTURE_PID=$!
+trap 'kill "$FIXTURE_PID" 2>/dev/null || true' EXIT
+dpv plan \
+  --config configs/offline-fixture.example.toml \
+  --profile profiles/offline-confirmation.example.json
+dpv run \
+  --config configs/offline-fixture.example.toml \
+  --profile profiles/offline-confirmation.example.json \
+  --endpoint fixture \
+  --out runs/offline-confirmation
+wait "$FIXTURE_PID"
+trap - EXIT
+```
+
+When only the wheel is installed, extract the packaged example configuration and omit `--profile`; `dpv` resolves `offline-confirmation.example` from the installed package:
+
+```sh
+python -c 'from importlib.resources import files; print(files("deepseek_provider_verifier").joinpath("configs", "offline-fixture.example.toml").read_text(), end="")' > offline-fixture.toml
+python -m deepseek_provider_verifier.synthetic_fixture --max-requests 4 &
+FIXTURE_PID=$!
+trap 'kill "$FIXTURE_PID" 2>/dev/null || true' EXIT
+dpv plan --config offline-fixture.toml
+dpv run --config offline-fixture.toml --endpoint fixture --out offline-run
+wait "$FIXTURE_PID"
+trap - EXIT
+```
+
+Stop an unfinished fixture with `kill "$FIXTURE_PID"`. The fixture accepts only the two documented API paths and the model label `synthetic-fixture-model`; it is not a general proxy or mock service.
+
+This example verifies only the explicitly labeled synthetic fixture contract. Its PASS is not official calibration and says nothing about a DeepSeek service or model identity. To repeat cases or expand the matrix, copy the custom profile, raise its per-protocol, per-endpoint, and total ceilings deliberately, set `run.repetitions`, and review the plan before running. The planner rejects configurations whose repeats exceed the declared profile budget.
+
+## Compare and render stored evidence
+
+Run multiple endpoints together by repeating `--endpoint`; `execution_order = "paired"` interleaves the selected endpoints case by case:
+
+```sh
+dpv run --config providers.toml \
+  --endpoint reference --endpoint candidate \
+  --out runs/paired
+dpv compare runs/paired runs/paired \
+  --reference-endpoint reference \
+  --candidate-endpoint candidate \
+  --model-map deepseek-flash=internal-flash-alias \
+  --out runs/comparison
+dpv report runs/comparison --format markdown
+```
+
+Different served model labels require an explicit `--model-map REFERENCE=CANDIDATE` or matching `contract_model` declarations. This mapping expresses operator intent; it does not authenticate weights. Add `--quality-policy policy.json` to enable quality gates. Without a policy, quality metrics remain descriptive and are labeled `INCONCLUSIVE (report only)`. Insufficient repeated prompt evidence or an unknown model release also prevents a quality PASS.
+
+Each run stores `manifest.json`, hash-chained `attempts.jsonl` and `results.jsonl`, `evidence-index.json`, authoritative `summary.json`, derived `summary.md`, and `junit.xml`. Comparison loading validates the manifest, every available journal and checkpoint, aggregate counts, completion state, budget usage, and evidence references. Legacy records without an explicit HTTP completion marker remain unavailable; an HTTP status alone is never treated as proof that an exchange completed.
+
+## Evidence and reference policy
+
+Rules record their source URL, section, retrieval date, and optional source hash. Project-policy fixtures are labeled separately from documented provider behavior. Raw prompts, responses, and reasoning traces stay in local per-attempt evidence and are linked rather than copied into default summaries. Nothing is uploaded automatically.
+
+Capture a fresh reference with the same profile, dataset, scorer revision, budgets, and date window as the candidate. Treat mutable model aliases as time-dependent labels: timestamp them, record the declared release, and remeasure them with the candidate. Never silently reuse an older alias baseline as current evidence.
+
+Exit status `0` means all selected required gates completed and passed. Status `1` means completed evidence contains a required failure. Status `2` takes precedence for invalid setup, interruption, incomplete work, required execution errors, or an inconclusive required gate.

@@ -10,6 +10,7 @@ from .records import (
     CaseResult,
     CaseTemplate,
     ComparisonPolicy,
+    ComparisonReportContext,
     ComparisonResult,
     Config,
     Endpoint,
@@ -18,9 +19,11 @@ from .records import (
     Profile,
     ProfilePreset,
     Rule,
+    RunReportContext,
     RunResult,
     RunSettings,
 )
+from .reports import exit_status, render_report
 
 __all__ = [
     "Attempt",
@@ -29,6 +32,7 @@ __all__ = [
     "CaseResult",
     "CaseTemplate",
     "ComparisonPolicy",
+    "ComparisonReportContext",
     "ComparisonResult",
     "Config",
     "Endpoint",
@@ -37,10 +41,13 @@ __all__ = [
     "Profile",
     "ProfilePreset",
     "Rule",
+    "RunReportContext",
     "RunResult",
     "RunSettings",
     "build_manifest",
     "compare_runs",
+    "exit_status",
     "load_config",
     "load_profile",
+    "render_report",
 ]

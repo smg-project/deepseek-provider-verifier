@@ -368,6 +368,26 @@ class ComparisonMetric(Record):
     counts: dict[str, int] = Field(default_factory=dict)
 
 
+class ComparisonReportContext(Record):
+    """Portable provenance needed to render a stored comparison result."""
+
+    created_at: datetime
+    profile: str | None = None
+    profile_hash: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+    dataset_hash: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+    endpoint_models: dict[str, str] = Field(default_factory=dict)
+    case_count: int = Field(ge=0)
+    required_case_count: int = Field(ge=0)
+    status_counts: dict[ResultStatus, int] = Field(default_factory=dict)
+    enabled_gates: list[str] = Field(default_factory=list)
+    evidence_links: dict[str, list[str]] = Field(default_factory=dict)
+    integrity: Literal["verified", "summary-only", "unavailable"] = "unavailable"
+    quality_verdict: Literal["PASS", "FAIL", "INCONCLUSIVE", "REPORT_ONLY"] | None = (
+        None
+    )
+    exit_code: Literal[0, 1, 2] | None = None
+
+
 class ComparisonResult(Record):
     comparable: bool
     reference_endpoint: str
@@ -380,6 +400,7 @@ class ComparisonResult(Record):
     )
     quality_gate: Literal["PASS", "FAIL", "INCONCLUSIVE"] | None = None
     reasons: list[str] = Field(default_factory=list)
+    report: ComparisonReportContext | None = None
 
 
 class BehavioralPrompt(Record):
@@ -407,6 +428,20 @@ class CaseResult(Record):
     reason: str | None = None
 
 
+class RunReportContext(Record):
+    """Portable provenance needed to render a stored run result."""
+
+    run_id: str | None = None
+    created_at: datetime | None = None
+    profile: str | None = None
+    profile_hash: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+    dataset_hash: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+    endpoints: dict[str, str] = Field(default_factory=dict)
+    required_case_ids: list[str] = Field(default_factory=list)
+    evidence_links: dict[str, list[str]] = Field(default_factory=dict)
+    integrity: Literal["verified", "summary-only", "unavailable"] = "unavailable"
+
+
 class RunResult(Record):
     actual_concurrency: PositiveInt = 1
     resume_dispositions: list[dict[str, Any]] = Field(default_factory=list)
@@ -418,6 +453,7 @@ class RunResult(Record):
     enabled_gates: list[str]
     exit_code: Literal[0, 1, 2]
     attempt_metrics: list[AttemptMetric] = Field(default_factory=list)
+    report: RunReportContext | None = None
 
 
 class ResumeState(Record):

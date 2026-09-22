@@ -128,6 +128,7 @@ def build_manifest(
                 )
 
     for attachment in attachment_templates:
+        attached = False
         for mode in attachment.modes:
             for stream in attachment.streams:
                 attachment_case_id = _case_id(attachment, mode, stream)
@@ -139,10 +140,8 @@ def build_manifest(
                     and case.stream == stream
                 ]
                 if not matching_indexes:
-                    raise ValueError(
-                        f"attached assertion {attachment_case_id} has no matching "
-                        "request variant"
-                    )
+                    continue
+                attached = True
                 for index in matching_indexes:
                     case = expanded[index]
                     expanded[index] = case.model_copy(
@@ -157,6 +156,10 @@ def build_manifest(
                             "required": case.required or attachment.required,
                         }
                     )
+        if not attached:
+            raise ValueError(
+                f"attached assertion {attachment.id} has no matching request variant"
+            )
 
     if config.run.repetitions > 1:
         expanded = [
