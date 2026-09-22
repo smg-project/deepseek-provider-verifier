@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import math
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any, Literal
 
 from pydantic import (
@@ -108,6 +108,10 @@ class Rule(Record):
 
     @model_validator(mode="after")
     def diagnostic_rules_are_not_gates(self) -> Rule:
+        if "compatibility_policy" in self.conditions and self.conditions[
+            "compatibility_policy"
+        ] not in ("self_hosted", "official_parity"):
+            raise ValueError("unknown compatibility_policy")
         if "calibrated_variants" in self.conditions:
             variants = self.conditions["calibrated_variants"]
             if (
@@ -162,6 +166,11 @@ class Profile(Record):
         ids = [rule.id for rule in self.rules]
         if len(ids) != len(set(ids)):
             raise ValueError("profile rule IDs must be unique")
+        policies = {r.conditions.get("compatibility_policy") for r in self.rules} - {
+            None
+        }
+        if len(policies) > 1:
+            raise ValueError("profile cannot mix compatibility policies")
         return self
 
 
@@ -208,6 +217,7 @@ class CaseTemplate(Record):
         ):
             if len(values) != len(set(values)):
                 raise ValueError(f"case template {label} must be unique")
+        _validate_probe(self.steps, self.oracle)
         missing = set(self.modes) - set(self.max_output_tokens)
         if missing:
             raise ValueError(f"missing max_output_tokens for modes: {sorted(missing)}")
@@ -235,6 +245,40 @@ class Case(Record):
     max_requests: PositiveInt
     max_output_tokens: PositiveInt
     oracle: dict[str, Any]
+
+    @model_validator(mode="after")
+    def validate_probe(self) -> Case:
+        _validate_probe(self.steps, self.oracle)
+        return self
+
+
+def _validate_probe(steps: list[dict], oracle: dict) -> None:
+    for index, step in enumerate(steps):
+        if "replay_from" in step:
+            source = step["replay_from"]
+            if type(source) is not int or not 0 <= source < index:
+                raise ValueError("replay_from must index a prior request step")
+    if "compatibility" in oracle:
+        spec = oracle["compatibility"]
+        if (
+            not isinstance(spec, dict)
+            or spec.get("feature")
+            not in ("identifier", "schema", "reasoning_pair", "forced_tool_choice")
+            or spec.get("reference_basis", "observed") not in ("observed", "documented")
+            or type(spec.get("allow_rejection")) is not bool
+            or type(spec.get("reference_status")) is not int
+            or spec["reference_status"] not in (200, 400, 422)
+            or not isinstance(spec.get("reference_date"), str)
+        ):
+            raise ValueError("invalid compatibility probe specification")
+        try:
+            if (
+                date.fromisoformat(spec["reference_date"]).isoformat()
+                != spec["reference_date"]
+            ):
+                raise ValueError("reference date must use YYYY-MM-DD")
+        except ValueError as exc:
+            raise ValueError("invalid compatibility reference_date") from exc
 
 
 class Manifest(Record):

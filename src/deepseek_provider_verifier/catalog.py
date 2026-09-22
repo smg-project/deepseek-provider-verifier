@@ -45,11 +45,17 @@ def load_cases(
 ) -> list[CaseTemplate]:
     prompts = {p.id: p for p in load_prompts()}
     templates = []
-    for protocol in protocols or ["chat", "responses"]:
-        if protocol not in ("chat", "responses"):
-            raise ValueError("Unknown catalog protocol")
-        for line in _resource(f"{protocol}.jsonl").read_text().splitlines():
+    selected_protocols = protocols or ["chat", "responses"]
+    if any(p not in ("chat", "responses") for p in selected_protocols):
+        raise ValueError("Unknown catalog protocol")
+    names = [f"{p}.jsonl" for p in selected_protocols]
+    if case_ids is not None:
+        names.append("compatibility.jsonl")
+    for name in names:
+        for line in _resource(name).read_text().splitlines():
             value = json.loads(line)
+            if value["protocol"] not in selected_protocols:
+                continue
             if case_ids is not None and value["id"] not in case_ids:
                 continue
             for step in value["steps"]:

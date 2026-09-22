@@ -181,3 +181,13 @@ exist before its omission can exercise the mutation. The original `negative_hist
 oracle is preserved for replaying historical manifests unchanged. New Responses
 C08/C09 recipes use `status_class_by_mode` to scope 4xx expectations to thinking
 mode; non-thinking mode still requires valid tool calls.
+
+
+## Self-hosted compatibility supplement
+
+The opt-in `cases/compatibility.jsonl` catalog adds P01–P10 alongside C08/C09.
+It covers paired reasoning preservation/omission, valid and invalid identifiers
+including length boundaries, and Responses typed/const-only schemas with strict
+on or omitted. See [coverage and scoring](self-hosted-compatibility.md) for the
+exact matrix, reference dates, and default versus strict parity behavior. Core
+C01–C24 and the historical profiles retain their prior behavior.
