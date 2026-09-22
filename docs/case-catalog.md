@@ -153,8 +153,11 @@ Unexpected assembler errors retain the successful transport capture and become
 ERROR. No evidence is automatically uploaded, and no live inference was used to
 validate this implementation.
 
-Review-hardened evidence boundaries: a fully received non-JSON response records a
-`RESPONSE_BODY_FORMAT` violation while retaining its decoding metadata. A decisive
+Review-hardened evidence boundaries: a fully received non-JSON response to a
+successful-response contract records a `RESPONSE_BODY_FORMAT` violation while
+retaining its decoding metadata. Status-only negative probes do not impose a
+JSON error-body requirement; an applicable `error_body_json` rule can explicitly
+require it. Successful setup responses are still subject to JSON validation. A decisive
 required HTTP 404 remains FAIL; malformed HTTP 200 is an observed format failure
 (or an INCONCLUSIVE enclosing case until calibration). Actual transport,
 assembler, and parser resource/depth failures remain ERROR. Unparseable or

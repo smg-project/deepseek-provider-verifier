@@ -84,8 +84,25 @@ def evaluate_case(
         return finish("SKIP", case.oracle["reason"])
     if not observations:
         return finish("INCONCLUSIVE", "No observations; planned trial remains unscored")
+    expected_status = case.oracle.get("status_class")
+    restriction = (
+        case.protocol == "chat"
+        and case.mode == "thinking"
+        and case.template_id in ("C08", "C09")
+    )
+    error_body_rules = [r for r in applicable if r.assertion_id == "error_body_json"]
     for o in observations:
-        if o.transport_error and o.transport_error.get("type") == "INVALID_JSON":
+        status_only_rejection = (
+            o.status_code is not None
+            and o.status_code >= 400
+            and (expected_status or restriction)
+            and not error_body_rules
+        )
+        if (
+            o.transport_error
+            and o.transport_error.get("type") == "INVALID_JSON"
+            and not status_only_rejection
+        ):
             check(
                 "RESPONSE_BODY_FORMAT",
                 False,
@@ -108,12 +125,6 @@ def evaluate_case(
         return finish(
             "ERROR", "Authentication, rate limit, or infrastructure HTTP failure"
         )
-    expected_status = case.oracle.get("status_class")
-    restriction = (
-        case.protocol == "chat"
-        and case.mode == "thinking"
-        and case.template_id in ("C08", "C09")
-    )
     if expected_status or restriction:
         mutation_steps = [
             (index, step["mutation"])

@@ -312,3 +312,96 @@ def test_correct_answer_does_not_repair_wrong_returned_tool_result(protocol):
         ).status
         == "FAIL"
     )
+
+
+@pytest.mark.parametrize("protocol", ["chat", "responses"])
+def test_status_only_invalid_request_accepts_html_rejection(tmp_path, protocol):
+    m = catalog_manifest("C21", protocol)
+    result = run(
+        m,
+        lambda r: httpx.Response(
+            400,
+            text="<html>invalid request shape</html>",
+            headers={"content-type": "text/html"},
+        ),
+        tmp_path,
+    )
+    trial = result.case_results[0]
+    assert result.exit_code == 0 and trial.status == "PASS"
+    assert (
+        next(a for a in trial.assertions if a.id == "EXPECTED_HTTP_REJECTION").status
+        == "PASS"
+    )
+    assert not any(
+        a.id == "RESPONSE_BODY_FORMAT" and a.status == "FAIL" for a in trial.assertions
+    )
+    attempt = load_resume_state(tmp_path, result.manifest_hash).prior_attempts[0]
+    assert attempt.error["type"] == "INVALID_JSON"
+
+
+@pytest.mark.parametrize("protocol", ["chat", "responses"])
+@pytest.mark.parametrize("case_id", ["C15", "C22"])
+def test_status_only_mutated_continuation_accepts_html_rejection(
+    tmp_path, protocol, case_id
+):
+    calls = []
+
+    def handler(request):
+        calls.append(request)
+        if len(calls) == 1:
+            return httpx.Response(200, json=protocol_response(protocol, call=True))
+        return httpx.Response(
+            400,
+            text="<html>mutated continuation rejected</html>",
+            headers={"content-type": "text/html"},
+        )
+
+    result = run(catalog_manifest(case_id, protocol), handler, tmp_path)
+    trial = result.case_results[0]
+    assert result.exit_code == 0 and trial.status == "PASS" and len(calls) == 2
+    assert all(
+        a.status == "PASS"
+        for a in trial.assertions
+        if a.id
+        in {
+            "EXPECTED_HTTP_REJECTION",
+            "NEGATIVE_PROBE_SETUP",
+            "NEGATIVE_PROBE_MUTATION",
+        }
+    )
+    assert not any(
+        a.id == "RESPONSE_BODY_FORMAT" and a.status == "FAIL" for a in trial.assertions
+    )
+    attempts = load_resume_state(tmp_path, result.manifest_hash).prior_attempts
+    assert (
+        attempts[-1].status_code == 400 and attempts[-1].error["type"] == "INVALID_JSON"
+    )
+
+
+@pytest.mark.parametrize("protocol", ["chat", "responses"])
+def test_explicit_json_error_body_contract_still_rejects_html(protocol):
+    from deepseek_provider_verifier.runner import rehash_manifest
+
+    m = catalog_manifest("C21", protocol)
+    profile = m.profile_snapshot.model_copy(
+        update={
+            "rules": [
+                m.profile_snapshot.rules[0].model_copy(
+                    update={"assertion_id": "error_body_json"}
+                )
+            ]
+        }
+    )
+    m = rehash_manifest(
+        m.model_copy(update={"profile_snapshot": profile, "gates": ["error_body_json"]})
+    )
+    result = run(m, lambda r: httpx.Response(400, text="<html>invalid request</html>"))
+    assert result.exit_code == 1
+    assert (
+        next(
+            a
+            for a in result.case_results[0].assertions
+            if a.id == "RESPONSE_BODY_FORMAT"
+        ).status
+        == "FAIL"
+    )
