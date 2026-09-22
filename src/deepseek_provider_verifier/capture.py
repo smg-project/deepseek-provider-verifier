@@ -138,6 +138,10 @@ class _UnsafeURL(ValueError):
     pass
 
 
+class _UninspectableBody(ValueError):
+    pass
+
+
 _MAX_REDACTION_DEPTH = 32
 _REDACTION_OMITTED = "[OMITTED: redaction depth limit]"
 
@@ -247,6 +251,19 @@ class AttemptPayload(CaptureRecord):
         if self.headers.get("content-encoding", "identity").lower() != "identity":
             self.body_omission_reason = "Encoded body cannot be safely redacted; raw bytes retained in memory only"
             return
+        streaming = "text/event-stream" in self.headers.get("content-type", "").lower()
+        if self.raw_body and (
+            (not streaming and self.raw_json is None)
+            or (
+                self.error
+                and self.error.get("type") not in ("INVALID_JSON", "JSON_DEPTH_LIMIT")
+            )
+        ):
+            # Plain text, HTML, malformed JSON, and interrupted bodies cannot
+            # establish that all credential-bearing material was inspected.
+            self.body_base64 = ""
+            self.body_omission_reason = "Unparsed or interrupted response body; raw bytes retained in memory only"
+            return
         secrets = {self._secret} if self._secret else set()
 
         def collect(value: Any, sensitive: bool = False, depth: int = 0) -> None:
@@ -281,10 +298,31 @@ class AttemptPayload(CaptureRecord):
             if self.error and self.error.get("type") == "JSON_DEPTH_LIMIT":
                 raise _RedactionDepthExceeded
             collect(self.raw_json)
-            if "text/event-stream" in self.headers.get("content-type", "").lower():
-                for event in decode_sse(self.raw_chunks):
-                    if event.data:
+            if streaming:
+                try:
+                    collect(self.raw_body.decode("utf-8"))
+                except UnicodeDecodeError as exc:
+                    raise _UninspectableBody from exc
+                events = decode_sse(self.raw_chunks)
+                if self.raw_body and not events:
+                    raise _UninspectableBody
+                for event in events:
+                    if not event.complete or event.errors:
+                        raise _UninspectableBody
+                    if event.data and event.data != "[DONE]":
+                        try:
+                            strict_json_loads(event.data)
+                        except RecursionError as exc:
+                            raise _RedactionDepthExceeded from exc
+                        except ValueError as exc:
+                            raise _UninspectableBody from exc
                         collect(event.data)
+        except _UninspectableBody:
+            self.body_base64 = ""
+            self.body_omission_reason = (
+                "Unparsed streaming body; raw bytes retained in memory only"
+            )
+            return
         except _UnsafeURL:
             self.body_base64 = ""
             self.body_omission_reason = (

@@ -9,7 +9,7 @@ from jsonschema import Draft202012Validator
 
 from .capture import Observation
 from .json_utils import strict_json_loads
-from .mock_tools import TOOL_SCHEMAS
+from .mock_tools import TOOL_SCHEMAS, execute_tool
 from .records import AssertionResult, Case, CaseResult, MetricObservation, Rule
 
 
@@ -84,7 +84,15 @@ def evaluate_case(
         return finish("SKIP", case.oracle["reason"])
     if not observations:
         return finish("INCONCLUSIVE", "No observations; planned trial remains unscored")
-    errors = [o.transport_error for o in observations if o.transport_error]
+    for o in observations:
+        if o.transport_error and o.transport_error.get("type") == "INVALID_JSON":
+            check(
+                "RESPONSE_BODY_FORMAT",
+                False,
+                "Fully received body is not valid response JSON",
+                o.transport_error,
+            )
+    errors = [o.transport_error for o in observations if has_execution_error(o)]
     if errors:
         assertions.append(
             AssertionResult(
@@ -107,9 +115,49 @@ def evaluate_case(
         and case.template_id in ("C08", "C09")
     )
     if expected_status or restriction:
+        mutation_steps = [
+            (index, step["mutation"])
+            for index, step in enumerate(case.steps)
+            if step.get("mutation")
+        ]
+        if mutation_steps:
+            target, mutation = mutation_steps[0]
+            setup_ok = (
+                target > 0
+                and len(observations) > target
+                and all(
+                    o.status_code is not None
+                    and 200 <= o.status_code < 300
+                    and not o.transport_error
+                    and not o.violations
+                    and o.terminal_state == "completed"
+                    for o in observations[:target]
+                )
+            )
+            check(
+                "NEGATIVE_PROBE_SETUP",
+                setup_ok,
+                "Negative continuation requires successful setup at the designated prior step",
+            )
+            mutated = setup_ok and _mutation_exercised(
+                case, observations[target - 1], observations[target], mutation
+            )
+            check(
+                "NEGATIVE_PROBE_MUTATION",
+                mutated,
+                "Required tool/reasoning prerequisites and the designated history mutation must be present",
+            )
+            rejected = (
+                setup_ok
+                and mutated
+                and observations[target].status_code is not None
+                and observations[target].status_code // 100 == expected_status
+            )
+        else:
+            rejected = bool(statuses) and statuses[-1] // 100 == (expected_status or 4)
         check(
             "EXPECTED_HTTP_REJECTION",
-            bool(statuses) and statuses[-1] // 100 == (expected_status or 4),
+            rejected,
             "Expected documented status class",
             statuses,
         )
@@ -218,6 +266,19 @@ def evaluate_case(
                         args,
                     )
         _check_history(case, observations, check)
+        if case.oracle.get("continue_tools"):
+            exercised = (
+                any(
+                    _tool_exchange(case, previous, current)
+                    for previous, current in itertools.pairwise(observations)
+                )
+                and not observations[-1].tools
+            )
+            check(
+                "TOOL_CONTINUATION_EXERCISED",
+                exercised,
+                "A valid intended tool call, matching result, and subsequent assistant response must be observed",
+            )
         final = observations[-1]
         tools = [t for o in observations for t in o.tools.values()]
         kind = case.oracle.get("kind")
@@ -466,3 +527,107 @@ def _check_history(case: Case, observations: list[Observation], check) -> None:
             all(i in results for i in ids),
             "Tool results must reference original call IDs",
         )
+
+
+def has_execution_error(observation: Observation) -> bool:
+    """A proven body-syntax defect is measured output, not interrupted execution.
+
+    Resource/depth limits and assembler failures are intentionally not classified
+    as syntax errors. Original decoding metadata remains in observation/capture.
+    """
+    return bool(
+        observation.transport_error
+        and observation.transport_error.get("type") != "INVALID_JSON"
+    )
+
+
+def _assistant_items(case: Case, observation: Observation) -> list[dict]:
+    if case.protocol == "chat":
+        return observation.assistant_messages
+    raw = observation.raw_response
+    return raw.get("output", []) if isinstance(raw, dict) else []
+
+
+def _tool_outputs(case: Case, observation: Observation) -> list[dict] | None:
+    """Recompute registered fixture results; never dispatch an arbitrary function."""
+    if not observation.tools or observation.violations:
+        return None
+    outputs, ids = [], set()
+    advertised = {
+        definition.get("function", definition).get("name")
+        for step in case.steps
+        for definition in step.get("request", {}).get("tools", [])
+        if isinstance(definition, dict)
+    }
+    for call in observation.tools.values():
+        if (
+            not call.complete
+            or not call.call_id
+            or call.call_id in ids
+            or (advertised and call.name not in advertised)
+        ):
+            return None
+        ids.add(call.call_id)
+        try:
+            arguments = strict_json_loads(call.arguments)
+            if (
+                "expected_arguments" in case.oracle
+                and arguments != case.oracle["expected_arguments"]
+            ):
+                return None
+            result = str(execute_tool(call.name, arguments))
+        except (ValueError, TypeError, RecursionError):
+            return None
+        outputs.append(
+            {"role": "tool", "tool_call_id": call.call_id, "content": result}
+            if case.protocol == "chat"
+            else {
+                "type": "function_call_output",
+                "call_id": call.call_id,
+                "output": result,
+            }
+        )
+    return outputs
+
+
+def _tool_exchange(case: Case, previous: Observation, current: Observation) -> bool:
+    outputs = _tool_outputs(case, previous)
+    history = current.request_payload.get(
+        "messages" if case.protocol == "chat" else "input", []
+    )
+    originals = _assistant_items(case, previous)
+    return bool(
+        outputs
+        and originals
+        and isinstance(history, list)
+        and all(item in history for item in [*originals, *outputs])
+        and _assistant_items(case, current)
+        and current.terminal_state == "completed"
+    )
+
+
+def _mutation_exercised(
+    case: Case, previous: Observation, current: Observation, mutation: str
+) -> bool:
+    outputs = _tool_outputs(case, previous)
+    originals = _assistant_items(case, previous)
+    history = current.request_payload.get(
+        "messages" if case.protocol == "chat" else "input", []
+    )
+    if not outputs or not originals or not isinstance(history, list):
+        return False
+    if mutation == "omit_reasoning":
+        replay = [
+            {k: v for k, v in item.items() if k != "reasoning_content"}
+            for item in originals
+            if item.get("type") != "reasoning"
+        ]
+        prerequisite = replay != originals
+    elif mutation == "wrong_call_id":
+        replay = originals
+        key = "tool_call_id" if case.protocol == "chat" else "call_id"
+        outputs = [item | {key: "intentionally-unmatched"} for item in outputs]
+        prerequisite = True
+    else:
+        return False
+    return prerequisite and all(item in history for item in [*replay, *outputs])

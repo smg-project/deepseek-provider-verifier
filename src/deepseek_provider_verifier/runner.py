@@ -10,7 +10,7 @@ from pathlib import Path
 
 import httpx
 
-from .assertions import evaluate_case, rule_applies
+from .assertions import evaluate_case, has_execution_error, rule_applies
 from .capture import AttemptPayload, Observation, redact
 from .catalog import content_hash
 from .evidence import (
@@ -196,6 +196,8 @@ def _replay(
         for item in replay:
             item.pop("reasoning_content", None)
         replay = [item for item in replay if item.get("type") != "reasoning"]
+        if replay == items:
+            raise ValueError("No returned reasoning exists for the negative mutation")
     history.extend(replay)
     if execute:
         for tool in observation.tools.values():
@@ -569,7 +571,7 @@ async def execute_manifest(
                 result = result.model_copy(update={"completed": False})
             available = bool(
                 observations
-                and not observations[-1].transport_error
+                and not has_execution_error(observations[-1])
                 and 200 <= (observations[-1].status_code or 0) < 300
             )
             metrics = [

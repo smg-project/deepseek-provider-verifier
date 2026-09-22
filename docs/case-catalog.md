@@ -152,3 +152,18 @@ omitted with a reason when arbitrary raw escaping prevents reliable replacement.
 Unexpected assembler errors retain the successful transport capture and become
 ERROR. No evidence is automatically uploaded, and no live inference was used to
 validate this implementation.
+
+Review-hardened evidence boundaries: a fully received non-JSON response records a
+`RESPONSE_BODY_FORMAT` violation while retaining its decoding metadata. A decisive
+required HTTP 404 remains FAIL; malformed HTTP 200 is an observed format failure
+(or an INCONCLUSIVE enclosing case until calibration). Actual transport,
+assembler, and parser resource/depth failures remain ERROR. Unparseable or
+interrupted raw bodies, including malformed streaming bodies, are omitted from
+persistence with a reason; their originals remain available only in memory.
+
+C13/C14 require an observed valid intended fixture call, its matching returned
+result, and a subsequent assistant response. Merely answering `42` can satisfy
+the separate answer metric but cannot pass the continuation contract. C15/C22
+bind rejection to the designated mutated continuation after successful setup;
+rejection of the setup request cannot pass the negative probe. C15 also requires
+returned reasoning to exist before its omission can exercise the mutation.
