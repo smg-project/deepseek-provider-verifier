@@ -25,6 +25,15 @@
       "title": "Concurrency",
       "type": "integer"
     },
+    "execution_order": {
+      "default": "sequential",
+      "enum": [
+        "sequential",
+        "paired"
+      ],
+      "title": "Execution Order",
+      "type": "string"
+    },
     "max_attempts_per_endpoint": {
       "exclusiveMinimum": 0,
       "title": "Max Attempts Per Endpoint",
@@ -85,6 +94,12 @@
       "minItems": 1,
       "title": "Protocols",
       "type": "array"
+    },
+    "repetitions": {
+      "default": 1,
+      "exclusiveMinimum": 0,
+      "title": "Repetitions",
+      "type": "integer"
     },
     "retries": {
       "minimum": 0,

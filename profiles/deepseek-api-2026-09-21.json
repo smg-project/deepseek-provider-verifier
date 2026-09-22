@@ -11,7 +11,10 @@
       "id": "chat.output.present",
       "protocol": "chat",
       "conditions": {
-        "case_ids": ["C01", "C03"],
+        "case_ids": [
+          "C01",
+          "C03"
+        ],
         "mode": "any"
       },
       "expectation": "A successful Chat response exposes assistant output in the documented choice shape.",
@@ -29,7 +32,9 @@
       "id": "chat.stream.done",
       "protocol": "chat",
       "conditions": {
-        "case_ids": ["C17"],
+        "case_ids": [
+          "C17"
+        ],
         "stream": true
       },
       "expectation": "A Chat stream is data-only SSE and terminates with the documented [DONE] marker.",
@@ -47,7 +52,9 @@
       "id": "chat.stream.usage-final-content",
       "protocol": "chat",
       "conditions": {
-        "case_ids": ["C20"],
+        "case_ids": [
+          "C20"
+        ],
         "stream": true,
         "documented_distinction": "DeepSeek attaches aggregate counts to its terminal content-bearing event, unlike clients expecting a dedicated accounting event."
       },
@@ -66,7 +73,9 @@
       "id": "chat.thinking.disabled",
       "protocol": "chat",
       "conditions": {
-        "case_ids": ["C02"],
+        "case_ids": [
+          "C02"
+        ],
         "mode": "non_thinking"
       },
       "expectation": "Setting thinking to disabled selects non-thinking behavior.",
@@ -84,7 +93,10 @@
       "id": "chat.thinking.tool-choice-restriction",
       "protocol": "chat",
       "conditions": {
-        "case_ids": ["C08", "C09"],
+        "case_ids": [
+          "C08",
+          "C09"
+        ],
         "mode": "thinking",
         "documented_distinction": "DeepSeek thinking mode narrows the tool-choice values accepted by the non-thinking interface."
       },
@@ -103,7 +115,10 @@
       "id": "responses.output.present",
       "protocol": "responses",
       "conditions": {
-        "case_ids": ["C01", "C03"],
+        "case_ids": [
+          "C01",
+          "C03"
+        ],
         "mode": "any"
       },
       "expectation": "A successful Responses result exposes typed output items.",
@@ -121,7 +136,9 @@
       "id": "responses.thinking.disabled",
       "protocol": "responses",
       "conditions": {
-        "case_ids": ["C02"],
+        "case_ids": [
+          "C02"
+        ],
         "mode": "non_thinking"
       },
       "expectation": "Setting reasoning effort to none selects non-thinking behavior.",
@@ -139,7 +156,9 @@
       "id": "responses.stream.terminal",
       "protocol": "responses",
       "conditions": {
-        "case_ids": ["C17"],
+        "case_ids": [
+          "C17"
+        ],
         "stream": true
       },
       "expectation": "A Responses stream emits typed events and a terminal response event.",
@@ -157,7 +176,10 @@
       "id": "responses.stateless",
       "protocol": "responses",
       "conditions": {
-        "case_ids": ["C13", "C23"],
+        "case_ids": [
+          "C13",
+          "C23"
+        ],
         "documented_distinction": "Stateful Responses assumptions do not apply to the documented DeepSeek service."
       },
       "expectation": "Conversation continuation replays complete history because the Responses service is stateless.",
@@ -175,7 +197,9 @@
       "id": "responses.ignored-options",
       "protocol": "responses",
       "conditions": {
-        "case_ids": ["C24"],
+        "case_ids": [
+          "C24"
+        ],
         "documented_distinction": "Accepted fields may be ignored and therefore cannot be inferred as supported behavior from HTTP success."
       },
       "expectation": "Fields documented as ignored remain diagnostic and are not reported as behaviorally verified from request acceptance.",
@@ -193,7 +217,9 @@
       "id": "responses.usage.accounting",
       "protocol": "responses",
       "conditions": {
-        "case_ids": ["C20"]
+        "case_ids": [
+          "C20"
+        ]
       },
       "expectation": "The response reports nonnegative input, output, reasoning, and total token counts in the documented usage fields.",
       "assertion_id": "responses_usage_accounting",
@@ -202,6 +228,690 @@
       "retrieved_at": "2026-09-22T00:18:58Z",
       "source_sha256": "5654c002d08e81b7f366568f988ed19c2f97f7c90118aa24e00a47a922faa3c8",
       "evidence_status": "documented",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c04",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C04"
+        ]
+      },
+      "expectation": "Original project fixture C04 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c04",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c05",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C05"
+        ]
+      },
+      "expectation": "Original project fixture C05 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c05",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c06",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C06"
+        ]
+      },
+      "expectation": "Original project fixture C06 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c06",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c07",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C07"
+        ]
+      },
+      "expectation": "Original project fixture C07 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c07",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c08",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C08"
+        ]
+      },
+      "expectation": "Original project fixture C08 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c08",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c09",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C09"
+        ]
+      },
+      "expectation": "Original project fixture C09 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c09",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c10",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C10"
+        ]
+      },
+      "expectation": "Original project fixture C10 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c10",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c11",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C11"
+        ]
+      },
+      "expectation": "Original project fixture C11 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c11",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c12",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C12"
+        ]
+      },
+      "expectation": "Original project fixture C12 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c12",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c13",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C13"
+        ]
+      },
+      "expectation": "Original project fixture C13 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c13",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c14",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C14"
+        ]
+      },
+      "expectation": "Original project fixture C14 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c14",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c15",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C15"
+        ]
+      },
+      "expectation": "Original project fixture C15 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c15",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c16",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C16"
+        ]
+      },
+      "expectation": "Original project fixture C16 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c16",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c18",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C18"
+        ]
+      },
+      "expectation": "Original project fixture C18 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c18",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c19",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C19"
+        ]
+      },
+      "expectation": "Original project fixture C19 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c19",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c21",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C21"
+        ]
+      },
+      "expectation": "Original project fixture C21 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c21",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c22",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C22"
+        ]
+      },
+      "expectation": "Original project fixture C22 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c22",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c23",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C23"
+        ]
+      },
+      "expectation": "Original project fixture C23 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c23",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c24",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C24"
+        ]
+      },
+      "expectation": "Original project fixture C24 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c24",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c04",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C04"
+        ]
+      },
+      "expectation": "Original project fixture C04 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c04",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c05",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C05"
+        ]
+      },
+      "expectation": "Original project fixture C05 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c05",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c06",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C06"
+        ]
+      },
+      "expectation": "Original project fixture C06 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c06",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c07",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C07"
+        ]
+      },
+      "expectation": "Original project fixture C07 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c07",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c08",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C08"
+        ]
+      },
+      "expectation": "Original project fixture C08 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c08",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c09",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C09"
+        ]
+      },
+      "expectation": "Original project fixture C09 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c09",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c10",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C10"
+        ]
+      },
+      "expectation": "Original project fixture C10 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c10",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c11",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C11"
+        ]
+      },
+      "expectation": "Original project fixture C11 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c11",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c12",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C12"
+        ]
+      },
+      "expectation": "Original project fixture C12 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c12",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c13",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C13"
+        ]
+      },
+      "expectation": "Original project fixture C13 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c13",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c14",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C14"
+        ]
+      },
+      "expectation": "Original project fixture C14 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c14",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c15",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C15"
+        ]
+      },
+      "expectation": "Original project fixture C15 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c15",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c16",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C16"
+        ]
+      },
+      "expectation": "Original project fixture C16 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c16",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c18",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C18"
+        ]
+      },
+      "expectation": "Original project fixture C18 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c18",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c19",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C19"
+        ]
+      },
+      "expectation": "Original project fixture C19 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c19",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c21",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C21"
+        ]
+      },
+      "expectation": "Original project fixture C21 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c21",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c22",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C22"
+        ]
+      },
+      "expectation": "Original project fixture C22 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c22",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c23",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C23"
+        ]
+      },
+      "expectation": "Original project fixture C23 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c23",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c24",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C24"
+        ]
+      },
+      "expectation": "Original project fixture C24 satisfies its declared observable oracle; calibration required before gating.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/case-catalog.md#c24",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "evidence_status": "project-policy",
       "maturity": "diagnostic",
       "gating": false
     }
@@ -220,8 +930,20 @@
         "non_thinking": 512,
         "thinking": 4096
       },
-      "case_ids": ["C01", "C03", "C05", "C07", "C11", "C13", "C14"],
-      "attached_assertion_case_ids": ["C02", "C17", "C20"]
+      "case_ids": [
+        "C01",
+        "C03",
+        "C05",
+        "C07",
+        "C11",
+        "C13",
+        "C14"
+      ],
+      "attached_assertion_case_ids": [
+        "C02",
+        "C17",
+        "C20"
+      ]
     }
   }
 }

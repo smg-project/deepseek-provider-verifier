@@ -6,6 +6,11 @@
       "title": "Attempt Number",
       "type": "integer"
     },
+    "capture": {
+      "additionalProperties": true,
+      "title": "Capture",
+      "type": "object"
+    },
     "case_id": {
       "minLength": 1,
       "title": "Case Id",
@@ -42,6 +47,18 @@
       "title": "Evidence Hash",
       "type": "string"
     },
+    "prompt_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Prompt Id"
+    },
     "repetition": {
       "minimum": 0,
       "title": "Repetition",
@@ -69,6 +86,12 @@
       ],
       "default": null,
       "title": "Response"
+    },
+    "retry": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Retry",
+      "type": "integer"
     },
     "schema_version": {
       "const": 1,

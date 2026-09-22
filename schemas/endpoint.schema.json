@@ -26,6 +26,19 @@
       "title": "Base Url",
       "type": "string"
     },
+    "contract_model": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Contract Model"
+    },
     "model": {
       "minLength": 1,
       "title": "Model",

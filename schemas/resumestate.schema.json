@@ -53,6 +53,149 @@
       "title": "AssertionResult",
       "type": "object"
     },
+    "Attempt": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_number": {
+          "exclusiveMinimum": 0,
+          "title": "Attempt Number",
+          "type": "integer"
+        },
+        "capture": {
+          "additionalProperties": true,
+          "title": "Capture",
+          "type": "object"
+        },
+        "case_id": {
+          "minLength": 1,
+          "title": "Case Id",
+          "type": "string"
+        },
+        "endpoint": {
+          "minLength": 1,
+          "title": "Endpoint",
+          "type": "string"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error"
+        },
+        "events": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Events",
+          "type": "array"
+        },
+        "evidence_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Hash",
+          "type": "string"
+        },
+        "prompt_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt Id"
+        },
+        "repetition": {
+          "minimum": 0,
+          "title": "Repetition",
+          "type": "integer"
+        },
+        "request": {
+          "additionalProperties": true,
+          "title": "Request",
+          "type": "object"
+        },
+        "request_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Request Hash",
+          "type": "string"
+        },
+        "response": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Response"
+        },
+        "retry": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Retry",
+          "type": "integer"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "status_code": {
+          "anyOf": [
+            {
+              "maximum": 599,
+              "minimum": 100,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Code"
+        },
+        "step": {
+          "minimum": 0,
+          "title": "Step",
+          "type": "integer"
+        },
+        "timings": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Timings",
+          "type": "object"
+        }
+      },
+      "required": [
+        "case_id",
+        "endpoint",
+        "step",
+        "repetition",
+        "attempt_number",
+        "request_hash",
+        "request",
+        "timings",
+        "events",
+        "evidence_hash"
+      ],
+      "title": "Attempt",
+      "type": "object"
+    },
     "CaseResult": {
       "additionalProperties": false,
       "properties": {
@@ -246,64 +389,37 @@
   },
   "additionalProperties": false,
   "properties": {
-    "actual_concurrency": {
-      "default": 1,
-      "exclusiveMinimum": 0,
-      "title": "Actual Concurrency",
-      "type": "integer"
-    },
-    "budget_usage": {
-      "additionalProperties": {
-        "type": "integer"
-      },
-      "title": "Budget Usage",
-      "type": "object"
-    },
-    "case_results": {
-      "items": {
-        "$ref": "#/$defs/CaseResult"
-      },
-      "title": "Case Results",
-      "type": "array"
-    },
-    "complete": {
-      "title": "Complete",
-      "type": "boolean"
-    },
-    "counts": {
-      "additionalProperties": {
-        "type": "integer"
-      },
-      "title": "Counts",
-      "type": "object"
-    },
-    "enabled_gates": {
+    "completed_case_ids": {
       "items": {
         "type": "string"
       },
-      "title": "Enabled Gates",
+      "title": "Completed Case Ids",
       "type": "array"
     },
-    "exit_code": {
-      "enum": [
-        0,
-        1,
-        2
-      ],
-      "title": "Exit Code",
-      "type": "integer"
-    },
-    "manifest_hash": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Manifest Hash",
-      "type": "string"
-    },
-    "resume_dispositions": {
+    "incomplete_records": {
       "items": {
         "additionalProperties": true,
         "type": "object"
       },
-      "title": "Resume Dispositions",
+      "title": "Incomplete Records",
+      "type": "array"
+    },
+    "manifest_hash": {
+      "title": "Manifest Hash",
+      "type": "string"
+    },
+    "prior_attempts": {
+      "items": {
+        "$ref": "#/$defs/Attempt"
+      },
+      "title": "Prior Attempts",
+      "type": "array"
+    },
+    "results": {
+      "items": {
+        "$ref": "#/$defs/CaseResult"
+      },
+      "title": "Results",
       "type": "array"
     },
     "schema_version": {
@@ -314,14 +430,8 @@
     }
   },
   "required": [
-    "manifest_hash",
-    "complete",
-    "case_results",
-    "counts",
-    "budget_usage",
-    "enabled_gates",
-    "exit_code"
+    "manifest_hash"
   ],
-  "title": "RunResult",
+  "title": "ResumeState",
   "type": "object"
 }

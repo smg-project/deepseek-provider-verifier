@@ -10,6 +10,7 @@ import base64
 import json
 import re
 from typing import Any, Literal
+from urllib.parse import urlsplit, urlunsplit
 
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
 
@@ -68,6 +69,12 @@ class ToolCall(CaptureRecord):
 
 
 class Observation(CaptureRecord):
+    status_code: int | None = None
+    transport_error: dict[str, Any] | None = None
+    endpoint: str = "unbound"
+    request_payload: dict[str, Any] = Field(
+        default_factory=dict, exclude=True, repr=False
+    )
     protocol: Literal["chat", "responses"]
     text_segments: list[Segment] = Field(default_factory=list)
     reasoning_segments: list[Segment] = Field(default_factory=list)
@@ -112,6 +119,23 @@ _SENSITIVE = re.compile(
     r"authorization|proxy.authorization|cookie|api[\W_]*key|access[\W_]*token|secret|password",
     re.IGNORECASE,
 )
+
+
+_URL = re.compile(r'https?://[^\s"<>\\]+')
+
+
+def _safe_url(match: re.Match) -> str:
+    try:
+        parts = urlsplit(match.group())
+        return urlunsplit(
+            (parts.scheme, parts.netloc.rsplit("@", 1)[-1], parts.path, "", "")
+        )
+    except ValueError:
+        return "[OMITTED: malformed URL]"
+
+
+class _UnsafeURL(ValueError):
+    pass
 
 
 _MAX_REDACTION_DEPTH = 32
@@ -165,7 +189,7 @@ def _redact(value: Any, secret: str | None, depth: int) -> Any:
                 reverse=True,
             ):
                 value = value.replace(encoded, "[REDACTED]")
-        return value
+        return _URL.sub(_safe_url, value)
     if isinstance(value, dict):
         return {
             _redact(str(k), secret, depth + 1): "[REDACTED]"
@@ -237,6 +261,10 @@ class AttemptPayload(CaptureRecord):
                 for item in value:
                     collect(item, sensitive, depth + 1)
             elif isinstance(value, str) and value:
+                if _URL.sub(_safe_url, value) != value:
+                    # Arbitrary JSON escaping can hide URL credential substrings
+                    # in raw bytes. Omit instead of inventing sanitized wire data.
+                    raise _UnsafeURL
                 if sensitive:
                     secrets.add(value)
                 else:
@@ -257,6 +285,12 @@ class AttemptPayload(CaptureRecord):
                 for event in decode_sse(self.raw_chunks):
                     if event.data:
                         collect(event.data)
+        except _UnsafeURL:
+            self.body_base64 = ""
+            self.body_omission_reason = (
+                "Secret-bearing URL components; raw bytes retained in memory only"
+            )
+            return
         except _RedactionDepthExceeded:
             self.body_base64 = ""
             self.body_omission_reason = (

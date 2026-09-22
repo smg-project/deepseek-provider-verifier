@@ -8,6 +8,11 @@
       "title": "Attached Assertion Case Ids",
       "type": "array"
     },
+    "dataset_version": {
+      "default": "original-v1",
+      "title": "Dataset Version",
+      "type": "string"
+    },
     "id": {
       "minLength": 1,
       "title": "Id",
@@ -36,6 +41,18 @@
       "title": "Oracle",
       "type": "object"
     },
+    "prompt_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Prompt Id"
+    },
     "protocol": {
       "enum": [
         "chat",
@@ -43,6 +60,12 @@
       ],
       "title": "Protocol",
       "type": "string"
+    },
+    "repetition": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Repetition",
+      "type": "integer"
     },
     "required": {
       "title": "Required",

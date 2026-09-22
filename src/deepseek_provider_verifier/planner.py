@@ -9,6 +9,7 @@ from collections import Counter
 from datetime import UTC, datetime
 from typing import Any
 
+from .assertions import rule_applies
 from .records import Case, CaseTemplate, Config, Manifest, PlanBudgets, Profile
 
 
@@ -110,6 +111,8 @@ def build_manifest(
                 expanded.append(
                     Case(
                         id=case_id,
+                        prompt_id=template.prompt_id or template.id,
+                        dataset_version=template.dataset_version,
                         protocol=template.protocol,
                         template_id=template.id,
                         mode=mode,
@@ -155,6 +158,15 @@ def build_manifest(
                         }
                     )
 
+    if config.run.repetitions > 1:
+        expanded = [
+            case.model_copy(
+                update={"id": f"{case.id}.r{repetition + 1}", "repetition": repetition}
+            )
+            for case in expanded
+            for repetition in range(config.run.repetitions)
+        ]
+
     retry_multiplier = config.run.retries + 1
     requests_by_protocol: Counter[str] = Counter()
     for case in expanded:
@@ -191,10 +203,12 @@ def build_manifest(
             for case in expanded
             if case.required
             for rule_id in case.rule_ids
-            if rules_by_id[rule_id].gating
+            if rules_by_id[rule_id].gating and rule_applies(rules_by_id[rule_id], case)
         }
     )
     budgets = PlanBudgets(
+        repetitions=config.run.repetitions,
+        execution_order=config.run.execution_order,
         suite=config.run.suite,
         protocols=config.run.protocols,
         max_requests_per_protocol=preset.max_requests_per_protocol,
@@ -228,6 +242,7 @@ def build_manifest(
         "gates": gates,
     }
     return Manifest(
+        profile_snapshot=profile,
         run_id=str(uuid.uuid4()),
         created_at=datetime.now(UTC),
         profile_hash=profile_hash,

@@ -1,6 +1,11 @@
 {
   "additionalProperties": false,
   "properties": {
+    "dataset_version": {
+      "default": "original-v1",
+      "title": "Dataset Version",
+      "type": "string"
+    },
     "id": {
       "minLength": 1,
       "title": "Id",
@@ -41,6 +46,18 @@
       "additionalProperties": true,
       "title": "Oracle",
       "type": "object"
+    },
+    "prompt_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Prompt Id"
     },
     "protocol": {
       "enum": [

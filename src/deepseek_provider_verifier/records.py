@@ -34,6 +34,7 @@ class Endpoint(Record):
     base_url: AnyHttpUrl
     model: str = Field(min_length=1)
     model_release: str = Field(min_length=1)
+    contract_model: str | None = Field(default=None, min_length=1)
     api_key_env: str | None = Field(
         default=None, min_length=1, pattern=r"^[A-Za-z_][A-Za-z0-9_]*$"
     )
@@ -65,6 +66,8 @@ class RunSettings(Record):
     concurrency: PositiveInt = 1
     max_attempts_per_endpoint: PositiveInt = 40
     retries: int = Field(default=0, ge=0)
+    repetitions: PositiveInt = 1
+    execution_order: Literal["sequential", "paired"] = "sequential"
     scorer_revision: str = Field(default="unversioned", min_length=1)
 
     @model_validator(mode="after")
@@ -151,6 +154,8 @@ class Profile(Record):
 
 
 class PlanBudgets(Record):
+    repetitions: PositiveInt = 1
+    execution_order: Literal["sequential", "paired"] = "sequential"
     suite: str = Field(min_length=1)
     protocols: list[Protocol] = Field(min_length=1)
     max_requests_per_protocol: PositiveInt
@@ -169,6 +174,8 @@ class PlanBudgets(Record):
 
 
 class CaseTemplate(Record):
+    prompt_id: str | None = None
+    dataset_version: str = "original-v1"
     id: str = Field(min_length=1)
     protocol: Protocol
     modes: list[Mode] = Field(min_length=1)
@@ -201,6 +208,9 @@ class CaseTemplate(Record):
 
 
 class Case(Record):
+    prompt_id: str | None = None
+    repetition: int = Field(default=0, ge=0)
+    dataset_version: str = "original-v1"
     id: str = Field(min_length=1)
     protocol: Protocol
     template_id: str = Field(min_length=1)
@@ -216,6 +226,7 @@ class Case(Record):
 
 
 class Manifest(Record):
+    profile_snapshot: Profile | None = None
     run_id: str = Field(min_length=1)
     created_at: datetime
     profile_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
@@ -231,6 +242,9 @@ class Manifest(Record):
 
 
 class Attempt(Record):
+    prompt_id: str | None = None
+    retry: int = Field(default=0, ge=0)
+    capture: dict[str, Any] = Field(default_factory=dict)
     case_id: str = Field(min_length=1)
     endpoint: str = Field(min_length=1)
     step: int = Field(ge=0)
@@ -246,17 +260,51 @@ class Attempt(Record):
     evidence_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
 
 
+class AssertionResult(Record):
+    id: str
+    status: ResultStatus
+    reason: str
+    rule_ids: list[str] = Field(default_factory=list)
+    gating: bool = False
+    observed: Any = None
+
+
+class MetricObservation(Record):
+    name: str
+    value: float | None = None
+    denominator: int = 1
+    scored: bool = True
+    reason: str | None = None
+
+
+class BehavioralPrompt(Record):
+    id: str
+    dataset_version: str
+    category: Literal["required", "forbidden", "ambiguous", "schema", "follow_up"]
+    content: str
+    intended_answer: Any
+    license: str
+    content_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
 class CaseResult(Record):
+    prompt_id: str | None = None
+    repetition: int = Field(default=0, ge=0)
+    first_attempt_status: ResultStatus | None = None
+    eventual_status: ResultStatus | None = None
+    completed: bool = True
     case_id: str = Field(min_length=1)
     endpoint: str = Field(min_length=1)
     status: ResultStatus
-    assertions: list[dict[str, Any]]
-    metric_observations: list[dict[str, Any]]
+    assertions: list[AssertionResult]
+    metric_observations: list[MetricObservation]
     attempt_refs: list[str]
     reason: str | None = None
 
 
 class RunResult(Record):
+    actual_concurrency: PositiveInt = 1
+    resume_dispositions: list[dict[str, Any]] = Field(default_factory=list)
     manifest_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     complete: bool
     case_results: list[CaseResult]
@@ -264,3 +312,11 @@ class RunResult(Record):
     budget_usage: dict[str, int]
     enabled_gates: list[str]
     exit_code: Literal[0, 1, 2]
+
+
+class ResumeState(Record):
+    manifest_hash: str
+    completed_case_ids: list[str] = Field(default_factory=list)
+    prior_attempts: list[Attempt] = Field(default_factory=list)
+    results: list[CaseResult] = Field(default_factory=list)
+    incomplete_records: list[dict[str, Any]] = Field(default_factory=list)
