@@ -31,9 +31,14 @@ def build_manifest(
         raise ValueError("configured concurrency exceeds the selected suite budget")
 
     rules_by_id = {rule.id: rule for rule in profile.rules}
-    expanded: list[Case] = []
-    seen_case_ids: set[str] = set()
+    templates_by_key: dict[tuple[str, str], CaseTemplate] = {}
     for template in cases:
+        key = (template.protocol, template.id)
+        if key in templates_by_key:
+            raise ValueError(
+                f"duplicate case ID template: {template.id}.{template.protocol}"
+            )
+        templates_by_key[key] = template
         if template.protocol not in config.run.protocols:
             raise ValueError(f"case {template.id} uses an unselected protocol")
         unknown_rules = set(template.rule_ids) - set(rules_by_id)
@@ -48,6 +53,44 @@ def build_manifest(
             raise ValueError(
                 f"case {template.id} references a rule for another protocol"
             )
+
+    selection_ids = [*preset.case_ids, *preset.attached_assertion_case_ids]
+    if selection_ids:
+        expected_keys = {
+            (protocol, case_id)
+            for protocol in config.run.protocols
+            for case_id in selection_ids
+        }
+        actual_keys = set(templates_by_key)
+        missing_keys = expected_keys - actual_keys
+        if missing_keys:
+            raise ValueError(
+                "missing preset template(s): "
+                + ", ".join(_template_key(key) for key in sorted(missing_keys))
+            )
+        extra_keys = actual_keys - expected_keys
+        if extra_keys:
+            raise ValueError(
+                "unexpected preset template(s): "
+                + ", ".join(_template_key(key) for key in sorted(extra_keys))
+            )
+        request_templates = [
+            templates_by_key[(protocol, case_id)]
+            for protocol in config.run.protocols
+            for case_id in preset.case_ids
+        ]
+        attachment_templates = [
+            templates_by_key[(protocol, case_id)]
+            for protocol in config.run.protocols
+            for case_id in preset.attached_assertion_case_ids
+        ]
+    else:
+        request_templates = cases
+        attachment_templates = []
+
+    expanded: list[Case] = []
+    seen_case_ids: set[str] = set()
+    for template in request_templates:
         if template.max_requests > preset.max_requests_per_conversation:
             raise ValueError(
                 f"case {template.id} exceeds the per-conversation request budget"
@@ -72,6 +115,7 @@ def build_manifest(
                         mode=mode,
                         stream=stream,
                         rule_ids=template.rule_ids,
+                        attached_assertion_case_ids=[],
                         steps=template.steps,
                         required=template.required,
                         max_requests=template.max_requests,
@@ -79,6 +123,37 @@ def build_manifest(
                         oracle=template.oracle,
                     )
                 )
+
+    for attachment in attachment_templates:
+        for mode in attachment.modes:
+            for stream in attachment.streams:
+                attachment_case_id = _case_id(attachment, mode, stream)
+                matching_indexes = [
+                    index
+                    for index, case in enumerate(expanded)
+                    if case.protocol == attachment.protocol
+                    and case.mode == mode
+                    and case.stream == stream
+                ]
+                if not matching_indexes:
+                    raise ValueError(
+                        f"attached assertion {attachment_case_id} has no matching "
+                        "request variant"
+                    )
+                for index in matching_indexes:
+                    case = expanded[index]
+                    expanded[index] = case.model_copy(
+                        update={
+                            "rule_ids": _ordered_union(
+                                case.rule_ids, attachment.rule_ids
+                            ),
+                            "attached_assertion_case_ids": [
+                                *case.attached_assertion_case_ids,
+                                attachment_case_id,
+                            ],
+                            "required": case.required or attachment.required,
+                        }
+                    )
 
     retry_multiplier = config.run.retries + 1
     requests_by_protocol: Counter[str] = Counter()
@@ -171,6 +246,15 @@ def build_manifest(
 def _case_id(template: CaseTemplate, mode: str, stream: bool) -> str:
     stream_label = "stream" if stream else "nonstream"
     return f"{template.id}.{template.protocol}.{mode}.{stream_label}"
+
+
+def _template_key(key: tuple[str, str]) -> str:
+    protocol, case_id = key
+    return f"{case_id}.{protocol}"
+
+
+def _ordered_union(left: list[str], right: list[str]) -> list[str]:
+    return list(dict.fromkeys([*left, *right]))
 
 
 def _hash(value: Any) -> str:

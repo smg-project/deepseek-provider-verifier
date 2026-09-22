@@ -2,8 +2,8 @@
   "schema_version": 1,
   "id": "deepseek-api-2026-09-21",
   "models": [
-    "deepseek-chat",
-    "deepseek-reasoner"
+    "deepseek-flash",
+    "deepseek-v4-pro"
   ],
   "rules": [
     {
@@ -49,9 +49,9 @@
       "conditions": {
         "case_ids": ["C20"],
         "stream": true,
-        "conflict": "The DeepSeek reference places usage on the final content chunk; clients modeled on a separate usage-only chunk require distinct handling."
+        "documented_distinction": "DeepSeek attaches aggregate counts to its terminal content-bearing event, unlike clients expecting a dedicated accounting event."
       },
-      "expectation": "When requested, stream usage appears on the final content chunk with finish_reason and no separate usage-only chunk.",
+      "expectation": "The terminal content-bearing event includes aggregate token counts and completion metadata whether or not include_usage is enabled.",
       "assertion_id": "chat_stream_usage_placement",
       "source_url": "https://api-docs.deepseek.com/api/create-chat-completion/",
       "source_section": "stream_options.include_usage",
@@ -63,12 +63,30 @@
     },
     {
       "schema_version": 1,
-      "id": "chat.thinking.tool-choice-restriction",
+      "id": "chat.thinking.disabled",
       "protocol": "chat",
       "conditions": {
         "case_ids": ["C02"],
+        "mode": "non_thinking"
+      },
+      "expectation": "Setting thinking to disabled selects non-thinking behavior.",
+      "assertion_id": "chat_thinking_disabled",
+      "source_url": "https://api-docs.deepseek.com/api/create-chat-completion/",
+      "source_section": "thinking",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "source_sha256": "4c2384d7ad4e5f1929edb922900b2a96546a7e699e8b067d6e82dcb9a330989d",
+      "evidence_status": "documented",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.thinking.tool-choice-restriction",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": ["C08", "C09"],
         "mode": "thinking",
-        "conflict": "Generic OpenAI-compatible behavior may accept required or named tool choice, while the DeepSeek reference rejects them in thinking mode."
+        "documented_distinction": "DeepSeek thinking mode narrows the tool-choice values accepted by the non-thinking interface."
       },
       "expectation": "Thinking mode rejects required and named function tool_choice values.",
       "assertion_id": "chat_thinking_tool_choice_rejected",
@@ -100,6 +118,24 @@
     },
     {
       "schema_version": 1,
+      "id": "responses.thinking.disabled",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": ["C02"],
+        "mode": "non_thinking"
+      },
+      "expectation": "Setting reasoning effort to none selects non-thinking behavior.",
+      "assertion_id": "responses_thinking_disabled",
+      "source_url": "https://api-docs.deepseek.com/api/create-response/",
+      "source_section": "reasoning.effort",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "source_sha256": "5654c002d08e81b7f366568f988ed19c2f97f7c90118aa24e00a47a922faa3c8",
+      "evidence_status": "documented",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
       "id": "responses.stream.terminal",
       "protocol": "responses",
       "conditions": {
@@ -121,8 +157,8 @@
       "id": "responses.stateless",
       "protocol": "responses",
       "conditions": {
-        "case_ids": ["C13"],
-        "conflict": "Stateful OpenAI Responses assumptions do not apply to the documented DeepSeek service."
+        "case_ids": ["C13", "C23"],
+        "documented_distinction": "Stateful Responses assumptions do not apply to the documented DeepSeek service."
       },
       "expectation": "Conversation continuation replays complete history because the Responses service is stateless.",
       "assertion_id": "responses_stateless_replay",
@@ -139,8 +175,8 @@
       "id": "responses.ignored-options",
       "protocol": "responses",
       "conditions": {
-        "case_ids": ["C02"],
-        "conflict": "Accepted fields may be ignored and therefore cannot be inferred as supported behavior from HTTP success."
+        "case_ids": ["C24"],
+        "documented_distinction": "Accepted fields may be ignored and therefore cannot be inferred as supported behavior from HTTP success."
       },
       "expectation": "Fields documented as ignored remain diagnostic and are not reported as behaviorally verified from request acceptance.",
       "assertion_id": "responses_ignored_options",
@@ -148,6 +184,23 @@
       "source_section": "Unsupported parameters",
       "retrieved_at": "2026-09-22T00:18:58Z",
       "source_sha256": "1719ac1b05e29579acd0cbc5ba0bcdb629cf7722eb551b5cd6d6d62c271e3ca2",
+      "evidence_status": "documented",
+      "maturity": "diagnostic",
+      "gating": false
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.usage.accounting",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": ["C20"]
+      },
+      "expectation": "The response reports nonnegative input, output, reasoning, and total token counts in the documented usage fields.",
+      "assertion_id": "responses_usage_accounting",
+      "source_url": "https://api-docs.deepseek.com/api/create-response/",
+      "source_section": "usage",
+      "retrieved_at": "2026-09-22T00:18:58Z",
+      "source_sha256": "5654c002d08e81b7f366568f988ed19c2f97f7c90118aa24e00a47a922faa3c8",
       "evidence_status": "documented",
       "maturity": "diagnostic",
       "gating": false

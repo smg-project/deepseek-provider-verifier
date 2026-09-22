@@ -1,6 +1,13 @@
 {
   "additionalProperties": false,
   "properties": {
+    "attached_assertion_case_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Attached Assertion Case Ids",
+      "type": "array"
+    },
     "id": {
       "minLength": 1,
       "title": "Id",

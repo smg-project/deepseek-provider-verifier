@@ -17,9 +17,12 @@ cannot promote a diagnostic rule to a verified requirement.
 | Thinking mode guide | <https://api-docs.deepseek.com/guides/thinking_mode/> | Reasoning mode and conversation replay requirements |
 | Tool calls guide | <https://api-docs.deepseek.com/guides/tool_calls/> | Function tool request and response structure |
 
-The Chat documentation says usage is included in the final content chunk with
-`finish_reason` rather than a separate usage-only chunk. It also describes
-required and named tool choice as unsupported in thinking mode. The Responses
-guide describes the API as stateless and lists accepted fields that are
-ignored. These are recorded as rule-level diagnostic conflicts in the profile;
-they are not release gates until live calibration is authorized and completed.
+A bounded [Chat reference capture](sources/deepseek-chat-2026-09-21.md)
+retains the source URL, retrieval time, full-page hash, selected excerpt, and
+excerpt hash without committing the third-party page.
+
+The Chat documentation places aggregate token counts on its terminal content
+event and narrows tool-choice behavior in thinking mode. The Responses guide
+describes the API as stateless and lists accepted fields that are ignored.
+These are recorded as documented distinctions in diagnostic rules. They are
+not release gates until live calibration is authorized and completed.

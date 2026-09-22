@@ -24,7 +24,7 @@ ResultStatus = Literal["PASS", "FAIL", "ERROR", "SKIP", "INCONCLUSIVE"]
 class Record(BaseModel):
     """Base for versioned records with strict input and stable JSON output."""
 
-    model_config = ConfigDict(extra="forbid", frozen=True)
+    model_config = ConfigDict(extra="forbid", frozen=True, hide_input_in_errors=True)
 
     schema_version: Literal[1] = 1
 
@@ -34,7 +34,9 @@ class Endpoint(Record):
     base_url: AnyHttpUrl
     model: str = Field(min_length=1)
     model_release: str = Field(min_length=1)
-    api_key_env: str | None = Field(default=None, min_length=1)
+    api_key_env: str | None = Field(
+        default=None, min_length=1, pattern=r"^[A-Za-z_][A-Za-z0-9_]*$"
+    )
     auth_none: bool = False
 
     @model_validator(mode="after")
@@ -43,6 +45,16 @@ class Endpoint(Record):
             raise ValueError(
                 "endpoint must set exactly one of api_key_env or auth_none"
             )
+        if any(
+            value is not None
+            for value in (
+                self.base_url.username,
+                self.base_url.password,
+                self.base_url.query,
+                self.base_url.fragment,
+            )
+        ):
+            raise ValueError("base_url must not contain userinfo, query, or fragment")
         return self
 
 
@@ -117,6 +129,10 @@ class ProfilePreset(Record):
             set(self.attached_assertion_case_ids)
         ):
             raise ValueError("attached assertion case IDs must be unique")
+        if set(self.case_ids) & set(self.attached_assertion_case_ids):
+            raise ValueError("request and attached assertion case IDs must be disjoint")
+        if self.attached_assertion_case_ids and not self.case_ids:
+            raise ValueError("attached assertion case IDs require request case IDs")
         return self
 
 
@@ -176,6 +192,11 @@ class CaseTemplate(Record):
         missing = set(self.modes) - set(self.max_output_tokens)
         if missing:
             raise ValueError(f"missing max_output_tokens for modes: {sorted(missing)}")
+        if self.max_requests < len(self.steps):
+            raise ValueError(
+                "max_requests must cover all request-producing steps; "
+                f"got {self.max_requests} for {len(self.steps)} steps"
+            )
         return self
 
 
@@ -186,6 +207,7 @@ class Case(Record):
     mode: Mode
     stream: bool
     rule_ids: list[str] = Field(min_length=1)
+    attached_assertion_case_ids: list[str] = Field(default_factory=list)
     steps: list[dict[str, Any]] = Field(min_length=1)
     required: bool
     max_requests: PositiveInt

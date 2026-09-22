@@ -31,6 +31,7 @@ include = [
   "/schemas",
   "/configs",
   "/docs/contract-sources.md",
+  "/docs/sources",
   "/tests",
   "/LICENSE",
 ]
@@ -43,3 +44,4 @@ packages = ["src/deepseek_provider_verifier"]
 "schemas" = "deepseek_provider_verifier/schemas"
 "configs" = "deepseek_provider_verifier/configs"
 "docs/contract-sources.md" = "deepseek_provider_verifier/docs/contract-sources.md"
+"docs/sources" = "deepseek_provider_verifier/docs/sources"

@@ -16,6 +16,7 @@ from deepseek_provider_verifier.records import (
     Endpoint,
     Profile,
     ProfilePreset,
+    Record,
     Rule,
     RunSettings,
 )
@@ -54,8 +55,8 @@ def profile() -> Profile:
                 concurrency=1,
                 case_deadline_seconds=300,
                 mode_max_output_tokens={"non_thinking": 512, "thinking": 4096},
-                case_ids=["C01"],
-                attached_assertion_case_ids=["C02", "C17", "C20"],
+                case_ids=[],
+                attached_assertion_case_ids=[],
             )
         },
     )
@@ -186,6 +187,74 @@ def test_planner_rejects_duplicate_expanded_case_ids(
         build_manifest(config, profile, [one_text_template, one_text_template])
 
 
+def test_planner_rejects_incomplete_named_preset(config, profile, one_text_template):
+    selected_profile = profile.model_copy(
+        update={
+            "presets": {
+                "smoke": profile.presets["smoke"].model_copy(
+                    update={"case_ids": ["C01", "C03"]}
+                )
+            }
+        }
+    )
+
+    with pytest.raises(ValueError, match="missing preset template.*C03"):
+        build_manifest(config, selected_profile, [one_text_template])
+
+
+def test_planner_rejects_extra_template_outside_named_preset(
+    config, profile, one_text_template
+):
+    selected_profile = profile.model_copy(
+        update={
+            "presets": {
+                "smoke": profile.presets["smoke"].model_copy(
+                    update={"case_ids": ["C01"]}
+                )
+            }
+        }
+    )
+    extra = one_text_template.model_copy(update={"id": "C99"})
+
+    with pytest.raises(ValueError, match="unexpected preset template.*C99"):
+        build_manifest(config, selected_profile, [one_text_template, extra])
+
+
+def test_planner_attaches_assertions_without_adding_requests(
+    config, profile, one_text_template
+):
+    selected_profile = profile.model_copy(
+        update={
+            "rules": [*profile.rules, _rule("R_ATTACH")],
+            "presets": {
+                "smoke": profile.presets["smoke"].model_copy(
+                    update={
+                        "case_ids": ["C01"],
+                        "attached_assertion_case_ids": ["C02"],
+                    }
+                )
+            },
+        }
+    )
+    request_template = one_text_template.model_copy(
+        update={"modes": ["non_thinking"], "streams": [False, True]}
+    )
+    attachment_template = request_template.model_copy(
+        update={"id": "C02", "streams": [True], "rule_ids": ["R_ATTACH"]}
+    )
+
+    manifest = build_manifest(
+        config, selected_profile, [request_template, attachment_template]
+    )
+
+    assert manifest.request_ceiling == 2 * len(config.endpoints)
+    assert len(manifest.cases) == 2
+    nonstream, stream = manifest.cases
+    assert nonstream.attached_assertion_case_ids == []
+    assert stream.attached_assertion_case_ids == ["C02.chat.non_thinking.stream"]
+    assert stream.rule_ids == ["R_TEXT", "R_ATTACH"]
+
+
 def test_planner_is_network_free_and_never_serializes_secret(
     monkeypatch, config, profile, one_text_template
 ):
@@ -230,6 +299,39 @@ def test_endpoint_rejects_conflicting_authentication_settings():
         )
 
 
+@pytest.mark.parametrize("api_key_env", ["1TOKEN", "TOKEN-NAME", "TOKEN NAME", "A=B"])
+def test_endpoint_rejects_invalid_environment_variable_names(api_key_env):
+    with pytest.raises(ValidationError, match="api_key_env") as caught:
+        Endpoint(
+            name="bad",
+            base_url="https://example.com",
+            model="deepseek-flash",
+            model_release="release",
+            api_key_env=api_key_env,
+        )
+    assert api_key_env not in str(caught.value)
+
+
+@pytest.mark.parametrize(
+    "base_url",
+    [
+        "https://user:password@example.com",
+        "https://example.com?token=secret",
+        "https://example.com#secret",
+    ],
+)
+def test_endpoint_rejects_secret_bearing_url_components(base_url):
+    with pytest.raises(ValidationError, match="userinfo, query, or fragment") as caught:
+        Endpoint(
+            name="bad",
+            base_url=base_url,
+            model="deepseek-flash",
+            model_release="release",
+            auth_none=True,
+        )
+    assert base_url not in str(caught.value)
+
+
 def test_records_reject_negative_budget():
     with pytest.raises(ValidationError):
         ProfilePreset(
@@ -241,6 +343,22 @@ def test_records_reject_negative_budget():
             concurrency=1,
             case_deadline_seconds=300,
             mode_max_output_tokens={"non_thinking": 512, "thinking": 4096},
+        )
+
+
+def test_case_template_rejects_more_request_steps_than_budget():
+    with pytest.raises(ValidationError, match="max_requests must cover"):
+        CaseTemplate(
+            id="C13",
+            protocol="chat",
+            modes=["non_thinking"],
+            streams=[False],
+            rule_ids=["R_TEXT"],
+            steps=[{"kind": "first"}, {"kind": "second"}],
+            required=True,
+            max_requests=1,
+            max_output_tokens={"non_thinking": 512},
+            oracle={"kind": "fixture"},
         )
 
 
@@ -341,6 +459,20 @@ def test_smoke_profile_encodes_exact_request_ceiling():
     assert smoke.mode_max_output_tokens == {"non_thinking": 512, "thinking": 4096}
     assert smoke.case_ids == ["C01", "C03", "C05", "C07", "C11", "C13", "C14"]
     assert smoke.attached_assertion_case_ids == ["C02", "C17", "C20"]
+    assert loaded.models == ["deepseek-flash", "deepseek-v4-pro"]
+
+
+def test_profile_seed_rules_target_their_documented_cases():
+    loaded = load_profile(Path("profiles/deepseek-api-2026-09-21.json"))
+    rules = {rule.id: rule for rule in loaded.rules}
+
+    assert rules["chat.thinking.tool-choice-restriction"].conditions["case_ids"] == [
+        "C08",
+        "C09",
+    ]
+    assert rules["responses.stateless"].conditions["case_ids"] == ["C13", "C23"]
+    assert rules["responses.ignored-options"].conditions["case_ids"] == ["C24"]
+    assert all("conflict" not in rule.conditions for rule in loaded.rules)
 
 
 def test_exact_smoke_matrix_uses_17_requests_per_protocol():
@@ -360,6 +492,14 @@ def test_exact_smoke_matrix_uses_17_requests_per_protocol():
         == 17
     )
     assert manifest.request_ceiling == 34 * len(loaded_config.endpoints)
+    c01_chat_stream = next(
+        case for case in manifest.cases if case.id == "C01.chat.non_thinking.stream"
+    )
+    assert c01_chat_stream.attached_assertion_case_ids == [
+        "C02.chat.non_thinking.stream",
+        "C17.chat.non_thinking.stream",
+        "C20.chat.non_thinking.stream",
+    ]
 
 
 def test_full_matrix_fails_under_smoke_budget():
@@ -373,15 +513,22 @@ def test_full_matrix_fails_under_smoke_budget():
             for number in range(1, 25)
         )
 
-    with pytest.raises(ValueError, match="request budget"):
+    with pytest.raises(ValueError, match="unexpected preset template"):
         build_manifest(loaded_config, loaded_profile, templates)
 
 
 def test_exported_schemas_come_from_runtime_records():
-    schema = json.loads(Path("schemas/manifest.schema.json").read_text())
+    expected = {
+        f"{record.__name__.lower()}.schema.json": record.model_json_schema()
+        for record in Record.__subclasses__()
+    }
+    committed = {
+        path.name: json.loads(path.read_text())
+        for path in Path("schemas").glob("*.json")
+    }
 
-    assert schema["title"] == "Manifest"
-    assert schema["properties"]["schema_version"]["const"] == 1
+    assert committed.keys() == expected.keys()
+    assert committed == expected
 
 
 def _smoke_templates() -> list[CaseTemplate]:
@@ -400,6 +547,46 @@ def _smoke_templates() -> list[CaseTemplate]:
         templates.extend(
             _template(case_id, protocol, rule_id, modes, streams, max_requests)
             for case_id, modes, streams, max_requests in variants
+        )
+        attachment_rules = {
+            "chat": {
+                "C02": "chat.thinking.disabled",
+                "C17": "chat.stream.done",
+                "C20": "chat.stream.usage-final-content",
+            },
+            "responses": {
+                "C02": "responses.thinking.disabled",
+                "C17": "responses.stream.terminal",
+                "C20": "responses.usage.accounting",
+            },
+        }[protocol]
+        templates.extend(
+            [
+                _template(
+                    "C02",
+                    protocol,
+                    attachment_rules["C02"],
+                    ["non_thinking"],
+                    [False, True],
+                    1,
+                ),
+                _template(
+                    "C17",
+                    protocol,
+                    attachment_rules["C17"],
+                    ["non_thinking", "thinking"],
+                    [True],
+                    1,
+                ),
+                _template(
+                    "C20",
+                    protocol,
+                    attachment_rules["C20"],
+                    ["non_thinking", "thinking"],
+                    [True],
+                    1,
+                ),
+            ]
         )
     return templates
 
