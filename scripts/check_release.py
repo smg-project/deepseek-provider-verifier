@@ -110,6 +110,24 @@ def main():
             env,
         )
         execute([dpv, "--help"], outside, env)
+        compatibility = execute(
+            [
+                python,
+                "-c",
+                'from importlib.resources import files; print(files("deepseek_provider_verifier").joinpath("configs", "self-hosted.example.toml").read_text(), end="")',
+            ],
+            outside,
+            env,
+        ).stdout
+        for policy in ("self-hosted", "official-parity"):
+            config = outside / f"{policy}.toml"
+            config.write_text(
+                compatibility.replace("deepseek-self-hosted-", f"deepseek-{policy}-")
+            )
+            planned = execute([dpv, "plan", "--config", str(config)], outside, env)
+            value = json.loads(planned.stdout)["manifest"]
+            assert len(value["cases"]) == 99 and value["request_ceiling"] == 123
+            assert value["profile_snapshot"]["id"] == f"deepseek-{policy}-2026-09-22-v1"
         resource = execute(
             [
                 python,

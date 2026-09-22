@@ -1,0 +1,19 @@
+# Edit the URL, served model label, and release before a live run.
+# Choose suite = "probes" for just the four compatibility finding families.
+# For strict status matching, use deepseek-official-parity-2026-09-22-v1.
+[run]
+profile = "deepseek-self-hosted-2026-09-22-v1"
+suite = "compatibility"
+protocols = ["chat", "responses"]
+concurrency = 1
+max_attempts_per_endpoint = 126
+retries = 0
+scorer_revision = "unversioned"
+
+[endpoints.candidate]
+base_url = "http://localhost:30000/v1"
+model = "your-served-deepseek-model"
+model_release = "unknown"
+auth_none = true
+# For an authenticated endpoint remove auth_none and set:
+# api_key_env = "CANDIDATE_API_KEY"
