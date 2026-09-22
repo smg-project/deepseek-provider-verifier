@@ -84,6 +84,10 @@ the declared parent's original assistant output, reasoning, and matched tool
 results. Branches restore parent request settings and exclude sibling history.
 Call/result order may vary within a parallel batch; call IDs and arguments must
 remain correct. Only registered local arithmetic/lookup functions execute.
+The 16-call parallel case allows 2,048 non-thinking output tokens per request;
+512 tokens truncated valid call batches during official live testing. Other
+non-thinking workflow cases retain their 512-token cap.
+
 At least two nonempty returned reasoning rounds are needed to measure accumulated
 reasoning replay. Otherwise that facet is inconclusive even if the task succeeded.
 Cases stop at their request bounds or deadline; they never grow unbounded chains.
@@ -115,12 +119,20 @@ instructions. L05–L08 distribute the same total sizes across four turns. Seede
 varied filler surrounds facts near the beginning, middle, and end. All three facts
 must be returned correctly. Literal UTF-8 bytes are not token estimates.
 
+When a run includes input- or output-size probes, the CLI's HTTP read timeout
+follows the manifest's per-case deadline (600 seconds in the shipped size presets), allowing
+large input processing and nonstream generation to finish. The runner still
+enforces that overall deadline;
+connect/write timeouts and the 30-second read timeout of other suites are unchanged.
+
 L09–L11 request numbered records with output caps of 1,024/4,096/16,384 tokens.
 The requested number of records exceeds twice the token cap. Every complete record
 must be correct, unique, and ordered. A partial last record requires an explicit
 length terminal. An output boundary is exercised only with a valid nonempty
 sequence and provider-reported visible generation of at least 90% of the requested
-cap. Reported reasoning tokens are excluded. Short or unmeasured generation is
+cap and a terminal explicitly reporting the output limit. Reported reasoning tokens
+are excluded; omitted reasoning usage is unknown, never assumed zero. Short or
+unmeasured generation is
 inconclusive; malformed output or contradictory usage fails. These measurements
 rely on provider-reported token usage, not an independently verified tokenizer.
 

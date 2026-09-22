@@ -172,6 +172,23 @@ def _parent_request(case, observations, index):
 
 
 def evaluate_workflow(case, observations, rules) -> CaseResult:
+    if not observations:
+        return CaseResult(
+            case_id=case.id,
+            endpoint="unbound",
+            prompt_id=case.prompt_id,
+            repetition=case.repetition,
+            status="INCONCLUSIVE",
+            assertions=[],
+            metric_observations=[
+                MetricObservation(
+                    name="task_success",
+                    scored=False,
+                    reason="No observations; planned trial remains unscored",
+                )
+            ],
+            attempt_refs=[],
+        )
     assertions = []
     metrics = []
 

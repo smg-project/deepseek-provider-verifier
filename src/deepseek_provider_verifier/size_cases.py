@@ -160,15 +160,22 @@ def usage_measurement(observation, cap):
     )
     fields = [usage.get(ik), usage.get(ok), usage.get("total_tokens")]
     details = usage.get(dk, {})
-    reasoning = (
-        details.get("reasoning_tokens", 0) if isinstance(details, dict) else None
-    )
-    valid = all(type(n) is int and n >= 0 for n in [*fields, reasoning])
+    reasoning = details.get("reasoning_tokens") if isinstance(details, dict) else None
+    missing_reasoning = isinstance(details, dict) and "reasoning_tokens" not in details
+    valid_counts = all(type(n) is int and n >= 0 for n in fields)
+    if valid_counts:
+        incoming, outgoing, total = fields
+        valid_counts = total == incoming + outgoing and outgoing <= cap
+    valid = valid_counts and type(reasoning) is int and reasoning >= 0
     if valid:
         incoming, outgoing, total = fields
         valid = total == incoming + outgoing and reasoning <= outgoing <= cap
     return {
-        "state": "valid" if valid else "invalid",
+        "state": "valid"
+        if valid
+        else "missing"
+        if valid_counts and missing_reasoning
+        else "invalid",
         "input_tokens": fields[0] if type(fields[0]) is int else None,
         "output_tokens": fields[1] if type(fields[1]) is int else None,
         "reasoning_tokens": reasoning if type(reasoning) is int else None,
@@ -231,7 +238,10 @@ def evaluate_size_case(case, observations, rules):
         }
     )
     visible = usage["visible_output_tokens"]
-    input_tokens = usage["input_tokens"] if usage["state"] == "valid" else None
+    # Missing reasoning detail does not invalidate independently checked input counts.
+    input_tokens = (
+        usage["input_tokens"] if usage["state"] in ("valid", "missing") else None
+    )
     payloads = [
         httpx.Request("POST", "http://fixture.invalid", json=o.request_payload).content
         for o in observations
@@ -327,12 +337,13 @@ def evaluate_size_case(case, observations, rules):
                 task_ok
                 and result.status == "PASS"
                 and usage["state"] == "valid"
+                and _length_terminal(observations[-1])
                 and visible >= 0.9 * case.max_output_tokens
             )
             check(
                 "OUTPUT_BOUNDARY",
                 "PASS" if boundary else "INCONCLUSIVE",
-                "Requested output cap requires valid visible generation and provider-reported visible usage of at least 90% of the cap",
+                "Requested output cap requires a length-limit terminal, valid visible generation, and provider-reported visible usage of at least 90% of the cap",
                 {"exercised": boundary},
             )
             metrics.append(

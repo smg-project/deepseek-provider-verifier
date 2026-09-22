@@ -193,7 +193,17 @@ def _run(args) -> int:
 
 
 async def _execute(manifest, secrets, output_dir, resume):
-    timeout = httpx.Timeout(30.0, connect=10.0)
+    # Large inputs and nonstream generations may exceed the ordinary read timeout.
+    # The runner still bounds each complete case by this explicit manifest deadline.
+    read_seconds = (
+        manifest.budgets.case_deadline_seconds
+        if any(
+            c.oracle.get("kind") in {"large_input", "large_output"}
+            for c in manifest.cases
+        )
+        else 30.0
+    )
+    timeout = httpx.Timeout(30.0, connect=10.0, read=read_seconds)
     async with AsyncExitStack() as stack:
         clients = {
             name: await stack.enter_async_context(endpoint_client(timeout=timeout))

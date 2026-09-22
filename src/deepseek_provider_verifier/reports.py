@@ -239,20 +239,17 @@ def write_report_bundle(
     allow_existing: bool = False,
     manifest: Manifest | None = None,
 ) -> None:
-    """Write the canonical aggregate and its two derived renderings atomically."""
+    """Prepare every rendering, then atomically replace each output file."""
 
     directory = Path(directory)
     if directory.exists() and not allow_existing and any(directory.iterdir()):
         raise ValueError(
             f"Output directory already exists and is not empty: {directory}"
         )
-    directory.mkdir(parents=True, exist_ok=True)
     canonical = json.loads(render_report(result, "json"))
-    atomic_json(directory / "summary.json", canonical)
-    _atomic_text(
-        directory / "summary.md", render_report(result, "markdown", manifest=manifest)
-    )
-    _atomic_text(directory / "junit.xml", render_report(result, "junit"))
+    markdown = render_report(result, "markdown", manifest=manifest)
+    junit = render_report(result, "junit")
+    reliability = None
     if (
         isinstance(result, RunResult)
         and manifest is not None
@@ -260,7 +257,13 @@ def write_report_bundle(
     ):
         from .reliability import build_reliability
 
-        atomic_json(directory / "reliability.json", build_reliability(manifest, result))
+        reliability = build_reliability(manifest, result)
+    directory.mkdir(parents=True, exist_ok=True)
+    atomic_json(directory / "summary.json", canonical)
+    _atomic_text(directory / "summary.md", markdown)
+    _atomic_text(directory / "junit.xml", junit)
+    if reliability is not None:
+        atomic_json(directory / "reliability.json", reliability)
 
 
 def _atomic_text(path: Path, value: str) -> None:

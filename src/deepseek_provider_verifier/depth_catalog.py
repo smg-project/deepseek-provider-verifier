@@ -145,6 +145,8 @@ def _expand(descriptor, protocol, prompts):
         from .workflows import workflow_steps
 
         steps = workflow_steps(descriptor, protocol)
+        # A 16-call batch was truncated by the official API at the 512-token cap.
+        non_thinking_tokens = 2048 if descriptor.get("width") == 16 else 512
         return CaseTemplate(
             id=descriptor["id"],
             prompt_id=descriptor["id"],
@@ -156,7 +158,7 @@ def _expand(descriptor, protocol, prompts):
             steps=steps,
             required=True,
             max_requests=len(steps),
-            max_output_tokens={"non_thinking": 512, "thinking": 4096},
+            max_output_tokens={"non_thinking": non_thinking_tokens, "thinking": 4096},
             oracle={
                 "kind": "workflow",
                 "bounded_steps": True,

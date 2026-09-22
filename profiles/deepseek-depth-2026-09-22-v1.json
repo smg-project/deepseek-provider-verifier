@@ -160,7 +160,7 @@
       "concurrency": 1,
       "case_deadline_seconds": 600,
       "mode_max_output_tokens": {
-        "non_thinking": 512,
+        "non_thinking": 2048,
         "thinking": 4096
       },
       "case_ids": [

@@ -36,16 +36,18 @@ behavioral failure or quality PASS.
 ## HTTP availability and latency
 
 `first_http_2xx_rate` is successful fully received 2xx HTTP exchanges divided
-by actual initial logical HTTP requests. The initial attempt is the first-ever
+by retained initial logical HTTP request slots. The initial attempt is the first-ever
 retained attempt, not the first attempt after a restart. `INVALID_JSON`,
 `JSON_DEPTH_LIMIT`, and post-receipt assembly findings do not erase a fully
 received HTTP 200. An interrupted read, timeout, cancelled reservation, missing
 status, or non-2xx status contributes zero. Planned trials that never start are
 reported separately in `unavailable`; unused request allowance is ignored.
 
-`eventual_http_2xx_rate` uses the same actual logical-request denominator and
+`eventual_http_2xx_rate` uses the same retained logical-request-slot denominator and
 counts a request when any retained initial or retry attempt completes with 2xx.
-`http_attempts` and `http_retry_attempts` show the literal outbound counts. Expected
+`http_attempts` and `http_retry_attempts` count retained attempt records, including
+interrupted reservations that may not have reached the server. They are not exact
+outbound-request counts. Expected
 4xx negative probes remain in both first/eventual denominators and score zero for
 this 2xx metric even when the verification trial succeeds.
 
@@ -106,7 +108,7 @@ variant, assuming independent trials. No pooled interval treats prompt variants
 as independent. Mixed PASS/FAIL prompts and error-affected prompts are separate.
 Five repetitions do not establish production reliability or create a quality gate.
 
-HTTP counts use retained attempts and actual logical requests, including interrupted
+HTTP counts use retained attempt records and logical request slots, including interrupted
 reservations. Reused completed trials are counted once. When a whole trial was
 rerun, the latest result cannot reconstruct the original contract assessment;
 its first-contract status is unavailable. The first HTTP attempt remains the

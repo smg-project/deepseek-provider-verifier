@@ -192,7 +192,7 @@ def render_reliability_markdown(analysis: dict) -> str:
         "",
         analysis["methods"]["interval"] + ". " + analysis["methods"]["scope"] + ".",
         "",
-        "| Endpoint / model / family / variant | Planned / started / completed | PASS / FAIL / ERROR / INCONCLUSIVE / SKIP / MISSING | Conditional failure | HTTP first / eventual | Requests / retries |",
+        "| Endpoint / model / family / variant | Planned / started / completed | PASS / FAIL / ERROR / INCONCLUSIVE / SKIP / MISSING | Conditional failure | HTTP first / eventual | Retained attempts / retries |",
         "| --- | --- | --- | --- | --- | --- |",
     ]
 

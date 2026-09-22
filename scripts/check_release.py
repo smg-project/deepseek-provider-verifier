@@ -21,17 +21,17 @@ def execute(args, cwd, env):
 
 def run_fixture(python, dpv, outside, env, config_text, evidence, profile=None):
     profile_args = ["--profile", str(profile)] if profile else []
-    with socket.socket() as reserve:
-        reserve.bind(("127.0.0.1", 0))
-        port = reserve.getsockname()[1]
-    (outside / "fixture.toml").write_text(config_text.replace(":8765/", f":{port}/"))
+    ready = outside / f"{evidence}-ready.json"
+    ready.unlink(missing_ok=True)
     server = subprocess.Popen(
         [
             python,
             "-m",
             "deepseek_provider_verifier.synthetic_fixture",
             "--port",
-            str(port),
+            "0",
+            "--ready-file",
+            str(ready),
             "--max-requests",
             "4",
         ],
@@ -45,6 +45,10 @@ def run_fixture(python, dpv, outside, env, config_text, evidence, profile=None):
         for _ in range(100):
             if server.poll() is not None:
                 raise RuntimeError("Installed fixture stopped before readiness")
+            if not ready.exists():
+                time.sleep(0.05)
+                continue
+            port = json.loads(ready.read_text())["port"]
             try:
                 with socket.create_connection(("127.0.0.1", port), timeout=0.1):
                     break
@@ -52,6 +56,9 @@ def run_fixture(python, dpv, outside, env, config_text, evidence, profile=None):
                 time.sleep(0.05)
         else:
             raise RuntimeError("Installed fixture readiness timed out")
+        (outside / "fixture.toml").write_text(
+            config_text.replace(":8765/", f":{port}/")
+        )
         execute([dpv, "plan", "--config", "fixture.toml", *profile_args], outside, env)
         execute(
             [
