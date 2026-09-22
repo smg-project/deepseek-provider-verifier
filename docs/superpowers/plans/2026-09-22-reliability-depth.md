@@ -773,7 +773,7 @@ git add README.md docs/case-catalog.md docs/metrics.md docs/reliability-depth.md
 git commit -s -m "Document and verify installed reliability suites"
 ```
 
-- [ ] **Step 5: Open the review-ready PR and verify CI/DCO.**
+- [x] **Step 5: Open the review-ready PR and verify CI/DCO.**
 
 Inspect staged files for credentials/raw runs, push the feature branch, and create
 the PR against the current main. Describe the completed four suites, exact offline
@@ -791,4 +791,6 @@ sources. Each of the five review risks has explicit tests in its owning task.
 Implementation, offline package verification, and independent whole-branch review are
 complete. The review found one HTTP 402 classification defect; a regression test
 failed on both protocols before the fix and all 695 tests pass afterward.
-PR delivery and GitHub checks are the remaining Task 7 gate.
+PR #4 is open against main. Python 3.11 and 3.14 CI and DCO passed on
+implementation commit b4b1169; documentation-only completion updates remain subject
+to the same automatic checks. No live calibration was performed for these suites.
