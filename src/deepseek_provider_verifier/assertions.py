@@ -40,6 +40,7 @@ def evaluate_case(
     case: Case, observations: list[Observation], rules: list[Rule]
 ) -> CaseResult:
     applicable = [r for r in rules if r.id in case.rule_ids and rule_applies(r, case)]
+    diagnostic_history = case.oracle.get("kind") == "reasoning_history_probe"
     assertions: list[AssertionResult] = []
     metric: list[MetricObservation] = []
 
@@ -58,7 +59,8 @@ def evaluate_case(
                 reason=reason,
                 observed=observed,
                 rule_ids=[r.id for r in linked],
-                gating=bool(linked)
+                gating=not diagnostic_history
+                and bool(linked)
                 and all(r.gating and r.maturity == "calibrated" for r in linked),
             )
         )
@@ -86,7 +88,9 @@ def evaluate_case(
         return finish("SKIP", case.oracle["reason"])
     if not observations:
         return finish("INCONCLUSIVE", "No observations; planned trial remains unscored")
-    expected_status = case.oracle.get("status_class")
+    expected_status = case.oracle.get("status_class_by_mode", {}).get(
+        case.mode, case.oracle.get("status_class")
+    )
     restriction = (
         case.protocol == "chat"
         and case.mode == "thinking"
@@ -97,7 +101,7 @@ def evaluate_case(
         status_only_rejection = (
             o.status_code is not None
             and o.status_code >= 400
-            and (expected_status or restriction)
+            and (expected_status or restriction or diagnostic_history)
             and not error_body_rules
         )
         if (
@@ -127,7 +131,7 @@ def evaluate_case(
         return finish(
             "ERROR", "Authentication, rate limit, or infrastructure HTTP failure"
         )
-    if expected_status or restriction:
+    if expected_status or restriction or diagnostic_history:
         mutation_steps = [
             (index, step["mutation"])
             for index, step in enumerate(case.steps)
@@ -168,12 +172,28 @@ def evaluate_case(
             )
         else:
             rejected = bool(statuses) and statuses[-1] // 100 == (expected_status or 4)
-        check(
-            "EXPECTED_HTTP_REJECTION",
-            rejected,
-            "Expected documented status class",
-            statuses,
-        )
+        if diagnostic_history:
+            exercised = bool(mutation_steps) and setup_ok and mutated
+            status = observations[target].status_code if exercised else None
+            check(
+                "REASONING_OMISSION_ACCEPTANCE",
+                None,
+                "Record acceptance without requiring omission to be accepted or rejected",
+                {
+                    "status_code": status,
+                    "accepted": 200 <= status < 300 if status is not None else None,
+                },
+            )
+            for o in observations:
+                for violation in o.violations:
+                    check(violation, False, "Protocol structural violation")
+        else:
+            check(
+                "EXPECTED_HTTP_REJECTION",
+                rejected,
+                "Expected documented status class",
+                statuses,
+            )
     elif any(s >= 400 for s in statuses):
         check(
             "REQUIRED_PROTOCOL_SUPPORTED",
@@ -495,6 +515,11 @@ def evaluate_case(
                 )
             elif aid not in ("case_oracle", "chat_thinking_tool_choice_rejected"):
                 check(aid, None, "No evaluator is registered for this rule", source=[r])
+    if diagnostic_history:
+        return finish(
+            "INCONCLUSIVE",
+            "Reasoning omission is diagnostic; acceptance or rejection is an observation",
+        )
     if not applicable or any(r.maturity != "calibrated" for r in applicable):
         return finish(
             "INCONCLUSIVE",

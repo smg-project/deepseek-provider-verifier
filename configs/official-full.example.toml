@@ -1,0 +1,21 @@
+# Official model aliases are mutable; inspect the plan before sending live requests.
+[run]
+profile = "deepseek-official-full-2026-09-22-v1"
+suite = "full"
+protocols = ["chat", "responses"]
+concurrency = 1
+max_attempts_per_endpoint = 106
+retries = 0
+scorer_revision = "unversioned"
+
+[endpoints.flash]
+base_url = "https://api.deepseek.com"
+api_key_env = "DEEPSEEK_API_KEY"
+model = "deepseek-flash"
+model_release = "unknown"
+
+[endpoints.pro]
+base_url = "https://api.deepseek.com"
+api_key_env = "DEEPSEEK_API_KEY"
+model = "deepseek-v4-pro"
+model_release = "unknown"

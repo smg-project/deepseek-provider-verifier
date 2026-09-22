@@ -4,7 +4,8 @@ The authoritative resources are `cases/chat.jsonl`, `cases/responses.jsonl`, and
 `cases/behavior.jsonl`. The build includes these files as package resources; there
 is no maintained duplicate under `src/`. `catalog.load_cases()` resolves prompt
 references and validates records. `catalog.load_prompts()` validates content hashes.
-Original prompts and intended answers are MIT-licensed, dataset `original-v1`;
+Original prompts and intended answers are MIT-licensed. Unchanged fixtures retain
+`original-v1`; corrected fixtures and the recall prompt use `original-v2`;
 no Kimi/MiniMax corpus is included. The authored variants cover tool-required,
 tool-forbidden, ambiguous, nested-schema, and follow-up wording. These small
 fixtures are diagnostics, not an adversarial fingerprint or a representative
@@ -14,45 +15,51 @@ Each template names source rules, protocol, modes, streaming variants, request
 recipes, token limits, applicability, and a machine-readable oracle. Missing
 required support remains a failure. A predeclared inapplicable case remains a
 visible SKIP. Official source provenance and live calibration are independent:
-the shipped profile is diagnostic, with no enabled release gates. Its observed
-assertion PASS/FAIL measurements remain visible inside INCONCLUSIVE cases.
+the base profile is diagnostic, while dated calibrated profiles enable only
+explicitly recorded model/variant scopes. Observed assertion PASS/FAIL measurements
+remain visible inside INCONCLUSIVE cases.
 
 | ID | Probe and oracle | Request bound and applicability |
 |---|---|---|
 | C01 | Exact `amber`, required envelope, output, terminal | 1, non-thinking, stream and nonstream |
 | C02 | Explicit thinking disabled; no reasoning channel or markers | Attachment in smoke, both stream settings |
 | C03 | Thinking output with separated channels, no demanded thought text | 1, thinking, both stream settings |
-| C04 | Remember an invented lantern color, replay history, recall `amber` | 2, both stream settings |
+| C04 | Remember an invented lantern color, replay history, request lowercase `amber` without punctuation | 2, both stream settings |
 | C05 | Completed JSON object matching original parcel schema | 1, nonstream; truncation is INCONCLUSIVE |
-| C06 | Declared parcel JSON schema | 1, Responses nonstream; Chat json_schema outside profile scope |
+| C06 | Declared parcel JSON schema with typed, single-value enum properties | 1, Responses nonstream; Chat json_schema outside profile scope |
 | C07 | `tool_choice=none`, zero calls | 1, non-thinking, both stream settings |
-| C08 | Required valid call; documented Chat thinking rejection | 1, both modes and stream settings |
-| C09 | Correct named function; documented Chat thinking rejection | 1, both modes and stream settings |
+| C08 | Required valid call; thinking mode expects 4xx on both protocols | 1, both modes and stream settings |
+| C09 | Correct named function; thinking mode expects 4xx on both protocols | 1, both modes and stream settings |
 | C10 | Automatic selection on an intentionally ambiguous prompt | 1; observed trigger, no invented ground-truth label |
 | C11 | Original nested arguments, strict schema and exact fixture values | 1, both stream settings; synthetic function is never executed |
 | C12 | Two calls with distinct IDs, independently reconstructed arguments | 1, both stream settings |
 | C13 | Registered addition result, original ID pairing, final `42` | At most 2, both stream settings |
 | C14 | Thinking tool continuation, complete assistant replay, final `42` | At most 4, thinking nonstream |
-| C15 | Deliberately omit reasoning from replay; observe negative status class | At most 2, thinking nonstream; project-policy diagnostic pending calibration |
+| C15 | Deliberately omit reasoning from replay; record acceptance or rejection | At most 2, thinking nonstream; always diagnostic, no mandatory rejection |
 | C16 | Multiple streamed calls assembled by identity | 1, streaming; interleaving order is not demanded of live generations |
 | C17 | Protocol terminal and lifecycle | Streaming attachment in smoke |
 | C18 | Same `amber` oracle for independent stream/nonstream generations | 1 each; never byte-for-byte generation equality |
 | C19 | Eight-token limit; valid completed/incomplete terminal | 1 each; does not demand truncation |
 | C20 | Nonnegative usage and arithmetic; documented Chat final placement | Streaming attachment in smoke |
 | C21 | Invalid `messages`/`input` shape yields documented status class | 1 nonstream; model and generation bounds remain protected |
-| C22 | Intentionally wrong result call ID, negative status class | At most 2 nonstream; diagnostic pending calibration |
+| C22 | Intentionally wrong result call ID, negative status class | At most 2 nonstream; rejection must follow a valid, exercised setup |
 | C23 | Responses full-history replay with `store=false` | 2 nonstream; Chat outside scope |
-| C24 | Option acceptance versus demonstrated effect | 1 nonstream; acceptance cannot establish behavioral support |
+| C24 | Chat: reject nonstream `stream_options`; Responses: observe option acceptance/effect | 1 nonstream; Responses acceptance cannot establish behavioral support |
 
-C10 and C24 deliberately remain INCONCLUSIVE for behavioral verification even
-when HTTP succeeds. Required/forbidden trigger labels come from C07 and the
+C10, C15, and Responses C24 deliberately remain INCONCLUSIVE for behavioral
+verification. C15 records the continuation status only after successful setup and
+an actual reasoning omission, whether that continuation is accepted or rejected.
+Authentication, rate-limit, transport, and infrastructure failures remain ERROR. Required/forbidden trigger labels come from C07 and the
 required/named/nested cases; ambiguous prompts are excluded from precision/recall
 labels. Repetition retains prompt identity for later cluster-aware comparison.
 
 The exact smoke selection is C01, C03, C05, C07, C11, C13, C14, with C02, C17,
 and C20 attached to compatible existing variants. This reserves 17 requests per
 protocol, 34 per endpoint with both protocols. Every retry and repetition is
-included in planning. A full matrix needs an explicitly larger preset.
+included in planning. The dated two-model `full` preset covers all C01–C24
+catalog variants, with 53 requests per protocol, 106 per endpoint, and 212 total
+reserved for two endpoints. It does not expand every case to every possible mode
+or cover the entire provider API.
 
 # Execution and evidence API
 
@@ -150,8 +157,8 @@ records before persistence. URL userinfo, query, and fragment components are
 removed from structured evidence. A body containing secret-bearing URLs is
 omitted with a reason when arbitrary raw escaping prevents reliable replacement.
 Unexpected assembler errors retain the successful transport capture and become
-ERROR. No evidence is automatically uploaded, and no live inference was used to
-validate this implementation.
+ERROR. No evidence is automatically uploaded. Dated official calibration records
+distinguish live captures from later offline scorer verification.
 
 Review-hardened evidence boundaries: a fully received non-JSON response to a
 successful-response contract records a `RESPONSE_BODY_FORMAT` violation while
@@ -167,6 +174,10 @@ persistence with a reason; their originals remain available only in memory.
 C13/C14 require an observed valid intended fixture call, its matching returned
 result, and a subsequent assistant response. Merely answering `42` can satisfy
 the separate answer metric but cannot pass the continuation contract. C15/C22
-bind rejection to the designated mutated continuation after successful setup;
-rejection of the setup request cannot pass the negative probe. C15 also requires
-returned reasoning to exist before its omission can exercise the mutation.
+bind their observations to the designated mutated continuation after successful
+setup; rejection of the setup request cannot establish mutation behavior. C22
+requires rejection. C15 remains diagnostic and requires returned reasoning to
+exist before its omission can exercise the mutation. The original `negative_history`
+oracle is preserved for replaying historical manifests unchanged. New Responses
+C08/C09 recipes use `status_class_by_mode` to scope 4xx expectations to thinking
+mode; non-thinking mode still requires valid tool calls.
