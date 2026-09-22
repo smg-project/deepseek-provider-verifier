@@ -58,6 +58,7 @@ The new profile's assertions are bounded by the observed workload:
 The immutable model checkpoint remains `unknown`. API observations support this
 captured alias and scope without authenticating weights or enabling
 quality-equivalence gates. Candidate alias mappings are operator declarations,
-not proof of model identity. The optional final installed-CLI live confirmation
-was skipped; the final CLI has only synthetic installed-fixture verification.
-The recorded run is not a final-version quality baseline.
+not proof of model identity. Final installed-CLI live confirmation is separate from this original calibration.
+This record contains only synthetic installed-fixture verification for the final
+CLI; any later live confirmation requires its own dated evidence addendum. The
+recorded run is not a final-version quality baseline.

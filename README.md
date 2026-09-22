@@ -102,7 +102,7 @@ rules. The example's `deepseek-api-2026-09-21` base profile remains diagnostic.
 | Official `deepseek-flash` | Responses: 12 smoke trials, 15 requests; same selected smoke matrix | Measured assertions passed; exact per-rule scope recorded |
 | Official V4 Pro / other models | No live coverage | Untested; no calibrated claim |
 | Candidate / direct engine / SMG | No live coverage | Deferred by operator choice |
-| Installed final CLI | Both protocols, C01 stream/non-stream, four loopback requests | Synthetic fixture only; final live CLI confirmation skipped |
+| Installed final CLI | Both protocols, C01 stream/non-stream, four loopback requests | Synthetic fixture evidence; any later live confirmation is recorded separately |
 
 The official observations comprise **30 HTTP 200 responses and 197 passing
 measured assertions across 24 trials**, collected on September 21, 2026 at

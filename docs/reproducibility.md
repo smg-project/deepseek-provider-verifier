@@ -182,5 +182,6 @@ identifies the original runner and six hashed artifacts. It records only safe
 metadata, original project-authored case identifiers, source URLs/hashes, and
 settings. Preserve raw evidence privately for an authorized audit; hashes alone
 do not let a third party independently reproduce the historical observations.
-The final installed CLI was not live-confirmed. Repeating a reference later is a
-new, timestamped measurement, never a silent replacement of that original run.
+Final installed-CLI live confirmation is not part of this original record. Any
+later confirmation needs a separate dated addendum. Repeating a reference later
+is a new, timestamped measurement, never a silent replacement of that original run.

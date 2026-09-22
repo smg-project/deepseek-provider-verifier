@@ -480,7 +480,7 @@
     "Stateless calibration covers tested full-history replay with store=false, not unsupported-option probes",
     "No reasoning-effort-strength behavioral claim",
     "Candidate/direct-engine/SMG comparison deferred by operator choice",
-    "Optional installed-CLI live confirmation skipped; final CLI tested against synthetic fixture only"
+    "Original calibration contains no final installed-CLI live confirmation; any later confirmation requires separate dated evidence"
   ],
   "source_captures": [
     {
