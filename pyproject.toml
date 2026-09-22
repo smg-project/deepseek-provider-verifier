@@ -53,6 +53,7 @@ packages = ["src/deepseek_provider_verifier"]
 "cases" = "deepseek_provider_verifier/cases"
 "schemas" = "deepseek_provider_verifier/schemas"
 "configs" = "deepseek_provider_verifier/configs"
+"docs/reliability-depth.md" = "deepseek_provider_verifier/docs/reliability-depth.md"
 "docs/self-hosted-compatibility.md" = "deepseek_provider_verifier/docs/self-hosted-compatibility.md"
 "docs/contract-sources.md" = "deepseek_provider_verifier/docs/contract-sources.md"
 "docs/sources" = "deepseek_provider_verifier/docs/sources"

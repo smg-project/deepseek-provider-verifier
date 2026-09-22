@@ -1,6 +1,6 @@
 # Reliability and Depth Suites Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Add opt-in repeatability, long-workflow, schema, and large-input/output suites that produce reproducible, honestly bounded measurements for self-hosted endpoints.
 
@@ -12,7 +12,7 @@
 
 **Workspace:** `/Users/keru/workspace/deepseek-provider-verifier-compatibility`, branch `feat/reliability-depth-suites`. PR #3 has merged; base the new PR on `main` at `e325026` or its verified descendant.
 
-**Execution recommendation:** Native execution in this session, task by task, with one independent whole-branch review. The tasks share catalog metadata, assertion semantics, and reporting interfaces, so a single implementer avoids repeated handoffs. No implementation method has been selected yet.
+**Execution recommendation:** Native execution in this session, task by task, with one independent whole-branch review. The tasks share catalog metadata, assertion semantics, and reporting interfaces, so a single implementer avoids repeated handoffs. The user selected native execution in this session.
 
 ## Global Constraints
 
@@ -105,7 +105,7 @@ The new profile is `profiles/deepseek-depth-2026-09-22-v1.json`. Rules are expli
 - `load_cases()` keeps its C01–C24 default. Explicit IDs append selected depth templates, without materializing unselected large fixtures.
 - In `tests/test_depth_catalog.py`, define `depth_manifest(suite: str, repetitions: int = 1) -> Manifest` for later tests. It loads the committed depth config/profile, changes run.suite/repetitions, selects the preset IDs, and calls build_manifest.
 
-- [ ] **Step 1: Write the failing contract tests.**
+- [x] **Step 1: Write the failing contract tests.**
 
 ```python
 from deepseek_provider_verifier.catalog import load_cases
@@ -135,13 +135,13 @@ Add tests for duplicate prompt IDs, changed prompt hashes, absent requested temp
 unknown metadata version, bool/negative resource limits, and family values that are
 not nonempty strings. Check that selecting R01 does not invoke size generation.
 
-- [ ] **Step 2: Run the new tests and verify failures are missing-feature failures.**
+- [x] **Step 2: Run the new tests and verify failures are missing-feature failures.**
 
 ```sh
 uv run --locked pytest tests/test_depth_catalog.py tests/test_depth_metadata.py -q
 ```
 
-- [ ] **Step 3: Add the descriptors, builder, and presets.**
+- [x] **Step 3: Add the descriptors, builder, and presets.**
 
 R01–R05 are exact-text tasks with intended words amber/violet/cobalt/silver/green.
 R06–R10 require `lookup_fixture`, using the existing harbor/orchard/station data
@@ -177,7 +177,7 @@ continuation. Use output caps 512 for non-thinking and 4096 for thinking. Preset
 request caps equal the table; per-protocol caps are half, total caps are twice.
 Keep five repetitions in the two example configs and zero retries.
 
-- [ ] **Step 4: Verify generated data and hash preservation.**
+- [x] **Step 4: Verify generated data and hash preservation.**
 
 ```sh
 uv run --locked pytest tests/test_depth_catalog.py tests/test_depth_metadata.py tests/test_planner.py tests/test_calibration.py tests/test_compatibility_catalog.py -q
@@ -187,7 +187,7 @@ uv run dpv plan --config configs/depth-repeatability.example.toml
 Assert all twenty prompts have distinct content hashes, four family groups with
 five distinct prompt IDs each, deterministic expansion, and exact planned counts.
 
-- [ ] **Step 5: Commit the independently usable catalog.**
+- [x] **Step 5: Commit the independently usable catalog.**
 
 ```sh
 git add src/deepseek_provider_verifier/depth_catalog.py src/deepseek_provider_verifier/depth_metadata.py src/deepseek_provider_verifier/catalog.py src/deepseek_provider_verifier/records.py cases/depth-prompts.jsonl cases/depth-descriptors.json profiles/deepseek-depth-2026-09-22-v1.json configs/depth-repeatability.example.toml configs/depth-repeatability-expanded.example.toml tests/test_depth_catalog.py tests/test_depth_metadata.py
@@ -208,7 +208,7 @@ git commit -s -m "Add bounded repeatability fixtures and presets"
 - `render_reliability_markdown(analysis: dict) -> str`
 - Add optional keyword-only `manifest: Manifest | None = None` to render_report and write_report_bundle; existing calls retain their behavior.
 
-- [ ] **Step 1: Write failing denominator, uncertainty, and round-trip tests.**
+- [x] **Step 1: Write failing denominator, uncertainty, and round-trip tests.**
 
 ```python
 import pytest
@@ -244,13 +244,13 @@ recoverable from retained result records, report first-contract status unavailab
 do not replace it with the later PASS. HTTP first/eventual accounting still uses
 the lowest retained attempt number per logical request.
 
-- [ ] **Step 2: Run tests and inspect the expected failures.**
+- [x] **Step 2: Run tests and inspect the expected failures.**
 
 ```sh
 uv run --locked pytest tests/test_reliability.py tests/test_cli_reports.py -q
 ```
 
-- [ ] **Step 3: Implement pure counts and rendering.**
+- [x] **Step 3: Implement pure counts and rendering.**
 
 Use the standard Wilson formula, with validation rejecting negative counts,
 counts above total, booleans as counts, and confidence outside (0,1):
@@ -289,7 +289,7 @@ CLI run passes its manifest into report-bundle generation; CLI report loads the
 manifest for run evidence while retaining the comparison-report path. Markdown
 appends reliability analysis only when a supplied manifest has depth-tagged cases.
 
-- [ ] **Step 4: Verify analysis, resume, corruption detection, and legacy rendering.**
+- [x] **Step 4: Verify analysis, resume, corruption detection, and legacy rendering.**
 
 ```sh
 uv run --locked pytest tests/test_reliability.py tests/test_cli_reports.py tests/test_comparison.py tests/test_evidence.py tests/test_runner.py -q
@@ -300,7 +300,7 @@ Changing the authoritative journal must still fail integrity validation. Old
 JSON/Markdown/JUnit rendering without a manifest remains byte-compatible in the
 existing golden tests. Statistical summaries never change the verification exit code.
 
-- [ ] **Step 5: Commit reporting.**
+- [x] **Step 5: Commit reporting.**
 
 ```sh
 git add src/deepseek_provider_verifier/reliability.py src/deepseek_provider_verifier/reports.py src/deepseek_provider_verifier/cli.py docs/metrics.md tests/test_reliability.py tests/test_cli_reports.py
@@ -320,7 +320,7 @@ git commit -s -m "Report repeated trial failure rates and uncertainty"
 - Each recipe adds `expect` with either `{"tools":[{"name":...,"arguments":...}]}` or `{"text":...}`.
 - Parent is the preceding recipe unless `replay_from` declares a prior recipe index. New workflow metadata requires one response per recipe and bounded_steps=true.
 
-- [ ] **Step 1: Add failing workflow tests.**
+- [x] **Step 1: Add failing workflow tests.**
 
 ```python
 from test_depth_catalog import depth_manifest
@@ -346,13 +346,13 @@ result ID; reversed parallel result order; mutated reasoning; sibling output in 
 branch; redirect with a valid body; service error after an earlier answer failure.
 Reversed ordering alone must pass when IDs and call argument multisets are correct.
 
-- [ ] **Step 2: Verify the new tests fail before implementation.**
+- [x] **Step 2: Verify the new tests fail before implementation.**
 
 ```sh
 uv run --locked pytest tests/test_workflows.py -q
 ```
 
-- [ ] **Step 3: Implement the recipe evaluator and branch state restoration.**
+- [x] **Step 3: Implement the recipe evaluator and branch state restoration.**
 
 Use these exact workload shapes:
 
@@ -387,7 +387,7 @@ workflow without at least two such rounds cannot establish accumulated reasoning
 replay; mark that facet INCONCLUSIVE instead of treating empty placeholders as
 proof. Its tool/history task observations remain available.
 
-- [ ] **Step 4: Verify workflow execution and old continuation behavior.**
+- [x] **Step 4: Verify workflow execution and old continuation behavior.**
 
 ```sh
 uv run --locked pytest tests/test_workflows.py tests/test_runner.py tests/test_compatibility_policy.py tests/test_compatibility_execution.py -q
@@ -397,7 +397,7 @@ Run Chat and Responses fixtures through real assemblers for nonstream and SSE,
 including fragmented/interleaved arguments. Preserve historical C13–C16 and P01
 requests/verdicts. Test early stop at the declared deadline/request bound.
 
-- [ ] **Step 5: Commit workflows.**
+- [x] **Step 5: Commit workflows.**
 
 ```sh
 git add src/deepseek_provider_verifier/workflows.py src/deepseek_provider_verifier/depth_catalog.py src/deepseek_provider_verifier/depth_metadata.py src/deepseek_provider_verifier/runner.py src/deepseek_provider_verifier/assertions.py cases/depth-descriptors.json profiles/deepseek-depth-2026-09-22-v1.json configs/depth-workflows.example.toml tests/test_workflows.py
@@ -418,7 +418,7 @@ git commit -s -m "Verify long tool chains and branching histories"
 - `evaluate_schema_probe(case: Case, observations: list[Observation], rules: list[Rule]) -> CaseResult`
 - Schema oracle fields: target=`tool`/`output`, schema, expected_value, strict boolean or omitted, required_support boolean, and depth family metadata.
 
-- [ ] **Step 1: Write failing local-reference and semantic tests.**
+- [x] **Step 1: Write failing local-reference and semantic tests.**
 
 ```python
 import pytest
@@ -449,13 +449,13 @@ oneOf matching two branches, optional keys under strict mode, 400/422 rejection,
 fixture-incorrect values. Baseline rejection must fail; optional subset rejection
 must be visible without claiming the feature works.
 
-- [ ] **Step 2: Run schema tests to confirm missing functionality.**
+- [x] **Step 2: Run schema tests to confirm missing functionality.**
 
 ```sh
 uv run --locked pytest tests/test_schema_cases.py -q
 ```
 
-- [ ] **Step 3: Implement the 16-feature by 4-target/strict matrix.**
+- [x] **Step 3: Implement the 16-feature by 4-target/strict matrix.**
 
 Feature order: required object, optional absent, optional present, nullable null,
 nullable nonnull, enum, const, array bounds, numeric bounds, string bounds,
@@ -483,7 +483,7 @@ optional rejection can pass the probe's observation contract but must never
 produce a supported-feature or schema-validity score of 1. Accepted output must
 satisfy both schema and intended fixture. No new official status expectation is added.
 
-- [ ] **Step 4: Verify matrix inventory and all seeded schema faults.**
+- [x] **Step 4: Verify matrix inventory and all seeded schema faults.**
 
 ```sh
 uv run --locked pytest tests/test_schema_cases.py tests/test_assertions.py tests/test_compatibility_policy.py tests/test_depth_catalog.py -q
@@ -493,7 +493,7 @@ Assert 128 planned trials, 32 Chat applicability skips, and 96 actual requests
 for a fixture provider with no early failures. Exercise optional rejection and
 accepted-invalid fixtures separately in JSON/Markdown/JUnit results.
 
-- [ ] **Step 5: Commit schema coverage.**
+- [x] **Step 5: Commit schema coverage.**
 
 ```sh
 git add src/deepseek_provider_verifier/schema_cases.py src/deepseek_provider_verifier/depth_catalog.py src/deepseek_provider_verifier/depth_metadata.py src/deepseek_provider_verifier/assertions.py cases/depth-descriptors.json profiles/deepseek-depth-2026-09-22-v1.json configs/depth-schemas.example.toml tests/test_schema_cases.py
@@ -512,7 +512,7 @@ git commit -s -m "Add schema keyword and strict-subset probes"
 - Use httpx Request construction to inspect the exact outgoing JSON bytes before reserving/sending an attempt.
 - `plan_resource_summary(manifest: Manifest) -> dict` produces derived byte ceilings outside the hashed legacy Manifest record.
 
-- [ ] **Step 1: Add failing preflight and oversized-chunk tests.**
+- [x] **Step 1: Add failing preflight and oversized-chunk tests.**
 
 ```python
 import httpx
@@ -541,13 +541,13 @@ complete valid response exactly at the cap. Assert the stream closes, retained
 raw bytes do not exceed the cap, interrupted delivery is not marked complete,
 and reports/redaction do not expose a secret from the partial body.
 
-- [ ] **Step 2: Verify failure before changing transport.**
+- [x] **Step 2: Verify failure before changing transport.**
 
 ```sh
 uv run --locked pytest tests/test_resource_limits.py -q
 ```
 
-- [ ] **Step 3: Implement guards without changing legacy request serialization.**
+- [x] **Step 3: Implement guards without changing legacy request serialization.**
 
 Before debiting a request, measure `httpx.Request("POST", url, json=payload).content`.
 Do not send or reserve a request that exceeds its cap; emit REQUEST_BYTE_LIMIT and
@@ -566,7 +566,7 @@ conservative aggregate byte ceilings computed from caps and request ceilings.
 These are outside the legacy manifest schema; the case metadata containing the
 caps is already hashed. Runtime checks include accumulated multi-turn history.
 
-- [ ] **Step 4: Verify limits and transport regressions.**
+- [x] **Step 4: Verify limits and transport regressions.**
 
 ```sh
 uv run --locked pytest tests/test_resource_limits.py tests/test_transport.py tests/test_runner.py tests/test_release_faults.py tests/test_task3_review_fixes.py -q
@@ -576,7 +576,7 @@ Verify an old case without depth metadata emits the same requests and result as
 before. A local byte cap must not be reported as a server rejection or as a
 successfully reached generation limit.
 
-- [ ] **Step 5: Commit resource controls.**
+- [x] **Step 5: Commit resource controls.**
 
 ```sh
 git add src/deepseek_provider_verifier/depth_metadata.py src/deepseek_provider_verifier/runner.py src/deepseek_provider_verifier/transport.py src/deepseek_provider_verifier/cli.py tests/test_resource_limits.py tests/test_transport.py tests/test_runner.py
@@ -597,7 +597,7 @@ git commit -s -m "Bound outgoing payloads and retained response captures"
 - `evaluate_size_case(case: Case, observations: list[Observation], rules: list[Rule]) -> CaseResult`
 - Optional per-endpoint deployment declarations live in the new size rules' free-form `conditions.deployment_limits`, keyed by endpoint name, with context_tokens/output_tokens positive integers. Empty by default; do not add Endpoint defaults or infer capacities from model names.
 
-- [ ] **Step 1: Write failing exact-size and generation-proof tests.**
+- [x] **Step 1: Write failing exact-size and generation-proof tests.**
 
 ```python
 from deepseek_provider_verifier.size_cases import sized_text, numbered_prefix
@@ -631,13 +631,13 @@ unknown usage, and differing endpoint declarations. No byte-to-token estimate
 is used as a measurement. Declared output maxima below a selected positive cap
 must fail planning instead of silently changing the request.
 
-- [ ] **Step 2: Confirm new size tests fail before implementation.**
+- [x] **Step 2: Confirm new size tests fail before implementation.**
 
 ```sh
 uv run --locked pytest tests/test_size_cases.py -q
 ```
 
-- [ ] **Step 3: Build descriptors and evaluate actual measurements.**
+- [x] **Step 3: Build descriptors and evaluate actual measurements.**
 
 L01–L04 are 16/64/256/1024 KiB single-user inputs. L05–L08 distribute the same
 respective total authored byte sizes over four user turns; the first three
@@ -676,7 +676,7 @@ observations already stored in CaseResult; do not reread raw response bodies for
 reporting. A user may copy the depth profile and add deployment_limits explicitly;
 the declared values and endpoint mapping become part of the profile hash.
 
-- [ ] **Step 4: Verify large descriptors, bounded execution, and exact inventories.**
+- [x] **Step 4: Verify large descriptors, bounded execution, and exact inventories.**
 
 ```sh
 uv run --locked pytest tests/test_size_cases.py tests/test_resource_limits.py tests/test_depth_catalog.py tests/test_reliability.py -q
@@ -687,7 +687,7 @@ Verify 1 MiB fixture generation offline, but use compact synthetic responses for
 unit tests. Confirm the ordinary repeatability plan does not build or include
 large strings and that all examples retain serial execution/zero retries.
 
-- [ ] **Step 5: Commit size probes.**
+- [x] **Step 5: Commit size probes.**
 
 ```sh
 git add src/deepseek_provider_verifier/size_cases.py src/deepseek_provider_verifier/depth_catalog.py src/deepseek_provider_verifier/depth_metadata.py src/deepseek_provider_verifier/assertions.py src/deepseek_provider_verifier/reliability.py cases/depth-descriptors.json profiles/deepseek-depth-2026-09-22-v1.json configs/depth-sizes.example.toml configs/depth-sizes-large.example.toml tests/test_size_cases.py
@@ -706,7 +706,7 @@ git commit -s -m "Measure bounded large-input and output workloads"
 - New examples select the named depth profile/preset; no new live workflow or automatic schedule is introduced.
 - Installed smoke: select R01 on both protocols, two repetitions, non-thinking/nonstream; its authored answer is amber so the existing synthetic provider can serve all four requests.
 
-- [ ] **Step 1: Write failing integration and installed-release assertions.**
+- [x] **Step 1: Write failing integration and installed-release assertions.**
 
 ```python
 from test_depth_catalog import depth_manifest
@@ -727,7 +727,7 @@ per family and assert verdict, JSON observation, Markdown detail, and JUnit stat
 agree. Include a mixed-success repeatability run with an interrupted/resumed trial
 and prove the derived report does not lose its earlier request failure.
 
-- [ ] **Step 2: Extend release checks and document limits.**
+- [x] **Step 2: Extend release checks and document limits.**
 
 In scripts/check_release.py, load all seven presets using the freshly installed
 wheel outside the checkout and verify the inventory table. Use a copied custom
@@ -743,7 +743,7 @@ examples, per-suite budgets, family semantics, confidence assumptions, optional
 feature rejection, size units, local resource caps, deployment-limit declarations,
 and offline-versus-live evidence. New fixtures have no official calibration claim.
 
-- [ ] **Step 3: Run complete verification once the implementation is stable.**
+- [x] **Step 3: Run complete verification once the implementation is stable.**
 
 ```sh
 uv run --locked ruff check .
@@ -788,6 +788,5 @@ file features. All new metadata has an owner and validator. Historical manifests
 and journals remain unchanged; derived reports are recomputed from validated
 sources. Each of the five review risks has explicit tests in its owning task.
 
-Next action after plan review and execution-method selection: begin Task 1 with
-failing tests. Recommended method is Native execution followed by the independent
-whole-branch review in Task 7.
+Implementation and offline package verification are complete. Independent whole-branch
+review and PR delivery are the remaining Task 7 gates.

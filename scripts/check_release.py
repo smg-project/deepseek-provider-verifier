@@ -1,4 +1,4 @@
-"""Inspect wheel/sdist and run the installed four-request example off checkout."""
+"""Inspect distributions and verify installed legacy/depth suites off checkout."""
 
 import argparse
 import json
@@ -19,6 +19,70 @@ def execute(args, cwd, env):
     )
 
 
+def run_fixture(python, dpv, outside, env, config_text, evidence, profile=None):
+    profile_args = ["--profile", str(profile)] if profile else []
+    with socket.socket() as reserve:
+        reserve.bind(("127.0.0.1", 0))
+        port = reserve.getsockname()[1]
+    (outside / "fixture.toml").write_text(config_text.replace(":8765/", f":{port}/"))
+    server = subprocess.Popen(
+        [
+            python,
+            "-m",
+            "deepseek_provider_verifier.synthetic_fixture",
+            "--port",
+            str(port),
+            "--max-requests",
+            "4",
+        ],
+        cwd=outside,
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+    )
+    try:
+        for _ in range(100):
+            if server.poll() is not None:
+                raise RuntimeError("Installed fixture stopped before readiness")
+            try:
+                with socket.create_connection(("127.0.0.1", port), timeout=0.1):
+                    break
+            except OSError:
+                time.sleep(0.05)
+        else:
+            raise RuntimeError("Installed fixture readiness timed out")
+        execute([dpv, "plan", "--config", "fixture.toml", *profile_args], outside, env)
+        execute(
+            [
+                dpv,
+                "run",
+                "--config",
+                "fixture.toml",
+                "--endpoint",
+                "fixture",
+                "--out",
+                evidence,
+                *profile_args,
+            ],
+            outside,
+            env,
+        )
+        server.wait(timeout=10)
+        assert server.returncode == 0
+        result = json.loads((outside / evidence / "summary.json").read_text())
+        assert result["complete"] and result["exit_code"] == 0
+        assert result["counts"]["PASS"] == 4
+        assert sum(result["counts"].values()) == 4
+        assert result["budget_usage"] == {"fixture": 4}
+    finally:
+        if server.poll() is None:
+            server.terminate()
+            server.wait(timeout=10)
+        if server.stdout:
+            server.stdout.close()
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--uv", default="uv")
@@ -36,6 +100,7 @@ def main():
                         in names
                     ), path
         assert "deepseek_provider_verifier/synthetic_fixture.py" in names
+        assert "deepseek_provider_verifier/docs/reliability-depth.md" in names
     with tarfile.open(sdist) as archive:
         names = {name.split("/", 1)[-1] for name in archive.getnames()}
         for file in [
@@ -137,69 +202,82 @@ def main():
             outside,
             env,
         )
-        with socket.socket() as reserve:
-            reserve.bind(("127.0.0.1", 0))
-            port = reserve.getsockname()[1]
-        (outside / "fixture.toml").write_text(
-            resource.stdout.replace(":8765/", f":{port}/")
-        )
-        server = subprocess.Popen(
-            [
-                python,
-                "-m",
-                "deepseek_provider_verifier.synthetic_fixture",
-                "--port",
-                str(port),
-                "--max-requests",
-                "4",
-            ],
-            cwd=outside,
-            env=env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-        )
-        try:
-            for _ in range(100):
-                if server.poll() is not None:
-                    raise RuntimeError("Installed fixture stopped before readiness")
-                try:
-                    with socket.create_connection(("127.0.0.1", port), timeout=0.1):
-                        break
-                except OSError:
-                    time.sleep(0.05)
-            else:
-                raise RuntimeError("Installed fixture readiness timed out")
-            execute([dpv, "plan", "--config", "fixture.toml"], outside, env)
-            execute(
+        run_fixture(python, dpv, outside, env, resource.stdout, "evidence")
+        inventory = [
+            ("repeatability", "repeatability", 200, 250),
+            ("repeatability-expanded", "repeatability-expanded", 800, 1000),
+            ("workflows-small", "workflows", 32, 160),
+            ("workflows-full", "workflows", 56, 384),
+            ("schemas", "schemas", 128, 128),
+            ("sizes-small", "sizes", 24, 48),
+            ("sizes-large", "sizes-large", 44, 92),
+        ]
+        depth_config = None
+        depth_profile = None
+        for suite, config_name, trial_count, request_count in inventory:
+            text = execute(
                 [
-                    dpv,
-                    "run",
-                    "--config",
-                    "fixture.toml",
-                    "--endpoint",
-                    "fixture",
-                    "--out",
-                    "evidence",
+                    python,
+                    "-c",
+                    f'from importlib.resources import files; print(files("deepseek_provider_verifier").joinpath("configs", "depth-{config_name}.example.toml").read_text(), end="")',
                 ],
                 outside,
                 env,
+            ).stdout
+            if suite == "workflows-full":
+                text = text.replace(
+                    'suite = "workflows-small"', 'suite = "workflows-full"'
+                )
+            config = outside / f"depth-{suite}.toml"
+            config.write_text(text)
+            planned = json.loads(
+                execute([dpv, "plan", "--config", str(config)], outside, env).stdout
             )
-            server.wait(timeout=10)
-            assert server.returncode == 0
-            result = json.loads((outside / "evidence/summary.json").read_text())
-            assert result["complete"] and result["exit_code"] == 0
-            assert result["counts"]["PASS"] == 4
-            assert sum(result["counts"].values()) == 4
-            assert result["budget_usage"] == {"fixture": 4}
-        finally:
-            if server.poll() is None:
-                server.terminate()
-                server.wait(timeout=10)
-            if server.stdout:
-                server.stdout.close()
+            m = planned["manifest"]
+            assert (len(m["cases"]), m["request_ceiling"]) == (
+                trial_count,
+                request_count,
+            )
+            assert m["budgets"]["retries"] == 0 and m["budgets"]["concurrency"] == 1
+            assert (
+                planned["resource_summary"]["aggregate_request_byte_ceiling"]
+                == request_count * 8388608
+            )
+            if suite == "repeatability":
+                depth_config, depth_profile = text, m["profile_snapshot"]
+        depth_profile["presets"] = {
+            "installed-smoke": {
+                **depth_profile["presets"]["repeatability"],
+                "case_ids": ["R01"],
+                "max_requests_per_protocol": 2,
+                "max_requests_per_endpoint": 4,
+                "max_total_requests": 8,
+            }
+        }
+        custom = outside / "depth-profile.json"
+        custom.write_text(json.dumps(depth_profile))
+        text = (
+            depth_config.replace('suite = "repeatability"', 'suite = "installed-smoke"')
+            .replace("repetitions = 5", "repetitions = 2")
+            .replace("[endpoints.candidate]", "[endpoints.fixture]")
+            .replace("http://localhost:30000/v1", "http://127.0.0.1:8765/v1")
+            .replace("your-served-deepseek-model", "synthetic-fixture-model")
+        )
+        run_fixture(python, dpv, outside, env, text, "depth-evidence", custom)
+        analysis = json.loads((outside / "depth-evidence/reliability.json").read_text())
+        assert len(analysis["groups"]) == 2
+        assert {g["protocol"] for g in analysis["groups"]} == {"chat", "responses"}
+        assert sum(g["http_attempts"] for g in analysis["groups"]) == 4
+        assert all(
+            g["counts"]["PASS"] == 2 and g["distinct_prompts"] == 1
+            for g in analysis["groups"]
+        )
+        regenerated = execute(
+            [dpv, "report", "depth-evidence", "--format", "markdown"], outside, env
+        ).stdout
+        assert regenerated == (outside / "depth-evidence/summary.md").read_text()
     print(
-        "Wheel/sdist contents verified; fresh installed CLI outside checkout: 4/4 synthetic trials PASS, 4 requests."
+        "Wheel/sdist verified; seven depth plans; installed legacy 4/4 and depth 4/4 synthetic trials PASS, eight local requests total."
     )
 
 

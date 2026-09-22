@@ -112,3 +112,12 @@ rerun, the latest result cannot reconstruct the original contract assessment;
 its first-contract status is unavailable. The first HTTP attempt remains the
 lowest retained attempt number. Reports recompute analysis from validated sources;
 the sidecar is never trusted as authoritative evidence.
+
+
+Depth capability and size observations are copied from typed assertion results into
+content-free derived report rows. Schema rejection never supplies a schema-validity
+success. Output utilization uses provider-reported output minus reasoning tokens;
+missing or invalid usage cannot establish a generation boundary. Declared context
+and output maxima are independent operator inputs. Literal byte sizes, visible
+record counts, selected caps, and deployment utilization are separate fields.
+See [size semantics and local controls](reliability-depth.md#large-inputs-and-outputs).

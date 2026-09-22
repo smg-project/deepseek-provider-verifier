@@ -59,6 +59,10 @@ def evaluate_case(
         from .compatibility import evaluate_compatibility
 
         return evaluate_compatibility(case, observations, applicable, policies.pop())
+    if case.oracle.get("depth", {}).get("family", "").startswith("repeatability."):
+        from .compatibility import _positive
+
+        return _positive(case, observations, applicable)
     return _evaluate_standard(case, observations, rules)
 
 

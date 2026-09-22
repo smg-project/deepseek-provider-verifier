@@ -191,3 +191,16 @@ including length boundaries, and Responses typed/const-only schemas with strict
 on or omitted. See [coverage and scoring](self-hosted-compatibility.md) for the
 exact matrix, reference dates, and default versus strict parity behavior. Core
 C01–C24 and the historical profiles retain their prior behavior.
+
+
+## Opt-in depth catalog
+
+`cases/depth-prompts.jsonl` holds hashed `depth-v1` authored prompts;
+`cases/depth-descriptors.json` holds small versioned descriptors. Explicit IDs
+expand R01–R40 repeatability, W01–W07 workflows, S01–S64 schema probes, and
+L01–L11 size ramps. The default `load_cases()` remains C01–C24 only. Large text
+is materialized only when selected. Depth metadata is validated before execution;
+its resource caps and semantic expectations participate in the existing hashes.
+See [depth suites](reliability-depth.md) for inventories, measurement limits,
+per-endpoint declarations, and examples. `reliability.json` is derived and stays
+outside the canonical result/checkpoint schema. Historical records are unchanged.
