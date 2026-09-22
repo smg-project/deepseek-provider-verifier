@@ -116,6 +116,16 @@ unchanged strings retain their original formatting. Invalid JSON is not repaired
 only literal or escaped supplied-secret occurrences are removed. The input event
 and raw replay data are never mutated by this operation.
 
+Structured and embedded-JSON traversal is limited to 32 levels. A value that
+exceeds this inspection bound, or causes the JSON parser to exceed its recursion
+limit, becomes `[OMITTED: redaction depth limit]` rather than being passed through
+with potentially encoded credentials. When complete body credential inspection
+cannot fit this bound, `body_base64` is omitted and `body_omission_reason` explains
+why; original bytes remain in memory. A recursion failure while decoding the
+HTTP JSON body itself returns `JSON_DEPTH_LIMIT` with status and raw bytes retained.
+The runner must preserve that transport/body error, rather than scoring a missing
+sanitized value as a provider capability failure.
+
 Raw body persistence also removes detected credential values and standard JSON
 encodings of the supplied secret, including secret echoes split across chunks.
 An escaped lone-surrogate credential has no UTF-8 representation; its ASCII JSON

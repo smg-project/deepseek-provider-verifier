@@ -285,3 +285,87 @@ def test_lone_surrogate_credential_keeps_capture_and_redacts_wire_escape(stream)
     assert "[REDACTED]" in base64.b64decode(attempt.body_base64).decode()
     assert attempt.error is None
     assert attempt.model_dump_json()
+
+
+def test_embedded_json_parse_depth_preserves_attempt_and_omits_uninspectable_text():
+    content = "[" * 1100 + '"a\\"b"' + "]" * 1100
+    body = json.dumps({"choices": [{"message": {"content": content}}]}).encode()
+    attempt = run(lambda req: httpx.Response(200, content=body), secret='a"b')
+    assert attempt.status_code == 200
+    assert attempt.raw_json["choices"][0]["message"]["content"] == content
+    assert attempt.raw_body == body
+    assert (
+        attempt.decoded_json["choices"][0]["message"]["content"]
+        == "[OMITTED: redaction depth limit]"
+    )
+    assert attempt.body_base64 == ""
+    assert attempt.body_omission_reason
+    assert attempt.model_dump_json()
+
+
+def test_decoded_container_traversal_depth_is_bounded_without_leaking_credentials():
+    body = b"[" * 600 + b'{"password":"hidden-credential"}' + b"]" * 600
+    attempt = run(lambda req: httpx.Response(200, content=body))
+    assert attempt.status_code == 200
+    assert attempt.raw_body == body
+    assert "hidden-credential" not in attempt.model_dump_json()
+    assert "[OMITTED: redaction depth limit]" in attempt.model_dump_json()
+    assert attempt.body_base64 == ""
+    assert attempt.body_omission_reason
+
+
+def test_uninspectable_sse_data_omits_encoded_secrets_at_persistence_boundary():
+    from deepseek_provider_verifier.sse import decode_sse
+
+    wire = (
+        b"data: "
+        + b"[" * 1100
+        + b'{"text":"a\\"b","api_key":"hidden-credential"}'
+        + b"]" * 1100
+        + b"\n\n"
+    )
+    attempt = run(
+        lambda req: httpx.Response(
+            200, headers={"content-type": "text/event-stream"}, stream=Chunks([wire])
+        ),
+        secret='a"b',
+    )
+    events = decode_sse(attempt.raw_chunks)
+    safe = attempt.safe_evidence([event.model_dump(mode="json") for event in events])
+    assert safe[0]["data"] == "[OMITTED: redaction depth limit]"
+    assert events[0].raw_bytes == wire
+    assert attempt.raw_body == wire
+    assert attempt.body_base64 == ""
+    assert "hidden-credential" not in json.dumps(safe)
+
+
+def test_malformed_escaped_event_data_keeps_secret_safe_without_repair():
+    from deepseek_provider_verifier.sse import decode_sse
+
+    wire = b'data: {"text":"a\\"b",broken}\n\n'
+    attempt = run(
+        lambda req: httpx.Response(
+            200, headers={"content-type": "text/event-stream"}, stream=Chunks([wire])
+        ),
+        secret='a"b',
+    )
+    events = decode_sse(attempt.raw_chunks)
+    safe = attempt.safe_evidence([event.model_dump(mode="json") for event in events])
+    assert safe[0]["data"] == '{"text":"[REDACTED]",broken}'
+    assert events[0].raw_bytes == wire
+    with pytest.raises(ValueError):
+        json.loads(safe[0]["data"])
+
+
+def test_json_parser_recursion_failure_preserves_status_and_omits_body():
+    # Exceed the interpreter's JSON parser depth, independently of redactor depth.
+    depth = 10000
+    body = b"[" * depth + b'{"api_key":"hidden-credential"}' + b"]" * depth
+    with pytest.raises(RecursionError):
+        json.loads(body)
+    attempt = run(lambda req: httpx.Response(200, content=body))
+    assert attempt.status_code == 200
+    assert attempt.raw_body == body
+    assert attempt.error["type"] == "JSON_DEPTH_LIMIT"
+    assert attempt.body_base64 == ""
+    assert attempt.body_omission_reason

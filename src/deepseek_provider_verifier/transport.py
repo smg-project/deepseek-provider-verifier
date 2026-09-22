@@ -77,7 +77,7 @@ def _record_events(
             result.timings["first_event_seconds"] = elapsed
         try:
             value = strict_json_loads(event.data or "")
-        except ValueError:
+        except (ValueError, RecursionError):
             continue
         if (
             _meaningful(value)
@@ -172,6 +172,11 @@ async def send_request(
                 try:
                     result.raw_json = strict_json_loads(result.raw_body)
                     result.decoded_json = result.safe_evidence(result.raw_json)
+                except RecursionError:
+                    result.error = {
+                        "type": "JSON_DEPTH_LIMIT",
+                        "message": "JSON decoding depth exceeded; raw bytes retained in memory",
+                    }
                 except (ValueError, UnicodeDecodeError) as error:
                     result.error = {
                         "type": "INVALID_JSON",

@@ -114,20 +114,44 @@ _SENSITIVE = re.compile(
 )
 
 
-def redact(value: Any, secret: str | None = None) -> Any:
-    """Redact structured values and JSON-encoded values without mutating inputs.
+_MAX_REDACTION_DEPTH = 32
+_REDACTION_OMITTED = "[OMITTED: redaction depth limit]"
 
-    SSE data and tool argument strings can themselves contain JSON. Decode those
-    layers for redaction, re-encoding only strings whose contents changed. Invalid
-    JSON stays invalid; it only receives literal/escaped supplied-secret removal.
-    """
+
+class _RedactionDepthExceeded(ValueError):
+    pass
+
+
+def _bounded_json(value: str, remaining_depth: int) -> Any:
+    """Inspect decoded depth iteratively before recursive redaction/comparison."""
+    try:
+        decoded = strict_json_loads(value)
+    except RecursionError as error:
+        raise _RedactionDepthExceeded from error
+    pending = [(decoded, 0)]
+    while pending:
+        item, depth = pending.pop()
+        if depth >= remaining_depth:
+            raise _RedactionDepthExceeded
+        if isinstance(item, dict):
+            pending.extend((child, depth + 1) for child in item.values())
+        elif isinstance(item, list):
+            pending.extend((child, depth + 1) for child in item)
+    return decoded
+
+
+def _redact(value: Any, secret: str | None, depth: int) -> Any:
+    if depth >= _MAX_REDACTION_DEPTH:
+        return _REDACTION_OMITTED
     if isinstance(value, str):
         try:
-            decoded = strict_json_loads(value)
+            decoded = _bounded_json(value, _MAX_REDACTION_DEPTH - depth)
+        except _RedactionDepthExceeded:
+            return _REDACTION_OMITTED
         except ValueError:
             decoded = None
         if isinstance(decoded, (dict, list, str)):
-            safe = redact(decoded, secret)
+            safe = _redact(decoded, secret, depth + 1)
             if safe != decoded:
                 return json.dumps(safe, ensure_ascii=True)
         if secret:
@@ -144,14 +168,24 @@ def redact(value: Any, secret: str | None = None) -> Any:
         return value
     if isinstance(value, dict):
         return {
-            redact(str(k), secret): "[REDACTED]"
+            _redact(str(k), secret, depth + 1): "[REDACTED]"
             if _SENSITIVE.search(str(k))
-            else redact(v, secret)
+            else _redact(v, secret, depth + 1)
             for k, v in value.items()
         }
     if isinstance(value, (list, tuple)):
-        return [redact(v, secret) for v in value]
+        return [_redact(v, secret, depth + 1) for v in value]
     return value
+
+
+def redact(value: Any, secret: str | None = None) -> Any:
+    """Redact structured and embedded JSON with a bounded, safe omission fallback.
+
+    Raw inputs are never mutated. Uninspectable strings/subtrees are replaced by
+    an explicit omission marker, never passed through with possibly encoded
+    credentials. Invalid shallow JSON stays invalid after known-secret removal.
+    """
+    return _redact(value, secret, 0)
 
 
 class AttemptPayload(CaptureRecord):
@@ -191,24 +225,44 @@ class AttemptPayload(CaptureRecord):
             return
         secrets = {self._secret} if self._secret else set()
 
-        def collect(value: Any, sensitive: bool = False) -> None:
+        def collect(value: Any, sensitive: bool = False, depth: int = 0) -> None:
+            if depth >= _MAX_REDACTION_DEPTH:
+                raise _RedactionDepthExceeded
             if isinstance(value, dict):
                 for key, item in value.items():
-                    collect(item, sensitive or bool(_SENSITIVE.search(str(key))))
+                    collect(
+                        item, sensitive or bool(_SENSITIVE.search(str(key))), depth + 1
+                    )
             elif isinstance(value, list):
                 for item in value:
-                    collect(item, sensitive)
-            elif sensitive and isinstance(value, str) and value:
-                secrets.add(value)
-
-        collect(self.raw_json)
-        if "text/event-stream" in self.headers.get("content-type", "").lower():
-            for event in decode_sse(self.raw_chunks):
-                if event.data:
+                    collect(item, sensitive, depth + 1)
+            elif isinstance(value, str) and value:
+                if sensitive:
+                    secrets.add(value)
+                else:
                     try:
-                        collect(json.loads(event.data))
+                        decoded = _bounded_json(value, _MAX_REDACTION_DEPTH - depth)
+                    except _RedactionDepthExceeded:
+                        raise
                     except ValueError:
-                        pass
+                        return
+                    if isinstance(decoded, (dict, list, str)):
+                        collect(decoded, depth=depth + 1)
+
+        try:
+            if self.error and self.error.get("type") == "JSON_DEPTH_LIMIT":
+                raise _RedactionDepthExceeded
+            collect(self.raw_json)
+            if "text/event-stream" in self.headers.get("content-type", "").lower():
+                for event in decode_sse(self.raw_chunks):
+                    if event.data:
+                        collect(event.data)
+        except _RedactionDepthExceeded:
+            self.body_base64 = ""
+            self.body_omission_reason = (
+                "Redaction depth limit exceeded; raw bytes retained in memory only"
+            )
+            return
         safe = self.raw_body
         encodings = set()
         for secret in secrets:
