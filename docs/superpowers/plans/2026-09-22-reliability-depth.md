@@ -761,7 +761,7 @@ zero live calls. Existing compatibility profiles retain their 99/37 trial matric
 Run the repository CI on Python 3.11 and 3.14. Re-run broader checks only after
 code/data changes, failures, or a specific unresolved concern.
 
-- [ ] **Step 4: Independent whole-branch review, fix findings, then commit.**
+- [x] **Step 4: Independent whole-branch review, fix findings, then commit.**
 
 Use requesting-code-review with a clean-context reviewer and the approved spec,
 this plan, base/head commits, and explicit review focus above. Reproduce each
@@ -788,5 +788,7 @@ file features. All new metadata has an owner and validator. Historical manifests
 and journals remain unchanged; derived reports are recomputed from validated
 sources. Each of the five review risks has explicit tests in its owning task.
 
-Implementation and offline package verification are complete. Independent whole-branch
-review and PR delivery are the remaining Task 7 gates.
+Implementation, offline package verification, and independent whole-branch review are
+complete. The review found one HTTP 402 classification defect; a regression test
+failed on both protocols before the fix and all 695 tests pass afterward.
+PR delivery and GitHub checks are the remaining Task 7 gate.

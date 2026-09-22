@@ -141,3 +141,18 @@ def test_mixed_trials_keep_original_http_failure_after_resume(tmp_path):
     assert g["first_http_2xx_rate"]["value"] == pytest.approx(2 / 3)
     assert g["eventual_http_2xx_rate"]["value"] == 1
     assert g["first_contract"]["counts"]["MISSING"] == 1
+
+
+@pytest.mark.parametrize("protocol", ["chat", "responses"])
+@pytest.mark.parametrize("status", [401, 402, 403, 408, 429, 500])
+def test_repeatability_service_errors_stay_unavailable_and_resumable(status, protocol):
+    m = selected("repeatability", "R01", protocol)
+    result = run(
+        m, lambda req: httpx.Response(status, json={"error": "service unavailable"})
+    )
+    assert result.case_results[0].status == "ERROR"
+    assert result.case_results[0].completed is False
+    assert result.exit_code == 2
+    group = build_reliability(m, result)["groups"][0]
+    assert group["failure_rate"]["value"] is None
+    assert group["end_to_end_success"]["unavailable"] == 1
