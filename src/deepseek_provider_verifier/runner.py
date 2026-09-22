@@ -581,6 +581,8 @@ async def execute_manifest(
                     break
                 follow_tools = bool(obs.tools and case.oracle.get("continue_tools"))
                 follow_recipe = recipe_index + 1 < len(case.steps)
+                if case.oracle.get("bounded_steps") and not follow_recipe:
+                    break
                 if not follow_tools and not follow_recipe:
                     break
                 if step + 1 >= case.max_requests:
@@ -592,6 +594,17 @@ async def execute_manifest(
                     else None
                 )
                 try:
+                    if follow_recipe and "replay_from" in case.steps[recipe_index + 1]:
+                        source = case.steps[recipe_index + 1]["replay_from"]
+                        obs = observations[source]
+                        history = copy.deepcopy(
+                            obs.request_payload[
+                                "messages" if case.protocol == "chat" else "input"
+                            ]
+                        )
+                        follow_tools = bool(
+                            obs.tools and case.oracle.get("continue_tools")
+                        )
                     _replay(case, obs, history, follow_tools, mutation)
                 except (ValueError, TypeError, RecursionError):
                     # Invalid calls remain observed contract failures, never executed.

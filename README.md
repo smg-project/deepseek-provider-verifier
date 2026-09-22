@@ -4,24 +4,46 @@ DeepSeek Provider Verifier (`dpv`) is a community-owned, MIT-licensed project fo
 
 ## Quickstart
 
-Install the project with Python 3.11 or newer, then inspect the bundled smoke workload without credentials or network traffic:
+Install with Python 3.11 or newer and plan the self-hosted compatibility suite
+without credentials or network traffic:
 
 ```sh
 uv sync
-uv run dpv plan --config configs/providers.example.toml
+uv run dpv plan --config configs/self-hosted.example.toml
 ```
 
-`plan` expands the cases and prints missing environment-variable names, request ceilings, output-token ceilings, concurrency, and deadlines. It never creates an HTTP client. The bundled smoke preset is fixed at 17 possible requests per protocol, 34 per endpoint, 68 total across the two example endpoints, zero retries, concurrency one, and at most four requests in a conversation. These are hard ceilings rather than cost predictions. `dpv` makes no monetary estimate unless an operator independently supplies pricing.
-
-For a live run, copy the example configuration, set only the named environment variable, select the endpoint explicitly, and choose a new output directory:
+Copy the config and set your endpoint URL, served model label, release, and
+authentication. Then select the candidate explicitly and use a new output directory:
 
 ```sh
-cp configs/providers.example.toml providers.toml
-export DEEPSEEK_API_KEY='set-this-outside-shell-history'
-uv run dpv run --config providers.toml --endpoint reference --out runs/reference
+cp configs/self-hosted.example.toml providers.toml
+uv run dpv plan --config providers.toml
+uv run dpv run --config providers.toml --endpoint candidate --out runs/candidate
+uv run dpv report runs/candidate --format markdown
 ```
 
-Credentials are read from environment variables, never command-line values, manifests, reports, or evidence records. Existing evidence directories are refused unless `--resume` is explicit and the newly planned workload matches the stored manifest.
+The example uses `deepseek-self-hosted-2026-09-22-v1`. Accepted requests must
+produce valid fixture results. Working extensions and stricter boundary
+validation appear as compatibility differences. Choose
+`deepseek-official-parity-2026-09-22-v1` to additionally require the dated official
+HTTP behavior. Both cover the four observed discrepancy families: reasoning
+history, identifier validation, thinking-mode forced tools, and strict schemas.
+See [probe coverage, scoring, and reference limits](docs/self-hosted-compatibility.md).
+
+The full compatibility preset plans 99 trials and at most 123 requests for one
+endpoint with both protocols. Set `suite = "probes"` for the focused 37-trial,
+43-request matrix. Skips and early failures reduce actual traffic. `plan` prints
+request and output-token ceilings, concurrency, deadlines, and missing credential
+environment-variable names. It never creates an HTTP client or estimates cost.
+
+The local example explicitly disables authentication. For an authenticated
+endpoint, replace `auth_none = true` with `api_key_env = "CANDIDATE_API_KEY"` and
+set that variable outside the config. Credentials are never command-line values,
+manifest fields, or report contents. Existing evidence directories require
+explicit `--resume` and a matching manifest.
+
+The historical `configs/providers.example.toml` diagnostic smoke example remains
+available with its original 34-request ceiling per endpoint.
 
 ## Four-request offline fixture example
 

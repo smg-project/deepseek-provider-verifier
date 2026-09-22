@@ -371,6 +371,28 @@ def _run_markdown(result: RunResult) -> str:
             f"| {_md(item.case_id)} | {_md(item.endpoint)} | {item.status} | "
             f"{'unavailable' if context is None else 'yes' if item.case_id in required else 'no'} | {evidence} | {_md('; '.join(reasons))} |"
         )
+    differences = [
+        (item, assertion.observed)
+        for item in result.case_results
+        for assertion in item.assertions
+        if assertion.id == "COMPATIBILITY_OBSERVATION"
+    ]
+    if differences:
+        lines.extend(
+            [
+                "",
+                "## Compatibility observations",
+                "",
+                "Status agreement alone does not establish functional correctness; see the case verdict above.",
+                "",
+                "| Case | Endpoint | Observed HTTP | Reference HTTP | Reference date | Basis | Comparison |",
+                "| --- | --- | --- | --- | --- | --- | --- |",
+            ]
+        )
+        for item, observed in differences:
+            lines.append(
+                f"| {_md(item.case_id)} | {_md(item.endpoint)} | {observed['status_code']} | {observed['reference_status']} | {_md(observed['reference_date'])} | {_md(observed['reference_basis'])} | {'MATCH' if observed['matches_reference'] else 'DIFFERENCE'} |"
+            )
     return "\n".join(lines) + "\n"
 
 

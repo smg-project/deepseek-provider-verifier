@@ -40,6 +40,24 @@ def evaluate_case(
     case: Case, observations: list[Observation], rules: list[Rule]
 ) -> CaseResult:
     applicable = [r for r in rules if r.id in case.rule_ids and rule_applies(r, case)]
+    policies = {r.conditions.get("compatibility_policy") for r in applicable} - {None}
+    if policies and (
+        case.oracle.get("compatibility") or case.template_id in ("C08", "C09")
+    ):
+        from .compatibility import evaluate_compatibility
+
+        return evaluate_compatibility(case, observations, applicable, policies.pop())
+    return _evaluate_standard(case, observations, rules)
+
+
+def _evaluate_standard(
+    case: Case,
+    observations: list[Observation],
+    rules: list[Rule],
+    *,
+    enforce_official_tool_restriction: bool = True,
+) -> CaseResult:
+    applicable = [r for r in rules if r.id in case.rule_ids and rule_applies(r, case)]
     diagnostic_history = case.oracle.get("kind") == "reasoning_history_probe"
     assertions: list[AssertionResult] = []
     metric: list[MetricObservation] = []
@@ -92,7 +110,8 @@ def evaluate_case(
         case.mode, case.oracle.get("status_class")
     )
     restriction = (
-        case.protocol == "chat"
+        enforce_official_tool_restriction
+        and case.protocol == "chat"
         and case.mode == "thinking"
         and case.template_id in ("C08", "C09")
     )

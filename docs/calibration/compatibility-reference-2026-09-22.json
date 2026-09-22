@@ -1,0 +1,251 @@
+{
+  "schema_version": 1,
+  "runner_revision": "26e4de9ceb71dd7037ee5e133c0d8f23783f5dee",
+  "started_at": "2026-09-22T17:52:15+00:00",
+  "finished_at": "2026-09-22T17:58:23+00:00",
+  "official_base_url": "https://api.deepseek.com",
+  "model_releases": "unknown",
+  "inference_requests": 262,
+  "by_model": {
+    "deepseek-flash": 131,
+    "deepseek-v4-pro": 131
+  },
+  "http_status_counts": {
+    "200": 230,
+    "400": 28,
+    "422": 4
+  },
+  "source_snapshots": [
+    {
+      "name": "chat",
+      "url": "https://api-docs.deepseek.com/api/create-chat-completion/",
+      "retrieved_at": "2026-09-22T17:53:35.754355+00:00",
+      "status_code": 200,
+      "html_sha256": "4c2384d7ad4e5f1929edb922900b2a96546a7e699e8b067d6e82dcb9a330989d",
+      "text_sha256": "640d42c17e9412ae690eff6ab45da0cc667e685edeaac5eaba43f00e077bc0fc"
+    },
+    {
+      "name": "responses",
+      "url": "https://api-docs.deepseek.com/api/create-response/",
+      "retrieved_at": "2026-09-22T17:53:35.941168+00:00",
+      "status_code": 200,
+      "html_sha256": "5654c002d08e81b7f366568f988ed19c2f97f7c90118aa24e00a47a922faa3c8",
+      "text_sha256": "3478f60d7e3b8604a7bb572eb23eec5b45690afef12e8a132e8c2eb401a2fcf4"
+    },
+    {
+      "name": "thinking",
+      "url": "https://api-docs.deepseek.com/guides/thinking_mode/",
+      "retrieved_at": "2026-09-22T17:53:37.159445+00:00",
+      "status_code": 200,
+      "html_sha256": "8f7d45a2a97d7a18d480130d24f26a4a4f6f4c8de2b4cc39be86438e9d6da5b3",
+      "text_sha256": "2aef0778ae5bb09fd060e421d323db140b8fa0f0837a3193b3d1fcc18851ba56"
+    },
+    {
+      "name": "responses-guide",
+      "url": "https://api-docs.deepseek.com/guides/responses_api/",
+      "retrieved_at": "2026-09-22T17:53:37.959941+00:00",
+      "status_code": 200,
+      "html_sha256": "1719ac1b05e29579acd0cbc5ba0bcdb629cf7722eb551b5cd6d6d62c271e3ca2",
+      "text_sha256": "f4b64f97f9152b9ecdf55a0851d043a824029a604339eab9f16c795b4e7b4b30"
+    },
+    {
+      "name": "vision",
+      "url": "https://api-docs.deepseek.com/guides/vision/",
+      "retrieved_at": "2026-09-22T17:53:38.768120+00:00",
+      "status_code": 200,
+      "html_sha256": "a805d8a40388ee238c626b83419c2cf786ac3002187c072699710132fc77dac7",
+      "text_sha256": "4d050e02a73bfd32c39b1542f0c9c71baf255325b20f7010488721dc71da97d0"
+    },
+    {
+      "name": "isolation",
+      "url": "https://api-docs.deepseek.com/quick_start/rate_limit/",
+      "retrieved_at": "2026-09-22T17:53:39.530697+00:00",
+      "status_code": 200,
+      "html_sha256": "1190b37c138b132b45ed3fa6e19861e7fa40be95a9a9c5a36104cc88ad26413a",
+      "text_sha256": "9abf22481b7bf0ecfe4a6fd31e416b6f0c5a24537d52f121093a4c63595eb42d"
+    },
+    {
+      "name": "tools",
+      "url": "https://api-docs.deepseek.com/guides/tool_calls/",
+      "retrieved_at": "2026-09-22T17:53:40.376736+00:00",
+      "status_code": 200,
+      "html_sha256": "5ee72ac00e5594bffac058cfef8872beb121b97e122f914c114a618f6a2b4027",
+      "text_sha256": "897954b524beaffb7442a3f29ca16a8fc5ed556290d8e824c4faecb4a2f414b6"
+    }
+  ],
+  "purpose": "Content-free provenance for dated compatibility expectations; not a live calibration of the new compatibility profiles.",
+  "findings": [
+    {
+      "id": "D1",
+      "classification": "explicit documented rejection contradicted",
+      "topic": "Chat reasoning history omission",
+      "models": [
+        "deepseek-flash",
+        "deepseek-v4-pro"
+      ],
+      "document_url": "https://api-docs.deepseek.com/guides/thinking_mode#tool-calls",
+      "documented": "Requests carrying tools must preserve reasoning_content; otherwise HTTP 400 is specified.",
+      "observed": "Both models accepted omitted reasoning: 4/4 paired follow-ups plus 2/2 main C15 continuations returned HTTP 200. All 4 preserved-history paired controls also returned HTTP 200.",
+      "evidence_ids": [
+        "deepseek-flash.chat.reasoning-preserved-False",
+        "deepseek-flash.chat.reasoning-omitted-False",
+        "deepseek-flash.chat.reasoning-preserved-True",
+        "deepseek-flash.chat.reasoning-omitted-True",
+        "deepseek-v4-pro.chat.reasoning-preserved-False",
+        "deepseek-v4-pro.chat.reasoning-omitted-False",
+        "deepseek-v4-pro.chat.reasoning-preserved-True",
+        "deepseek-v4-pro.chat.reasoning-omitted-True"
+      ]
+    },
+    {
+      "id": "D2",
+      "classification": "documented character constraint not enforced at request acceptance",
+      "topic": "Chat user_id and Responses user",
+      "models": [
+        "deepseek-flash",
+        "deepseek-v4-pro"
+      ],
+      "document_urls": [
+        "https://api-docs.deepseek.com/api/create-chat-completion/",
+        "https://api-docs.deepseek.com/api/create-response/",
+        "https://api-docs.deepseek.com/quick_start/rate_limit#setting-user_id"
+      ],
+      "documented": "Only ASCII letters, digits, underscores and hyphens are allowed, up to 512 characters.",
+      "observed": "All 16 repeated space/punctuation probes returned HTTP 200. All 4 valid controls returned HTTP 200; all 4 length-513 controls returned HTTP 400.",
+      "evidence_ids": [
+        "deepseek-flash.chat.user-valid-0",
+        "deepseek-flash.chat.user-space-0",
+        "deepseek-flash.chat.user-space-1",
+        "deepseek-flash.chat.user-punctuation-0",
+        "deepseek-flash.chat.user-punctuation-1",
+        "deepseek-flash.chat.user-length513-0",
+        "deepseek-flash.responses.user-valid-0",
+        "deepseek-flash.responses.user-space-0",
+        "deepseek-flash.responses.user-space-1",
+        "deepseek-flash.responses.user-punctuation-0",
+        "deepseek-flash.responses.user-punctuation-1",
+        "deepseek-flash.responses.user-length513-0",
+        "deepseek-v4-pro.chat.user-valid-0",
+        "deepseek-v4-pro.chat.user-space-0",
+        "deepseek-v4-pro.chat.user-space-1",
+        "deepseek-v4-pro.chat.user-punctuation-0",
+        "deepseek-v4-pro.chat.user-punctuation-1",
+        "deepseek-v4-pro.chat.user-length513-0",
+        "deepseek-v4-pro.responses.user-valid-0",
+        "deepseek-v4-pro.responses.user-space-0",
+        "deepseek-v4-pro.responses.user-space-1",
+        "deepseek-v4-pro.responses.user-punctuation-0",
+        "deepseek-v4-pro.responses.user-punctuation-1",
+        "deepseek-v4-pro.responses.user-length513-0"
+      ]
+    },
+    {
+      "id": "D3",
+      "classification": "Responses documentation omits a runtime restriction",
+      "topic": "Thinking mode with required/named tool_choice",
+      "models": [
+        "deepseek-flash",
+        "deepseek-v4-pro"
+      ],
+      "document_urls": [
+        "https://api-docs.deepseek.com/api/create-response/",
+        "https://api-docs.deepseek.com/guides/responses_api#top-level-request-parameters"
+      ],
+      "documented": "Responses lists required and named tool choice as supported without a thinking-mode exception. Chat explicitly documents that exception.",
+      "observed": "All 8 Responses thinking variants returned HTTP 400; all 8 matching non-thinking variants succeeded and emitted the required calls.",
+      "evidence_ids": [
+        "flash:C08.responses.non_thinking.nonstream",
+        "flash:C08.responses.non_thinking.stream",
+        "flash:C08.responses.thinking.nonstream",
+        "flash:C08.responses.thinking.stream",
+        "flash:C09.responses.non_thinking.nonstream",
+        "flash:C09.responses.non_thinking.stream",
+        "flash:C09.responses.thinking.nonstream",
+        "flash:C09.responses.thinking.stream",
+        "pro:C08.responses.non_thinking.nonstream",
+        "pro:C08.responses.non_thinking.stream",
+        "pro:C08.responses.thinking.nonstream",
+        "pro:C08.responses.thinking.stream",
+        "pro:C09.responses.non_thinking.nonstream",
+        "pro:C09.responses.non_thinking.stream",
+        "pro:C09.responses.thinking.nonstream",
+        "pro:C09.responses.thinking.stream"
+      ]
+    },
+    {
+      "id": "D4",
+      "classification": "Responses documentation omits strict-mode schema details",
+      "topic": "text.format.strict and schema subset",
+      "models": [
+        "deepseek-flash",
+        "deepseek-v4-pro"
+      ],
+      "document_url": "https://api-docs.deepseek.com/api/create-response/",
+      "documented": "The Responses reference describes type/name/schema but does not list strict or this schema-validation restriction.",
+      "observed": "A const-only property schema was accepted on both models when strict was omitted and rejected with HTTP 400 on both when strict=true. Typed enum schemas succeeded in all four controls.",
+      "error": "Invalid json schema: one of `type`, `anyOf`, `$ref` field is required",
+      "evidence_ids": [
+        "deepseek-flash.responses.schema-typed",
+        "deepseek-flash.responses.schema-const-no-type",
+        "deepseek-v4-pro.responses.schema-typed",
+        "deepseek-v4-pro.responses.schema-const-no-type",
+        "deepseek-flash.responses.schema-typed-strict",
+        "deepseek-flash.responses.schema-const-no-type-strict",
+        "deepseek-v4-pro.responses.schema-typed-strict",
+        "deepseek-v4-pro.responses.schema-const-no-type-strict"
+      ]
+    }
+  ],
+  "source_summary_sha256": "420e19eee76a13c5d9ef3a2aad56c15481530bd9481af11440aa0a046338159a",
+  "artifact_sha256": {
+    "authorization.json": "a63eb87fec68379c0b58ced8b735e7321a87a825286d226cc5e801f6354e8539",
+    "driver.py": "3c5ef4addcd4060c666e8f04572ee7ac36c58d7a2cd6bc081dc4457b8e900ecb",
+    "specs/thinking.html": "8f7d45a2a97d7a18d480130d24f26a4a4f6f4c8de2b4cc39be86438e9d6da5b3",
+    "specs/tools.txt": "897954b524beaffb7442a3f29ca16a8fc5ed556290d8e824c4faecb4a2f414b6",
+    "specs/isolation.html": "1190b37c138b132b45ed3fa6e19861e7fa40be95a9a9c5a36104cc88ad26413a",
+    "specs/vision.txt": "4d050e02a73bfd32c39b1542f0c9c71baf255325b20f7010488721dc71da97d0",
+    "specs/responses.html": "5654c002d08e81b7f366568f988ed19c2f97f7c90118aa24e00a47a922faa3c8",
+    "specs/responses-guide.txt": "f4b64f97f9152b9ecdf55a0851d043a824029a604339eab9f16c795b4e7b4b30",
+    "specs/isolation.txt": "9abf22481b7bf0ecfe4a6fd31e416b6f0c5a24537d52f121093a4c63595eb42d",
+    "specs/responses-guide.html": "1719ac1b05e29579acd0cbc5ba0bcdb629cf7722eb551b5cd6d6d62c271e3ca2",
+    "specs/responses.txt": "3478f60d7e3b8604a7bb572eb23eec5b45690afef12e8a132e8c2eb401a2fcf4",
+    "specs/chat.txt": "640d42c17e9412ae690eff6ab45da0cc667e685edeaac5eaba43f00e077bc0fc",
+    "specs/tools.html": "5ee72ac00e5594bffac058cfef8872beb121b97e122f914c114a618f6a2b4027",
+    "specs/vision.html": "a805d8a40388ee238c626b83419c2cf786ac3002187c072699710132fc77dac7",
+    "specs/thinking.txt": "2aef0778ae5bb09fd060e421d323db140b8fa0f0837a3193b3d1fcc18851ba56",
+    "specs/index.json": "c54b7c02a61f75a7937375667d5ec012242aad449a498dbe9473d8da5abb447d",
+    "specs/chat.html": "4c2384d7ad4e5f1929edb922900b2a96546a7e699e8b067d6e82dcb9a330989d",
+    "catalog/summary.json": "cf9b47c6904ae78a60ec43e750015c95f4faa61033146bd04a4a8c9f58cdd3f8",
+    "catalog/evidence-index.json": "ef24bd1e85f28e87a14e4117b8d0b327c3f77e6a7fd6772667f1a922723ca6bb",
+    "catalog/summary.md": "4cf32508053512b5a33d4894ca9424f1b9e70460e6ec9f36bf1fb0dfcb303b00",
+    "catalog/results.jsonl": "10365c1c4ea94c466d6166df71992c94b3dbafd71d0b5b50aa1d09b0226db532",
+    "catalog/manifest.json": "5f7f2243a150c989e2dc98963dc321bbcc4b9ec1043edde891d9a4bc4339c5ae",
+    "catalog/attempts.jsonl": "80d5d189cfaa6d50be4368bba45f87a5294c08078bb4b095e763890141471578",
+    "catalog/junit.xml": "bfa12513e4926d55a95aa8c1e8ec36150e3eae201db0ba4f49fb6b97f9fe33da",
+    "spec-probes/summary.json": "3f19b74e6f4360d08beda097526e65746bed9162e5493559392ec040731f9a61",
+    "spec-probes/plan.json": "bd19adf79fc9f8d47900e29503bc7a907b27d92f97792ab1fb5fc7b34d772d87",
+    "spec-probes/attempts.jsonl": "d823641f0eae3392c2caf10b59423939c6ab124773a3823499cb982ff6a40324",
+    "provenance/official_extended.py": "fc562b01f1c71b66b8becedd3d25fae1efdbfde2536ff4f8075ee4b85b86c16a",
+    "provenance/live_spec_probes.py": "7ebf9a3c08380e9dbeb0cf77136709d68b4a215a5d7110b7f89e77fb9e1f029d",
+    "provenance/live_rerun.py": "3c5ef4addcd4060c666e8f04572ee7ac36c58d7a2cd6bc081dc4457b8e900ecb",
+    "provenance/build_live_discrepancy_report.py": "c6d2c4f292b77b3397318db6a2509523a41f1d2875afa6fc52077755c914ee48",
+    "provenance/fetch_current_specs.py": "744bb541f4bc0e649be63ba9c24e75d39d7d42aaf16074a1670d56bb96315f97",
+    "provenance/live_schema_strict.py": "1ffaf13cbd91d179aefbed3cf4aed6143bb569e1c8d0d31fef48e80e62d15d7a",
+    "schema-strict/summary.json": "eda2d3d6837d21b0e4e2d21efecccf47a291892e087c3f8186c06d12b926e7ee",
+    "schema-strict/plan.json": "137429436b04eefb614cf27fd2550bf88ead9841e3e9eb842f097a79ca4b1869",
+    "schema-strict/attempts.jsonl": "5ce15cc12126f12c55b169d7238167d195ec27b59b439f2b6b2f6a0d9962f417"
+  },
+  "new_case_mapping": {
+    "P01": "D1; Chat nonstream and stream paired; Responses nonstream C15 status observed in the catalog",
+    "P02-P04, P06": "D2",
+    "P05": "Documented 512-character control; no live observation at exactly 512 characters",
+    "C08-C09": "D3; Chat restriction also observed in the catalog",
+    "P07-P10": "D4"
+  },
+  "limitations": [
+    "New profile composition, P05, and all self-hosted candidate endpoints have offline verification only.",
+    "Reused prompts and new paired setup are not an exact-request replay of every source capture.",
+    "Reference HTTP status is a dated observation, not proof of current behavior, model identity, constrained decoding, or identifier isolation.",
+    "Responses streaming omission is excluded until an official reference has been captured."
+  ]
+}
