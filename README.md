@@ -102,7 +102,8 @@ rules. The example's `deepseek-api-2026-09-21` base profile remains diagnostic.
 | Official `deepseek-flash` | Responses: 12 smoke trials, 15 requests; same selected smoke matrix | Measured assertions passed; exact per-rule scope recorded |
 | Official V4 Pro / other models | No live coverage | Untested; no calibrated claim |
 | Candidate / direct engine / SMG | No live coverage | Deferred by operator choice |
-| Installed final CLI | Both protocols, C01 stream/non-stream, four loopback requests | Synthetic fixture evidence; any later live confirmation is recorded separately |
+| Installed CLI at `8b12f73` | Official Flash C01, both protocols and stream settings, four requests | Separate live confirmation: 4 HTTP 200, 4 PASS, 23 passing assertions |
+| Current scorer after final review fixes | Both protocols; synthetic fixtures and exact-request replay of the 34 captured responses | Offline verification only; no additional live calls |
 
 The official observations comprise **30 HTTP 200 responses and 197 passing
 measured assertions across 24 trials**, collected on September 21, 2026 at
@@ -112,6 +113,13 @@ within their enumerated variants; it does not imply full protocol conformance.
 Usage option branches, reasoning-effort strength, unknown checkpoint identity,
 and quality equivalence remain outside the claim. See [calibration provenance
 and exact limitations](docs/contract-sources.md).
+
+A [separate CLI confirmation](docs/calibration/official-flash-cli-confirmation-2026-09-21.json)
+ran at **22:35:53–22:35:59 PDT on September 21** using immutable `8b12f73`,
+with exit 0 and verified evidence integrity. Total session traffic was **34
+requests**. This predates the final streaming-envelope fixes; those changes
+were checked offline against synthetic corruption tests and both captured runs.
+The original calibration record and hashes remain unchanged.
 
 Offline CI tests Python 3.11 and 3.14, checks schemas against runtime records,
 exercises valid and seeded-fault fixtures, and checks wheel/sdist contents plus

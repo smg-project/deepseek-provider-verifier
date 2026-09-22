@@ -59,6 +59,16 @@ The immutable model checkpoint remains `unknown`. API observations support this
 captured alias and scope without authenticating weights or enabling
 quality-equivalence gates. Candidate alias mappings are operator declarations,
 not proof of model identity. Final installed-CLI live confirmation is separate from this original calibration.
-This record contains only synthetic installed-fixture verification for the final
-CLI; any later live confirmation requires its own dated evidence addendum. The
-recorded run is not a final-version quality baseline.
+The [dated CLI addendum](calibration/official-flash-cli-confirmation-2026-09-21.json)
+records `8b12f73` at 22:35:53–22:35:59 PDT on September 21: four HTTP 200
+responses, four PASS trials, 23 passing assertions, exit 0 and verified integrity.
+This makes 34 session requests without changing the original calibration.
+
+Final review tightened Chat streaming envelope/identity and initial assistant-role
+checks, and applied the existing Responses envelope requirement to its terminal
+snapshot. The captured Chat response schema documents required chunk ID, object,
+created timestamp and model; IDs and timestamps stay constant. Continuation role
+may be omitted or null (as in the documented final chunk). Additive fields are
+retained. These scorer changes postdate both live revisions and are verified only
+offline, including exact-request replay of both original captures. Neither live
+run is a current-version quality baseline.

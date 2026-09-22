@@ -182,6 +182,19 @@ identifies the original runner and six hashed artifacts. It records only safe
 metadata, original project-authored case identifiers, source URLs/hashes, and
 settings. Preserve raw evidence privately for an authorized audit; hashes alone
 do not let a third party independently reproduce the historical observations.
-Final installed-CLI live confirmation is not part of this original record. Any
-later confirmation needs a separate dated addendum. Repeating a reference later
-is a new, timestamped measurement, never a silent replacement of that original run.
+The [separate CLI confirmation record](calibration/official-flash-cli-confirmation-2026-09-21.json)
+identifies `8b12f73` and its eight original artifact hashes plus wheel hash.
+On September 21 at 22:35:53–22:35:59 PDT it made four official requests, all
+HTTP 200, with four PASS trials, 23 passing assertions, exit 0 and verified
+integrity. Total session traffic is 34. The operator authorized this session-only
+after-window check; no persistent repository scheduling policy was changed.
+
+The final review fixes, including stronger streaming-envelope checks, were not
+live-tested. Offline replay sent each exact captured request to a MockTransport,
+consumed the original sanitized response bytes in memory, and yielded 24 PASS
+trials for the 30-request calibration under the scoped profile and four PASS
+trials for the separate confirmation. All original artifact hashes were checked
+before and after; neither source bundle was rewritten. This validates the new
+scorer against historical observations, not a new provider measurement.
+Candidate/direct-engine/SMG and V4 Pro remain untested. A later reference run is
+a new, timestamped measurement, never a silent replacement of an original run.
