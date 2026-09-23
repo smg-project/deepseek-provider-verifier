@@ -191,3 +191,8 @@ captures. See [acceptance workflow](self-hosted-compatibility.md#recommended-acc
 for the exact gates, diagnostic limitations and exit codes. Repeated default
 runs are independent executions of the same frozen prompt/filler seeds; they
 measure repeatability without claiming broad statistical coverage.
+
+See the [official acceptance campaign](calibration/official-acceptance-2026-09-23.md)
+for the installed-wheel default rounds and extended stress matrix. It preserves
+all initial failures and the 600-second request timeout, with confirmations
+labeled separately from the original validation runs.

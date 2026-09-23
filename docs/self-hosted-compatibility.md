@@ -208,3 +208,9 @@ fewer than two nonempty reasoning rounds are emitted, accumulated replay is
 **INCONCLUSIVE**, even when the workflow succeeds. The default policy reports
 this as an uncertified capability; strict mode or a policy requiring
 `workflow.thinking/reasoning` cannot pass that unknown measurement.
+
+The [2026-09-23 official acceptance report](calibration/official-acceptance-2026-09-23.md)
+records three frozen default rounds, extended stress, explicit Beta checks, and
+separately bounded confirmations after a retained request timeout. Compatibility
+and strict results are reported side by side. These observations do not certify
+a self-hosted deployment; run the selected controls against that deployment.

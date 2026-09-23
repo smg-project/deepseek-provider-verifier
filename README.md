@@ -1,6 +1,5 @@
 # DeepSeek Provider Verifier
 
-
 For the recommended self-hosted acceptance workflow, use `dpv verify` with
 `configs/self-hosted-verify.example.toml` and policy `official-compatible-v1`.
 Run `dpv plan --config configs/self-hosted-verify.example.toml --policy official-compatible-v1`
@@ -17,20 +16,31 @@ without credentials or network traffic:
 
 ```sh
 uv sync
-uv run dpv plan --config configs/self-hosted.example.toml
+uv run dpv plan --config configs/self-hosted-verify.example.toml --policy official-compatible-v1
 ```
 
 Copy the config and set your endpoint URL, served model label, release, and
 authentication. Then select the candidate explicitly and use a new output directory:
 
 ```sh
-cp configs/self-hosted.example.toml providers.toml
-uv run dpv plan --config providers.toml
-uv run dpv run --config providers.toml --endpoint candidate --out runs/candidate
-uv run dpv report runs/candidate --format markdown
+cp configs/self-hosted-verify.example.toml providers.toml
+uv run dpv plan --config providers.toml --policy official-compatible-v1
+uv run dpv verify --config providers.toml --endpoint candidate --out runs/candidate
 ```
 
-The example uses `deepseek-self-hosted-2026-09-22-v1`. Accepted requests must
+Read `runs/candidate/acceptance.md` for the policy verdict, required checks,
+and diagnostic findings. JSON and JUnit acceptance reports accompany it; the
+canonical strict reports and captures remain separate. The compact verification
+workload has a 210-request ceiling for one endpoint with both protocols.
+
+The [official acceptance report](docs/calibration/official-acceptance-2026-09-23.md)
+records the three frozen default rounds, stress results, retained timeout, and
+separately reported confirmations. It does not claim every raw strict check passed.
+
+## Boundary compatibility and official parity
+
+The earlier `configs/self-hosted.example.toml` recipe uses
+`deepseek-self-hosted-2026-09-22-v1` with the legacy `dpv run` command. Accepted requests must
 produce valid fixture results. Working extensions and stricter boundary
 validation appear as compatibility differences. Choose
 `deepseek-official-parity-2026-09-22-v1` to additionally require the dated official
