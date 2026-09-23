@@ -1353,8 +1353,8 @@
         "R27",
         "R31",
         "R32",
-        "R36",
-        "R37",
+        "R41",
+        "R42",
         "W01",
         "W04",
         "S01",
@@ -1376,9 +1376,9 @@
       ]
     },
     "full-stress": {
-      "max_requests_per_protocol": 444,
-      "max_requests_per_endpoint": 888,
-      "max_total_requests": 1776,
+      "max_requests_per_protocol": 452,
+      "max_requests_per_endpoint": 904,
+      "max_total_requests": 1808,
       "max_requests_per_conversation": 17,
       "max_retries": 0,
       "concurrency": 1,
@@ -1516,7 +1516,9 @@
         "L08",
         "L09",
         "L10",
-        "L11"
+        "L11",
+        "R41",
+        "R42"
       ],
       "attached_assertion_case_ids": [
         "C02",

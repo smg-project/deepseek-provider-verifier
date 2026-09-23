@@ -107,7 +107,7 @@ def _repeatability(descriptor, protocol, prompts):
     return CaseTemplate(
         id=descriptor["id"],
         prompt_id=prompt.id,
-        dataset_version="depth-v1",
+        dataset_version=prompt.dataset_version,
         protocol=protocol,
         modes=["non_thinking", "thinking"] if expanded else ["non_thinking"],
         streams=[False, True] if expanded else [False],

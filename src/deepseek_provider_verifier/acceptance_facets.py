@@ -79,6 +79,12 @@ def _protocol(case, observations, rules):
             for group in groups
         )
     for obs in observations:
+        if case.oracle.get("depth", {}).get("family") == "repeatability.structured":
+            try:
+                if not isinstance(bounded_json(obs.text), dict):
+                    raise TypeError("JSON-mode output must be an object")
+            except (ValueError, TypeError, RecursionError):
+                statuses.append("FAIL")
         for tool in obs.tools.values():
             try:
                 if not isinstance(bounded_json(tool.arguments), dict):

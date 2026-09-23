@@ -52,6 +52,15 @@ def case_family(case: Case) -> str:
         return "workflow.thinking" if case.mode == "thinking" else "workflow"
     if kind in ("large_input", "large_output"):
         return "size.input" if kind == "large_input" else "size.output"
+    # Legacy prose-only Chat JSON-mode prompts measure instruction quality.
+    # Versioned controls with literal examples still require exact schemas;
+    # Responses native schema requests always retain their functional gate.
+    if (
+        family == "repeatability.structured"
+        and case.protocol == "chat"
+        and case.dataset_version == "depth-v1"
+    ):
+        return "quality"
     if family == "repeatability.instruction":
         return "quality"
     if family in (

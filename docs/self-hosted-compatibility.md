@@ -147,7 +147,7 @@ dpv assess runs/candidate-verification --policy strict-contract-v1 \
 Edit the example endpoint/model and configure authentication before live use. The
 `verification` preset has a 210-request ceiling per endpoint, with both APIs,
 thinking modes and stream modes where the selected fixtures support them. The
-`full-stress` preset has an 888-request ceiling per endpoint and additionally
+`full-stress` preset has a 904-request ceiling per endpoint and additionally
 includes all depth schemas, long workflows, 1 MiB inputs and 16K output budgets.
 The output-token ceiling and route are printed before `verify` sends traffic.
 These are selected fixture sizes, not a claim about the model's maximum capacity.
@@ -167,6 +167,15 @@ and visible-token measurement remain separately reported diagnostics. Advanced
 schema rejection or invalid output never certifies support. Valid extra support
 from a self-hosted provider earns a capability PASS; it need not reproduce an
 official provider defect. Malformed tool JSON always fails protocol validation.
+
+The compact structured controls R41/R42 use `depth-v2` prompts with literal
+JSON examples, following the [official JSON Output guide](https://api-docs.deepseek.com/guides/json_mode/).
+They require the exact two fields and authored values; extra fields still fail.
+The unchanged `depth-v1` prose-only Chat structured prompts remain in full stress
+as instruction-quality diagnostics. Responses native strict-schema requests
+remain functional gates regardless of prompt version. Every structured prompt
+still requires raw, bounded JSON without duplicate keys. The legacy strict
+verdict is retained, and strict assessment continues to gate it.
 
 Plain-text retrieval may return exactly the expected object inside one complete
 outer JSON fence. JSON-mode responses still require raw JSON. Duplicate members,
