@@ -58,8 +58,9 @@ uv run dpv plan --config configs/depth-sizes.example.toml
 ```
 
 Each run includes per-prompt failure rates and uncertainty in a derived
-`reliability.json` report. Larger matrices are separate presets. New fixtures
-are verified offline and have no live calibration claim. See the
+`reliability.json` report. Larger matrices are separate presets. The
+[2026-09-22 official live report](docs/calibration/official-depth-2026-09-22.md)
+records both-model results, verifier fixes, and remaining failures. See the
 [coverage, exact budgets, interpretation, and endpoint setup](docs/reliability-depth.md).
 
 ## Four-request offline fixture example

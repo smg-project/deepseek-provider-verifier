@@ -108,6 +108,13 @@ the schema and intended fixture. `record_schema_fixture` is inspected, never run
 Passing an example does not establish that constrained decoding enforces every
 schema keyword.
 
+For official Chat strict-tool calibration, use `https://api.deepseek.com/beta`
+as the endpoint base URL and select only the Chat protocol. DeepSeek documents
+strict tools on that route; accepting `strict=true` on the standard URL does not
+establish the same guarantee. Self-hosted endpoints should use their documented
+route. See the [official tool guide](https://api-docs.deepseek.com/guides/tool_calls/)
+and the [dated live findings](calibration/official-depth-2026-09-22.md).
+
 Validation is local only: schemas/values are bounded to 64 KiB, 2,048 nodes, and
 depth 32. Expanded reference traversal is bounded too. Remote/recursive references,
 dynamic scopes, and regex patterns are outside this validator's bounded subset.
@@ -167,6 +174,9 @@ existing redaction/omission rules.
 
 Offline tests cover valid fixtures, seeded failures, streams, branches, resume,
 byte bounds, schema boundaries, installed CLI runs, and historical replay. These
-new depth fixtures have **no live official or candidate calibration yet**. Load,
-recovery under live concurrency, parameter effects, caching, vision, and files
-remain separate work. Inspect a concrete plan before choosing a live workload.
+new depth fixtures were exercised against both official model aliases on
+2026-09-22; the [live report](calibration/official-depth-2026-09-22.md) preserves
+initial failures, targeted confirmations, and measurement limits. No self-hosted
+candidate was supplied. Load, recovery under live concurrency, parameter effects,
+caching, vision, and files remain separate work. Inspect a concrete plan before
+choosing a live workload.
