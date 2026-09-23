@@ -1,5 +1,12 @@
 # DeepSeek Provider Verifier
 
+For the recommended self-hosted acceptance workflow, use `dpv verify` with
+`configs/self-hosted-core.example.toml` and policy `strict-contract-v1`.
+Run `dpv plan --config configs/self-hosted-core.example.toml --policy strict-contract-v1`
+first to inspect the bounded core workload. [Acceptance and strict reports](docs/self-hosted-compatibility.md#recommended-acceptance-workflow)
+explain what must pass, which findings remain diagnostic, and how to assess
+stored captures without network traffic.
+
 DeepSeek Provider Verifier (`dpv`) is a community-owned, MIT-licensed project for collecting reproducible evidence from DeepSeek-compatible HTTP providers. It is independent of DeepSeek and provider vendors. A passing result establishes only the behavior observed for the declared endpoint, model label, profile, dataset, and capture date. It does not authenticate model weights, prove quantization, certify a vendor, or predict production-load performance.
 
 ## Quickstart
@@ -9,20 +16,50 @@ without credentials or network traffic:
 
 ```sh
 uv sync
-uv run dpv plan --config configs/self-hosted.example.toml
+uv run dpv plan --config configs/self-hosted-core.example.toml --policy strict-contract-v1
 ```
 
 Copy the config and set your endpoint URL, served model label, release, and
 authentication. Then select the candidate explicitly and use a new output directory:
 
 ```sh
-cp configs/self-hosted.example.toml providers.toml
-uv run dpv plan --config providers.toml
-uv run dpv run --config providers.toml --endpoint candidate --out runs/candidate
-uv run dpv report runs/candidate --format markdown
+cp configs/self-hosted-core.example.toml providers.toml
+uv run dpv plan --config providers.toml --policy strict-contract-v1
+uv run dpv verify --config providers.toml --endpoint candidate --policy strict-contract-v1 --out runs/candidate
 ```
 
-The example uses `deepseek-self-hosted-2026-09-22-v1`. Accepted requests must
+Read `runs/candidate/acceptance.md` for the policy verdict, required checks,
+and diagnostic findings. JSON and JUnit acceptance reports accompany it; the
+canonical strict reports and captures remain separate. The core workload selects 16 fixture templates (84 trials) and has a 142-request
+ceiling per endpoint with both protocols. Every selected facet is mandatory under
+the strict policy, including the original raw assertions. The core covers API
+responses, streaming, thinking controls, tools, history, a four-round tool chain,
+and shallow structured output.
+
+Large input/output probes, deep schemas, exact-word quality prompts, larger
+parallel tool workflows and extra reasoning measurements are opt-in. They are
+excluded from the core result and are not certified by a core PASS. Use
+`configs/self-hosted-verify.example.toml` for the earlier expanded `verification`
+or `full-stress` presets with `official-compatible-v1`; original cases and reports
+remain available. The manual GitHub workflow also defaults to the bounded core.
+
+The [core selection record](docs/calibration/core-selection-2026-09-23.md)
+documents the unchanged controls and the prior observations used to select them.
+This is an observed stable baseline, not a guarantee of future reliability.
+
+The [fresh official core confirmation](docs/calibration/official-core-2026-09-23.md)
+passed all 168 trials and all 496 mandatory facets across Flash and Pro through
+the installed wheel, with 276 requests and zero retries. It is one new round
+after freezing the selection.
+
+The [official acceptance report](docs/calibration/official-acceptance-2026-09-23.md)
+records the three frozen default rounds, stress results, retained timeout, and
+separately reported confirmations. It does not claim every raw strict check passed.
+
+## Boundary compatibility and official parity
+
+The earlier `configs/self-hosted.example.toml` recipe uses
+`deepseek-self-hosted-2026-09-22-v1` with the legacy `dpv run` command. Accepted requests must
 produce valid fixture results. Working extensions and stricter boundary
 validation appear as compatibility differences. Choose
 `deepseek-official-parity-2026-09-22-v1` to additionally require the dated official

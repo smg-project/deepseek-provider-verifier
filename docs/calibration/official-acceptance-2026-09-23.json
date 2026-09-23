@@ -1,0 +1,3878 @@
+{
+  "version": 1,
+  "frozen_verification_revision": "b0e7d5a9e70a6eddb7846076aeca05f38024ba96",
+  "verification_started_at_utc": "2026-09-23T05:42:27.755863+00:00",
+  "scope": {
+    "models": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "protocols": [
+      "chat",
+      "responses"
+    ],
+    "routes": [
+      "https://api.deepseek.com",
+      "https://api.deepseek.com/beta"
+    ],
+    "retries": 0,
+    "concurrency": 1,
+    "default_rounds": 3,
+    "full_stress_rounds": 1,
+    "beta_schema_rounds": 1,
+    "manual_github_live_workflow_executed": false,
+    "self_hosted_endpoint_tested": false
+  },
+  "frozen_inputs": {
+    "scorer_revision": "sha256:e6f11609db3796d7728fc82f11166bba19435997f0a1cca713ca3029bc3f9313",
+    "policy_hash": "a5c2d0844e64188aefc626d8ea1ff5b3d799073469865fb83c10da5088a9fe5c",
+    "wheel_sha256": "947696e9e4ebce951ff00251f981f3451959602aa996bbe44677e73173180ac8",
+    "request_ceiling": 3074,
+    "output_token_ceiling": 5727232,
+    "task_request_ceiling": 4334,
+    "task_output_token_ceiling": 8104960,
+    "prompt_seeds": "Original depth-v1 stress prompts and filler seeds retained; compact structured controls use separately hashed depth-v2 literal examples; three independent sessions on identical default inventory."
+  },
+  "beta_http_statuses": [
+    {
+      "endpoint": "flash",
+      "case_id": "S01.chat.non_thinking.nonstream",
+      "http_status": 200
+    },
+    {
+      "endpoint": "flash",
+      "case_id": "S46.chat.non_thinking.nonstream",
+      "http_status": 200
+    },
+    {
+      "endpoint": "flash",
+      "case_id": "S50.chat.non_thinking.nonstream",
+      "http_status": 200
+    },
+    {
+      "endpoint": "pro",
+      "case_id": "S01.chat.non_thinking.nonstream",
+      "http_status": 200
+    },
+    {
+      "endpoint": "pro",
+      "case_id": "S46.chat.non_thinking.nonstream",
+      "http_status": 200
+    },
+    {
+      "endpoint": "pro",
+      "case_id": "S50.chat.non_thinking.nonstream",
+      "http_status": 200
+    }
+  ],
+  "final_verification": [
+    {
+      "phase": "round-1",
+      "source_complete": true,
+      "confirmation": false,
+      "acceptance": "PASS",
+      "strict_acceptance": "INCONCLUSIVE",
+      "required_counts": {
+        "PASS": 460,
+        "SKIP": 4
+      },
+      "diagnostic_counts": {
+        "PASS": 318,
+        "FAIL": 26,
+        "INCONCLUSIVE": 8,
+        "SKIP": 8
+      },
+      "raw_counts": {
+        "ERROR": 0,
+        "FAIL": 13,
+        "INCONCLUSIVE": 4,
+        "PASS": 243,
+        "SKIP": 4
+      },
+      "requests": 408,
+      "strict_nonpassing": [
+        {
+          "endpoint": "flash",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.chat.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.responses.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S46.chat.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S46.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.chat.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.chat.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        }
+      ],
+      "canonical_unchanged": true,
+      "offline_default_three_formats_identical": true
+    },
+    {
+      "phase": "round-2",
+      "source_complete": true,
+      "confirmation": false,
+      "acceptance": "PASS",
+      "strict_acceptance": "INCONCLUSIVE",
+      "required_counts": {
+        "PASS": 460,
+        "SKIP": 4
+      },
+      "diagnostic_counts": {
+        "PASS": 310,
+        "FAIL": 34,
+        "INCONCLUSIVE": 8,
+        "SKIP": 8
+      },
+      "raw_counts": {
+        "ERROR": 0,
+        "FAIL": 17,
+        "INCONCLUSIVE": 4,
+        "PASS": 239,
+        "SKIP": 4
+      },
+      "requests": 408,
+      "strict_nonpassing": [
+        {
+          "endpoint": "flash",
+          "case_id": "L01.chat.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L01.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L01.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L01.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L01.responses.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L01.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.chat.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.responses.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S46.chat.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S46.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S46.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S46.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.chat.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.chat.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        }
+      ],
+      "canonical_unchanged": true,
+      "offline_default_three_formats_identical": true
+    },
+    {
+      "phase": "round-3",
+      "source_complete": true,
+      "confirmation": false,
+      "acceptance": "PASS",
+      "strict_acceptance": "INCONCLUSIVE",
+      "required_counts": {
+        "PASS": 460,
+        "SKIP": 4
+      },
+      "diagnostic_counts": {
+        "PASS": 316,
+        "FAIL": 26,
+        "INCONCLUSIVE": 10,
+        "SKIP": 8
+      },
+      "raw_counts": {
+        "ERROR": 0,
+        "FAIL": 13,
+        "INCONCLUSIVE": 5,
+        "PASS": 242,
+        "SKIP": 4
+      },
+      "requests": 408,
+      "strict_nonpassing": [
+        {
+          "endpoint": "flash",
+          "case_id": "L01.chat.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L01.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "W04.responses.thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "W04.responses.thinking.nonstream",
+          "facet": "reasoning",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.chat.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S45.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S45.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.chat.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.chat.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        }
+      ],
+      "canonical_unchanged": true,
+      "offline_default_three_formats_identical": true
+    },
+    {
+      "phase": "full-stress",
+      "source_complete": false,
+      "confirmation": false,
+      "acceptance": "INCONCLUSIVE",
+      "strict_acceptance": "INCONCLUSIVE",
+      "required_counts": {
+        "PASS": 1415,
+        "SKIP": 64,
+        "FAIL": 2,
+        "ERROR": 1
+      },
+      "diagnostic_counts": {
+        "PASS": 1240,
+        "FAIL": 84,
+        "INCONCLUSIVE": 25,
+        "SKIP": 128,
+        "ERROR": 1
+      },
+      "raw_counts": {
+        "ERROR": 1,
+        "FAIL": 37,
+        "INCONCLUSIVE": 12,
+        "PASS": 822,
+        "SKIP": 64
+      },
+      "requests": 1736,
+      "strict_nonpassing": [
+        {
+          "endpoint": "flash",
+          "case_id": "L01.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L01.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L01.responses.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L01.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L02.responses.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L02.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L03.chat.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L03.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L03.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L03.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L04.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L04.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L04.responses.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L04.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L10.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L10.chat.non_thinking.nonstream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L10.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L10.chat.non_thinking.stream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L11.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L11.chat.non_thinking.nonstream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L11.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L11.chat.non_thinking.stream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "R19.chat.non_thinking.nonstream",
+          "facet": "quality",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "R19.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "R25.responses.non_thinking.nonstream",
+          "facet": "quality",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "R25.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "S08.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "S11.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "S11.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "S12.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "S13.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "S13.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "S24.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "S28.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "S50.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "S50.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "S60.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L02.chat.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L02.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L02.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L02.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L02.responses.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L02.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L02.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L02.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L03.chat.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L03.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L03.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L03.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L03.responses.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L03.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L03.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L03.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L04.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L04.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L04.responses.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L04.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L04.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L04.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.responses.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L05.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L07.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L07.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L08.chat.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L08.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L08.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L08.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L10.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L10.chat.non_thinking.nonstream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L10.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L10.chat.non_thinking.stream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L10.responses.non_thinking.nonstream",
+          "facet": "budget",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L10.responses.non_thinking.nonstream",
+          "facet": "functional",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L10.responses.non_thinking.nonstream",
+          "facet": "protocol",
+          "status": "ERROR"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L10.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "ERROR"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L10.responses.non_thinking.nonstream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L11.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L11.chat.non_thinking.nonstream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L11.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L11.chat.non_thinking.stream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S08.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S12.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S24.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S28.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.chat.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.chat.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S60.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        }
+      ],
+      "canonical_unchanged": true,
+      "offline_default_three_formats_identical": true
+    },
+    {
+      "phase": "beta-schema",
+      "source_complete": true,
+      "confirmation": false,
+      "acceptance": "PASS",
+      "strict_acceptance": "FAIL",
+      "required_counts": {
+        "PASS": 8
+      },
+      "diagnostic_counts": {
+        "PASS": 6,
+        "FAIL": 4
+      },
+      "raw_counts": {
+        "ERROR": 0,
+        "FAIL": 2,
+        "INCONCLUSIVE": 0,
+        "PASS": 4,
+        "SKIP": 0
+      },
+      "requests": 6,
+      "strict_nonpassing": [
+        {
+          "endpoint": "flash",
+          "case_id": "S50.chat.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "S50.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.chat.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        }
+      ],
+      "canonical_unchanged": true,
+      "offline_default_three_formats_identical": true
+    },
+    {
+      "phase": "output-confirmation",
+      "source_complete": true,
+      "confirmation": true,
+      "acceptance": "PASS",
+      "strict_acceptance": "PASS",
+      "required_counts": {
+        "PASS": 6
+      },
+      "diagnostic_counts": {
+        "PASS": 4
+      },
+      "raw_counts": {
+        "ERROR": 0,
+        "FAIL": 0,
+        "INCONCLUSIVE": 0,
+        "PASS": 2,
+        "SKIP": 0
+      },
+      "requests": 2,
+      "strict_nonpassing": [],
+      "canonical_unchanged": true,
+      "offline_default_three_formats_identical": true
+    },
+    {
+      "phase": "full-stress-pro-confirmation",
+      "source_complete": true,
+      "confirmation": true,
+      "acceptance": "FAIL",
+      "strict_acceptance": "INCONCLUSIVE",
+      "required_counts": {
+        "PASS": 708,
+        "FAIL": 1,
+        "SKIP": 32
+      },
+      "diagnostic_counts": {
+        "PASS": 610,
+        "FAIL": 53,
+        "INCONCLUSIVE": 12,
+        "SKIP": 64
+      },
+      "raw_counts": {
+        "ERROR": 0,
+        "FAIL": 24,
+        "INCONCLUSIVE": 6,
+        "PASS": 406,
+        "SKIP": 32
+      },
+      "requests": 868,
+      "strict_nonpassing": [
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L01.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L02.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L02.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L02.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L02.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L03.chat.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L03.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L03.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L03.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L03.responses.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L03.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L03.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L03.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L04.chat.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L04.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L04.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L04.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L04.responses.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L04.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L04.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L04.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L06.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L06.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L06.chat.non_thinking.stream",
+          "facet": "retrieval",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L07.chat.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L07.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L07.responses.non_thinking.stream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L07.responses.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L08.chat.non_thinking.nonstream",
+          "facet": "format",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L08.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.nonstream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L09.chat.non_thinking.stream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L10.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L10.chat.non_thinking.nonstream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L10.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L10.chat.non_thinking.stream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L11.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L11.chat.non_thinking.nonstream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L11.chat.non_thinking.stream",
+          "facet": "raw_contract",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L11.chat.non_thinking.stream",
+          "facet": "visible",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S08.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S12.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S24.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S28.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S45.chat.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S45.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S46.chat.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S46.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.chat.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S49.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.chat.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.chat.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S50.responses.non_thinking.nonstream",
+          "facet": "raw_contract",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "S60.responses.non_thinking.nonstream",
+          "facet": "capability",
+          "status": "FAIL"
+        }
+      ],
+      "canonical_unchanged": true,
+      "offline_default_three_formats_identical": true
+    }
+  ],
+  "all_live_phases": [
+    {
+      "session": "official-acceptance-20260923-62e4a76",
+      "phase": "round-1",
+      "live_revision": "62e4a764321c99b14f0b2869a0c12d424a9369cd",
+      "source_manifest_hash": "1578e953ed23a51b4f3a6ad7c2d95a1d0ce7b075ffb1a83f385e27e0ec6ca00f",
+      "policy_hash": "13172f244224eafcfb18c75a3edcdfcd05f57844edd3d4ffb691be73636612d2",
+      "scorer_revision": "sha256:53bacc95e210033d1767932bcf117923373f25838dda4fef1539484d270bfcd4",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "integrity": "verified",
+      "by_endpoint": {
+        "flash": {
+          "model": "deepseek-flash",
+          "raw_counts": {
+            "PASS": 125,
+            "SKIP": 2,
+            "FAIL": 4,
+            "INCONCLUSIVE": 1
+          },
+          "required_counts": {
+            "PASS": 226,
+            "FAIL": 4,
+            "SKIP": 2
+          },
+          "diagnostic_counts": {
+            "PASS": 159,
+            "FAIL": 6,
+            "INCONCLUSIVE": 3,
+            "SKIP": 4
+          },
+          "diagnostic_facets": {
+            "capability": {
+              "PASS": 10,
+              "SKIP": 2
+            },
+            "format": {
+              "FAIL": 2,
+              "PASS": 6
+            },
+            "quality": {
+              "PASS": 16
+            },
+            "raw_contract": {
+              "PASS": 125,
+              "FAIL": 4,
+              "INCONCLUSIVE": 1,
+              "SKIP": 2
+            },
+            "visible": {
+              "INCONCLUSIVE": 2,
+              "PASS": 2
+            }
+          },
+          "blocking": [
+            {
+              "case_id": "C13.responses.non_thinking.nonstream",
+              "facet": "protocol",
+              "status": "FAIL",
+              "evidence_hashes": [
+                "c0e2f35286d5185ccc137701c39bbac3e15e52acf65323e66f9e10bad96864b6",
+                "0e69f2cd50dbd3af87cf2e0a48158f8163959df7fd919a1b32f58ca22e97b59d"
+              ]
+            },
+            {
+              "case_id": "C13.responses.non_thinking.stream",
+              "facet": "protocol",
+              "status": "FAIL",
+              "evidence_hashes": [
+                "325404ca65b76a8a403f3d6ac2a68ef28dc31db53faac5a885e4524336cd3fe4",
+                "44bf4b928937ebe41b4cac95001d1a1343a51fad96f0441ba4d4984e34477c33"
+              ]
+            },
+            {
+              "case_id": "L09.chat.non_thinking.stream",
+              "facet": "protocol",
+              "status": "FAIL",
+              "evidence_hashes": [
+                "ad11e6f8ce9c1d4ce24a025669082632a068615b7b41f8a606d6896d63427e1c"
+              ]
+            },
+            {
+              "case_id": "L09.responses.non_thinking.stream",
+              "facet": "protocol",
+              "status": "FAIL",
+              "evidence_hashes": [
+                "0d470adb322a9954e3789dc333d5d61167400efca5aa249a6e8a2d96bae7455c"
+              ]
+            }
+          ],
+          "requests": 204,
+          "trials": 132
+        },
+        "pro": {
+          "model": "deepseek-v4-pro",
+          "raw_counts": {
+            "PASS": 115,
+            "SKIP": 2,
+            "FAIL": 14,
+            "INCONCLUSIVE": 1
+          },
+          "required_counts": {
+            "PASS": 226,
+            "FAIL": 4,
+            "SKIP": 2
+          },
+          "diagnostic_counts": {
+            "PASS": 139,
+            "FAIL": 26,
+            "INCONCLUSIVE": 3,
+            "SKIP": 4
+          },
+          "diagnostic_facets": {
+            "capability": {
+              "PASS": 5,
+              "SKIP": 2,
+              "FAIL": 5
+            },
+            "format": {
+              "FAIL": 7,
+              "PASS": 1
+            },
+            "quality": {
+              "PASS": 16
+            },
+            "raw_contract": {
+              "PASS": 115,
+              "FAIL": 14,
+              "INCONCLUSIVE": 1,
+              "SKIP": 2
+            },
+            "visible": {
+              "INCONCLUSIVE": 2,
+              "PASS": 2
+            }
+          },
+          "blocking": [
+            {
+              "case_id": "C13.responses.non_thinking.nonstream",
+              "facet": "protocol",
+              "status": "FAIL",
+              "evidence_hashes": [
+                "42add637dbac7df270d605ec60f8ba7d5a055e4c5c9822fdde76a554b9803302",
+                "12eb36f746abe0f8599ffe5981b905d2e7e4b865daa4488895dc06b439888a3e"
+              ]
+            },
+            {
+              "case_id": "C13.responses.non_thinking.stream",
+              "facet": "protocol",
+              "status": "FAIL",
+              "evidence_hashes": [
+                "b7cf0016fc5c0a40250d8fb295c6aa2f29baeb7351c3551aa1c1bea4f6e940d3",
+                "cb73f2484229e87440c8223f4a406e6993af81a258749699379fe83538d80fe7"
+              ]
+            },
+            {
+              "case_id": "L09.chat.non_thinking.stream",
+              "facet": "protocol",
+              "status": "FAIL",
+              "evidence_hashes": [
+                "39cb2eb01ad391168b5213740b0cf3ceb099564927857bee8bc7e8e91883d14a"
+              ]
+            },
+            {
+              "case_id": "L09.responses.non_thinking.stream",
+              "facet": "protocol",
+              "status": "FAIL",
+              "evidence_hashes": [
+                "c663a97e89640e59c7dfe81b90b345f68f8de2b81a3bffc4e4a58341334367ee"
+              ]
+            }
+          ],
+          "requests": 204,
+          "trials": 132
+        }
+      },
+      "reasons": [],
+      "canonical_artifact_sha256": {
+        "summary.json": "531a1a54e31429492b3c313591af0f30eaf0ebeb7127e015f8787088e0d9de85",
+        "reliability.json": "4c6e3e950dc647858aa23cdd6f95304514c06ee45eaae7fd887cf7f9c31298cb",
+        "evidence-index.json": "56cd7f4819f63ae056875cbacdcab9adb3e6c9de7a6c250754dd90d63a6bcd9f",
+        "summary.md": "cccf076b9c8c92f63b9a61bd6defc10723dc85dd3797a204cfe70213aacba195",
+        "acceptance.json": "c9c852b10028029a5585235090bada4cefa95e1eb4d4a63ec8f634e982367602",
+        "results.jsonl": "56130306bfb5140e77432b7ba57761b488d08e87ed7755ab48b5add7d7a56c5e",
+        "manifest.json": "f92bae8b85ee8f24a4a5e6bfcc034d81434c7ced3c22bbdbc4d710e0c8ce3cde",
+        "attempts.jsonl": "fa4f8de6b1bc75b5d473ae3086d3bd4ef71d7c676021eb3b10827eb0c6f8585a",
+        "junit.xml": "1e4c7590bb9184828e491b81892c313ac5d1c40da54b2b76a4d56d9242a438a9",
+        "acceptance.junit.xml": "63d2e40ca27a8779345025719ec625cc639d36b68d14c13c7aa9b079e6cd3bd2",
+        "acceptance.md": "1a948783f256766b140a43eb740a5a26bad4922d4669c1fdd2b2804181807dcf"
+      },
+      "request_ceiling": 420,
+      "output_token_ceiling": 792576,
+      "dataset_hash": "9f44d1f0aa48311b3c94291654398804ab3dc8d165d92d2dbd9a9fa431a156eb",
+      "completed": true
+    },
+    {
+      "session": "official-acceptance-20260923-8308288",
+      "phase": "round-1",
+      "live_revision": "83082882adfb8eb36bd2934d3d4a4469ed57864b",
+      "source_manifest_hash": "25bd4a5ad85600dd6efcccfcaecb7a69f3dc55d514e4f29a3de82d3253bd7526",
+      "policy_hash": "a5c2d0844e64188aefc626d8ea1ff5b3d799073469865fb83c10da5088a9fe5c",
+      "scorer_revision": "sha256:f58fbe96059fe06aed615a2c2eef55e2e90585cfb05e4d69dbba4c83b31e9a09",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "integrity": "verified",
+      "by_endpoint": {
+        "flash": {
+          "model": "deepseek-flash",
+          "raw_counts": {
+            "PASS": 125,
+            "FAIL": 3,
+            "SKIP": 2,
+            "INCONCLUSIVE": 2
+          },
+          "required_counts": {
+            "PASS": 229,
+            "FAIL": 1,
+            "SKIP": 2
+          },
+          "diagnostic_counts": {
+            "PASS": 167,
+            "FAIL": 5,
+            "INCONCLUSIVE": 4,
+            "SKIP": 4
+          },
+          "diagnostic_facets": {
+            "capability": {
+              "PASS": 10,
+              "SKIP": 2
+            },
+            "format": {
+              "FAIL": 2,
+              "PASS": 6
+            },
+            "quality": {
+              "PASS": 16
+            },
+            "raw_contract": {
+              "PASS": 125,
+              "FAIL": 3,
+              "INCONCLUSIVE": 2,
+              "SKIP": 2
+            },
+            "reasoning": {
+              "PASS": 8
+            },
+            "visible": {
+              "INCONCLUSIVE": 2,
+              "PASS": 2
+            }
+          },
+          "blocking": [
+            {
+              "case_id": "R37.chat.thinking.nonstream",
+              "facet": "functional",
+              "status": "FAIL",
+              "evidence_hashes": [
+                "0487dd3c1d31d6c8afeed2be72b3431a74d1b577c54ad5be08cf954a9d48b702"
+              ]
+            }
+          ],
+          "requests": 204,
+          "trials": 132
+        },
+        "pro": {
+          "model": "deepseek-v4-pro",
+          "raw_counts": {
+            "PASS": 115,
+            "SKIP": 2,
+            "FAIL": 13,
+            "INCONCLUSIVE": 2
+          },
+          "required_counts": {
+            "PASS": 230,
+            "SKIP": 2
+          },
+          "diagnostic_counts": {
+            "PASS": 146,
+            "FAIL": 26,
+            "INCONCLUSIVE": 4,
+            "SKIP": 4
+          },
+          "diagnostic_facets": {
+            "capability": {
+              "PASS": 4,
+              "SKIP": 2,
+              "FAIL": 6
+            },
+            "format": {
+              "FAIL": 7,
+              "PASS": 1
+            },
+            "quality": {
+              "PASS": 16
+            },
+            "raw_contract": {
+              "PASS": 115,
+              "FAIL": 13,
+              "INCONCLUSIVE": 2,
+              "SKIP": 2
+            },
+            "reasoning": {
+              "PASS": 8
+            },
+            "visible": {
+              "INCONCLUSIVE": 2,
+              "PASS": 2
+            }
+          },
+          "blocking": [],
+          "requests": 204,
+          "trials": 132
+        }
+      },
+      "reasons": [],
+      "canonical_artifact_sha256": {
+        "summary.json": "fc48728390c61791d022bcda05cc8f978b3d54f1abdbfe5d947cf6852f7b8b45",
+        "reliability.json": "630bf409b7e9c520da361649b90ae06afa374ab66689edf824acbd5d2d6fba8b",
+        "evidence-index.json": "12ce9554d4f5724ef7c47c68c16d28e72a0560979e64ccde6826e4be52ad2fcf",
+        "summary.md": "2993bedbf47c6ae08e11e8b7da9db8015449f4f3c744104275963f459a1dd0a4",
+        "acceptance.json": "77b1da97030291730924a9272f1bfc2a42d7277b024fa9a985a713e4921b6c55",
+        "results.jsonl": "ac49f5ed541cd048b57c06dc9c4efd2545300ccd9e1181e5f64962db8cd825f1",
+        "manifest.json": "9cc5b4d1a52dd73b8b0e1f04759ca82ca88a59849f8fb7b4cdafe0a0e554d65a",
+        "attempts.jsonl": "142b029cc1268b74b437a923a14cfb0b89fdf46536e3719a9b541ee09cb023c4",
+        "junit.xml": "afee7baca930123a97e4dd3078baa80ad50674c42a7c1524f18c41b3befc4d44",
+        "acceptance.junit.xml": "51efbdbee42e8c60c82c950055b52719a80df696bbe6ff8bcb87372a31a9a8aa",
+        "acceptance.md": "2470807d2a93d359e84fefd017ecfe460eaa6252c27daad3478b7fe2c3fc54b3"
+      },
+      "request_ceiling": 420,
+      "output_token_ceiling": 792576,
+      "dataset_hash": "9f44d1f0aa48311b3c94291654398804ab3dc8d165d92d2dbd9a9fa431a156eb",
+      "completed": true
+    },
+    {
+      "session": "official-acceptance-20260923-8385d2f",
+      "phase": "round-1",
+      "live_revision": "8385d2f1d7d346c581c6ab05048605a4016c0857",
+      "source_manifest_hash": "1256d9ce289023dd6659a96b6f473efdd4d0faac54704f39afd4f7ce8196ef6f",
+      "policy_hash": "13172f244224eafcfb18c75a3edcdfcd05f57844edd3d4ffb691be73636612d2",
+      "scorer_revision": "sha256:a2eab715d283644664552bdfb22e1d975159da3aa9ab715ab607183af8753d7a",
+      "verdict": "INCONCLUSIVE",
+      "exit_code": 2,
+      "integrity": "verified",
+      "by_endpoint": {
+        "flash": {
+          "model": "deepseek-flash",
+          "raw_counts": {
+            "PASS": 125,
+            "INCONCLUSIVE": 3,
+            "SKIP": 2,
+            "FAIL": 2
+          },
+          "required_counts": {
+            "PASS": 229,
+            "SKIP": 2,
+            "INCONCLUSIVE": 1
+          },
+          "diagnostic_counts": {
+            "PASS": 159,
+            "FAIL": 4,
+            "INCONCLUSIVE": 5,
+            "SKIP": 4
+          },
+          "diagnostic_facets": {
+            "capability": {
+              "PASS": 10,
+              "SKIP": 2
+            },
+            "format": {
+              "PASS": 6,
+              "FAIL": 2
+            },
+            "quality": {
+              "PASS": 16
+            },
+            "raw_contract": {
+              "PASS": 125,
+              "FAIL": 2,
+              "INCONCLUSIVE": 3,
+              "SKIP": 2
+            },
+            "visible": {
+              "INCONCLUSIVE": 2,
+              "PASS": 2
+            }
+          },
+          "blocking": [
+            {
+              "case_id": "W04.chat.thinking.nonstream",
+              "facet": "functional",
+              "status": "INCONCLUSIVE",
+              "evidence_hashes": [
+                "52199ab041f2cff6650b41da731766f1a97a7eec6024fe6628202a0484fbf3e4",
+                "bcc6d7e17c973efb1bc693ee8c88b82dbc3cbca616d8d7abe9e998b8ecf009f8"
+              ]
+            }
+          ],
+          "requests": 204,
+          "trials": 132
+        },
+        "pro": {
+          "model": "deepseek-v4-pro",
+          "raw_counts": {
+            "PASS": 118,
+            "SKIP": 2,
+            "FAIL": 10,
+            "INCONCLUSIVE": 2
+          },
+          "required_counts": {
+            "PASS": 230,
+            "SKIP": 2
+          },
+          "diagnostic_counts": {
+            "PASS": 144,
+            "FAIL": 20,
+            "INCONCLUSIVE": 4,
+            "SKIP": 4
+          },
+          "diagnostic_facets": {
+            "capability": {
+              "PASS": 5,
+              "SKIP": 2,
+              "FAIL": 5
+            },
+            "format": {
+              "FAIL": 5,
+              "PASS": 3
+            },
+            "quality": {
+              "PASS": 16
+            },
+            "raw_contract": {
+              "PASS": 118,
+              "FAIL": 10,
+              "INCONCLUSIVE": 2,
+              "SKIP": 2
+            },
+            "visible": {
+              "INCONCLUSIVE": 2,
+              "PASS": 2
+            }
+          },
+          "blocking": [],
+          "requests": 204,
+          "trials": 132
+        }
+      },
+      "reasons": [
+        "A mandatory facet is unmeasured or errored"
+      ],
+      "canonical_artifact_sha256": {
+        "summary.json": "d054aab0fd223966ee6184464f269b902e71922f16a251a7612dc45eb70de554",
+        "reliability.json": "c6d05a14fdcbcc7fab9f4a288f28b2e312d1ec56fac5b87da67b948dc1ec884c",
+        "evidence-index.json": "713d4f4475a56ea99b5104ac698c798bbe7b19d7c1a1eabff2f32ed8192dacac",
+        "summary.md": "e0aa3ae647e4c7e4b95fff8223376b490d798a373ac66ccf5de5b3e06c7f5890",
+        "acceptance.json": "47ef345063102ae57ef712201b39192998a98057ca9f8bbbecb8a6e004e57ef0",
+        "results.jsonl": "aecd878f3738e4ad23edcebeeed73e0293ccb3ae99286f652654653a273327d8",
+        "manifest.json": "7b797d1f691383d1ef2975e4986484bc4c75ed27025700f8a318117036a3d45b",
+        "attempts.jsonl": "197720a95b6181696f3a1a83affe3259536646f2e5f2a9728de395b80f5bb6bf",
+        "junit.xml": "dca6a4fa889177edeeecaff9bd904bf07ceefac19272bb43a65915de2341d28a",
+        "acceptance.junit.xml": "0d20c011cb70000bddbcea93cfe835018bf42f287331fce3d6f6af4f09b8bf48",
+        "acceptance.md": "08174f63a96c38169ea097addfa073026d801ae1b8256a7b80629b9d80d0efce"
+      },
+      "request_ceiling": 420,
+      "output_token_ceiling": 792576,
+      "dataset_hash": "9f44d1f0aa48311b3c94291654398804ab3dc8d165d92d2dbd9a9fa431a156eb",
+      "completed": true
+    },
+    {
+      "session": "official-acceptance-20260923-b0e7d5a",
+      "phase": "round-1",
+      "live_revision": "b0e7d5a9e70a6eddb7846076aeca05f38024ba96",
+      "source_manifest_hash": "40ff9c726278d5bae5e69edaf5ab797b7ae9da00b14df8a4e24339394d240ecc",
+      "policy_hash": "a5c2d0844e64188aefc626d8ea1ff5b3d799073469865fb83c10da5088a9fe5c",
+      "scorer_revision": "sha256:e6f11609db3796d7728fc82f11166bba19435997f0a1cca713ca3029bc3f9313",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "integrity": "verified",
+      "by_endpoint": {
+        "flash": {
+          "model": "deepseek-flash",
+          "raw_counts": {
+            "PASS": 127,
+            "SKIP": 2,
+            "INCONCLUSIVE": 2,
+            "FAIL": 1
+          },
+          "required_counts": {
+            "PASS": 230,
+            "SKIP": 2
+          },
+          "diagnostic_counts": {
+            "PASS": 170,
+            "FAIL": 2,
+            "INCONCLUSIVE": 4,
+            "SKIP": 4
+          },
+          "diagnostic_facets": {
+            "capability": {
+              "PASS": 10,
+              "SKIP": 2
+            },
+            "format": {
+              "PASS": 7,
+              "FAIL": 1
+            },
+            "quality": {
+              "PASS": 16
+            },
+            "raw_contract": {
+              "PASS": 127,
+              "FAIL": 1,
+              "INCONCLUSIVE": 2,
+              "SKIP": 2
+            },
+            "reasoning": {
+              "PASS": 8
+            },
+            "visible": {
+              "INCONCLUSIVE": 2,
+              "PASS": 2
+            }
+          },
+          "blocking": [],
+          "requests": 204,
+          "trials": 132
+        },
+        "pro": {
+          "model": "deepseek-v4-pro",
+          "raw_counts": {
+            "PASS": 116,
+            "SKIP": 2,
+            "FAIL": 12,
+            "INCONCLUSIVE": 2
+          },
+          "required_counts": {
+            "PASS": 230,
+            "SKIP": 2
+          },
+          "diagnostic_counts": {
+            "PASS": 148,
+            "FAIL": 24,
+            "INCONCLUSIVE": 4,
+            "SKIP": 4
+          },
+          "diagnostic_facets": {
+            "capability": {
+              "PASS": 5,
+              "SKIP": 2,
+              "FAIL": 5
+            },
+            "format": {
+              "FAIL": 7,
+              "PASS": 1
+            },
+            "quality": {
+              "PASS": 16
+            },
+            "raw_contract": {
+              "PASS": 116,
+              "FAIL": 12,
+              "INCONCLUSIVE": 2,
+              "SKIP": 2
+            },
+            "reasoning": {
+              "PASS": 8
+            },
+            "visible": {
+              "INCONCLUSIVE": 2,
+              "PASS": 2
+            }
+          },
+          "blocking": [],
+          "requests": 204,
+          "trials": 132
+        }
+      },
+      "reasons": [],
+      "canonical_artifact_sha256": {
+        "summary.json": "c0760636a56fcddb33e6320970ffa4b4db04bd86b8d5f9206c6ec54194916b87",
+        "reliability.json": "6de8e567b5332584b468b3519f25b9640ec1d68d632ecbeb31fddffb614d09c3",
+        "evidence-index.json": "473b73cbea7cc075da0068c771c584e90f3d01193a8c64b9ca2d55e81dc9715b",
+        "summary.md": "590bac9928901b36f191a644740cf57010cbff7bc1fd785f37dbddcd64f9d20e",
+        "acceptance.json": "850c4af48d7a7fb745de85d5408b016f4367a9e670c8ee523a3156e5ab3d86f7",
+        "results.jsonl": "4e63accf288745d4dbcc8990c3cf7e407ec9602ef4d6416348ae24a0e2a0f97a",
+        "manifest.json": "830021a275f377ea179b288d609278a097f527a9db180faf08d44f4d5ee38021",
+        "attempts.jsonl": "592c8bc6a18b639fa8f4f91011e7ec21e9a31bf231cb167fa6d9372044b64495",
+        "junit.xml": "6c91fb26c7a39bb2c04fdaa811152109da89a5cab756146fdc421243e9f1f515",
+        "acceptance.junit.xml": "741396a268314b5f7d9c923b5fcfcb0b3729ebf99b24c8cc815ccc978a7dfe24",
+        "acceptance.md": "15a52627a2853c190a174ac16e2900b1408ab40fb588a9fc73eac86eef8ef460"
+      },
+      "request_ceiling": 420,
+      "output_token_ceiling": 792576,
+      "dataset_hash": "348ae63da3a67eb27636874a849a2b42ed15388ab3881d2c3ef7be53b7ea4ad9",
+      "completed": true
+    },
+    {
+      "session": "official-acceptance-20260923-b0e7d5a",
+      "phase": "round-2",
+      "live_revision": "b0e7d5a9e70a6eddb7846076aeca05f38024ba96",
+      "source_manifest_hash": "40ff9c726278d5bae5e69edaf5ab797b7ae9da00b14df8a4e24339394d240ecc",
+      "policy_hash": "a5c2d0844e64188aefc626d8ea1ff5b3d799073469865fb83c10da5088a9fe5c",
+      "scorer_revision": "sha256:e6f11609db3796d7728fc82f11166bba19435997f0a1cca713ca3029bc3f9313",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "integrity": "verified",
+      "by_endpoint": {
+        "flash": {
+          "model": "deepseek-flash",
+          "raw_counts": {
+            "PASS": 124,
+            "SKIP": 2,
+            "FAIL": 4,
+            "INCONCLUSIVE": 2
+          },
+          "required_counts": {
+            "PASS": 230,
+            "SKIP": 2
+          },
+          "diagnostic_counts": {
+            "PASS": 164,
+            "FAIL": 8,
+            "INCONCLUSIVE": 4,
+            "SKIP": 4
+          },
+          "diagnostic_facets": {
+            "capability": {
+              "PASS": 10,
+              "SKIP": 2
+            },
+            "format": {
+              "FAIL": 4,
+              "PASS": 4
+            },
+            "quality": {
+              "PASS": 16
+            },
+            "raw_contract": {
+              "PASS": 124,
+              "FAIL": 4,
+              "INCONCLUSIVE": 2,
+              "SKIP": 2
+            },
+            "reasoning": {
+              "PASS": 8
+            },
+            "visible": {
+              "INCONCLUSIVE": 2,
+              "PASS": 2
+            }
+          },
+          "blocking": [],
+          "requests": 204,
+          "trials": 132
+        },
+        "pro": {
+          "model": "deepseek-v4-pro",
+          "raw_counts": {
+            "PASS": 115,
+            "SKIP": 2,
+            "FAIL": 13,
+            "INCONCLUSIVE": 2
+          },
+          "required_counts": {
+            "PASS": 230,
+            "SKIP": 2
+          },
+          "diagnostic_counts": {
+            "PASS": 146,
+            "FAIL": 26,
+            "INCONCLUSIVE": 4,
+            "SKIP": 4
+          },
+          "diagnostic_facets": {
+            "capability": {
+              "PASS": 4,
+              "SKIP": 2,
+              "FAIL": 6
+            },
+            "format": {
+              "FAIL": 7,
+              "PASS": 1
+            },
+            "quality": {
+              "PASS": 16
+            },
+            "raw_contract": {
+              "PASS": 115,
+              "FAIL": 13,
+              "INCONCLUSIVE": 2,
+              "SKIP": 2
+            },
+            "reasoning": {
+              "PASS": 8
+            },
+            "visible": {
+              "INCONCLUSIVE": 2,
+              "PASS": 2
+            }
+          },
+          "blocking": [],
+          "requests": 204,
+          "trials": 132
+        }
+      },
+      "reasons": [],
+      "canonical_artifact_sha256": {
+        "summary.json": "95da5152b2157e015705eb0125fc0e11155941253625c3c2b2e5cc0bf9f570bd",
+        "reliability.json": "08e5037a28e7278776820f508332eb78b5c80e8d5073fd3314f25cc2546bbc64",
+        "evidence-index.json": "5ed6c1383b80c9416ad8028ed031c73d4bb9239077220970bfddbf7d0f6ac6d4",
+        "summary.md": "1071b490dde8f6d3ff57b90d70a47345955e74604d6791d2250160b5023e6049",
+        "acceptance.json": "376d0580b2794e72059367649de7c0f5d86389bbed915cebb84c53e1b1ac00ce",
+        "results.jsonl": "5b0ce0e64353c0a7090f8b6ac97cd8230fa4b4f41310c52234afe98b638d6929",
+        "manifest.json": "f94b014caaea4bb9ec1c59d14562da7e4992234ccf6b87c5a3ea5be2abe08efe",
+        "attempts.jsonl": "8a8035136a4deb08cafa98ee2608c49112c6e1c21463b8991b3d4f640f860da5",
+        "junit.xml": "8287fb3a77695dfffe5c09ff3d184d97d2bd1c63dac956df367a51fe0cea5f74",
+        "acceptance.junit.xml": "9958709153dabc747ece2582860038baac004eeb907cbf9494aa62a7f1bb2a4d",
+        "acceptance.md": "1db35fbaca97ef4e1ade50b2c72c1fba123fad2641a4c8fcfdffc22f162ab7b8"
+      },
+      "request_ceiling": 420,
+      "output_token_ceiling": 792576,
+      "dataset_hash": "348ae63da3a67eb27636874a849a2b42ed15388ab3881d2c3ef7be53b7ea4ad9",
+      "completed": true
+    },
+    {
+      "session": "official-acceptance-20260923-b0e7d5a",
+      "phase": "round-3",
+      "live_revision": "b0e7d5a9e70a6eddb7846076aeca05f38024ba96",
+      "source_manifest_hash": "40ff9c726278d5bae5e69edaf5ab797b7ae9da00b14df8a4e24339394d240ecc",
+      "policy_hash": "a5c2d0844e64188aefc626d8ea1ff5b3d799073469865fb83c10da5088a9fe5c",
+      "scorer_revision": "sha256:e6f11609db3796d7728fc82f11166bba19435997f0a1cca713ca3029bc3f9313",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "integrity": "verified",
+      "by_endpoint": {
+        "flash": {
+          "model": "deepseek-flash",
+          "raw_counts": {
+            "PASS": 125,
+            "SKIP": 2,
+            "FAIL": 2,
+            "INCONCLUSIVE": 3
+          },
+          "required_counts": {
+            "PASS": 230,
+            "SKIP": 2
+          },
+          "diagnostic_counts": {
+            "PASS": 166,
+            "FAIL": 4,
+            "INCONCLUSIVE": 6,
+            "SKIP": 4
+          },
+          "diagnostic_facets": {
+            "capability": {
+              "PASS": 10,
+              "SKIP": 2
+            },
+            "format": {
+              "FAIL": 2,
+              "PASS": 6
+            },
+            "quality": {
+              "PASS": 16
+            },
+            "raw_contract": {
+              "PASS": 125,
+              "FAIL": 2,
+              "INCONCLUSIVE": 3,
+              "SKIP": 2
+            },
+            "reasoning": {
+              "PASS": 7,
+              "INCONCLUSIVE": 1
+            },
+            "visible": {
+              "INCONCLUSIVE": 2,
+              "PASS": 2
+            }
+          },
+          "blocking": [],
+          "requests": 204,
+          "trials": 132
+        },
+        "pro": {
+          "model": "deepseek-v4-pro",
+          "raw_counts": {
+            "PASS": 117,
+            "SKIP": 2,
+            "FAIL": 11,
+            "INCONCLUSIVE": 2
+          },
+          "required_counts": {
+            "PASS": 230,
+            "SKIP": 2
+          },
+          "diagnostic_counts": {
+            "PASS": 150,
+            "FAIL": 22,
+            "INCONCLUSIVE": 4,
+            "SKIP": 4
+          },
+          "diagnostic_facets": {
+            "capability": {
+              "PASS": 5,
+              "SKIP": 2,
+              "FAIL": 5
+            },
+            "format": {
+              "FAIL": 6,
+              "PASS": 2
+            },
+            "quality": {
+              "PASS": 16
+            },
+            "raw_contract": {
+              "PASS": 117,
+              "FAIL": 11,
+              "INCONCLUSIVE": 2,
+              "SKIP": 2
+            },
+            "reasoning": {
+              "PASS": 8
+            },
+            "visible": {
+              "INCONCLUSIVE": 2,
+              "PASS": 2
+            }
+          },
+          "blocking": [],
+          "requests": 204,
+          "trials": 132
+        }
+      },
+      "reasons": [],
+      "canonical_artifact_sha256": {
+        "summary.json": "c6193c05b091f349ea7664c5b3608b19313ea12365205da9b1c92e03f6fbf00c",
+        "reliability.json": "10400d7e4566f19b567d481bb332c43e219dda4eeedb31ec02c2b95e2b06b329",
+        "evidence-index.json": "1f302a7611b64e6bba4e1be07ee54655f44c86958b3fd54b6390fac6db8f3813",
+        "summary.md": "4849ff1054c06bfa32d88e820e079654e64811462ac226f04d8ff5001dfa908a",
+        "acceptance.json": "2e01cb20d0daa4c5dd6016186f1b0b220763a5a4e36e99a38b44deef56615bb1",
+        "results.jsonl": "6cce04165bb45c8fea93b02f170b84605b94d290785aec0b4dd2e1b159e0ff80",
+        "manifest.json": "2575664904d870cf132424b54d5a7c18041ecd476b87a0f83759b29335a2fd7c",
+        "attempts.jsonl": "412b4325be1b7b1b2eb005cc17e965ed0d8456c1fce4c28a86c80d252ef711a2",
+        "junit.xml": "33a29dedcfedb4e1a33e65030d48932622570bac0e4f466c9a4cf4c2c9dc63a6",
+        "acceptance.junit.xml": "910a0ab1be95b5e486f21cb0274ad93b3e4df1bc5d247352ee77e7b6c0ac0e7a",
+        "acceptance.md": "7f98fb74002ee7d623af46ea1138482c04888d40dcd2bb244434ec36f5bdeec2"
+      },
+      "request_ceiling": 420,
+      "output_token_ceiling": 792576,
+      "dataset_hash": "348ae63da3a67eb27636874a849a2b42ed15388ab3881d2c3ef7be53b7ea4ad9",
+      "completed": true
+    },
+    {
+      "session": "official-acceptance-20260923-b0e7d5a",
+      "phase": "full-stress",
+      "live_revision": "b0e7d5a9e70a6eddb7846076aeca05f38024ba96",
+      "source_manifest_hash": "e92b12bdfdb93d99f394e484af2cd05546c0b4391455ad6ae9df068a2b47e71c",
+      "policy_hash": "a5c2d0844e64188aefc626d8ea1ff5b3d799073469865fb83c10da5088a9fe5c",
+      "scorer_revision": "sha256:e6f11609db3796d7728fc82f11166bba19435997f0a1cca713ca3029bc3f9313",
+      "verdict": "INCONCLUSIVE",
+      "exit_code": 2,
+      "integrity": "verified",
+      "by_endpoint": {
+        "flash": {
+          "model": "deepseek-flash",
+          "raw_counts": {
+            "PASS": 417,
+            "FAIL": 13,
+            "SKIP": 32,
+            "INCONCLUSIVE": 6
+          },
+          "required_counts": {
+            "PASS": 709,
+            "SKIP": 32
+          },
+          "diagnostic_counts": {
+            "PASS": 632,
+            "FAIL": 31,
+            "INCONCLUSIVE": 12,
+            "SKIP": 64
+          },
+          "diagnostic_facets": {
+            "capability": {
+              "PASS": 84,
+              "SKIP": 32,
+              "FAIL": 8
+            },
+            "format": {
+              "PASS": 24,
+              "FAIL": 8
+            },
+            "quality": {
+              "PASS": 73,
+              "FAIL": 2
+            },
+            "raw_contract": {
+              "PASS": 417,
+              "FAIL": 13,
+              "INCONCLUSIVE": 6,
+              "SKIP": 32
+            },
+            "reasoning": {
+              "PASS": 28
+            },
+            "visible": {
+              "INCONCLUSIVE": 6,
+              "PASS": 6
+            }
+          },
+          "blocking": [],
+          "requests": 868,
+          "trials": 468
+        },
+        "pro": {
+          "model": "deepseek-v4-pro",
+          "raw_counts": {
+            "PASS": 405,
+            "SKIP": 32,
+            "FAIL": 24,
+            "INCONCLUSIVE": 6,
+            "ERROR": 1
+          },
+          "required_counts": {
+            "PASS": 706,
+            "FAIL": 2,
+            "ERROR": 1,
+            "SKIP": 32
+          },
+          "diagnostic_counts": {
+            "PASS": 608,
+            "FAIL": 53,
+            "INCONCLUSIVE": 13,
+            "ERROR": 1,
+            "SKIP": 64
+          },
+          "diagnostic_facets": {
+            "capability": {
+              "PASS": 83,
+              "SKIP": 32,
+              "FAIL": 9
+            },
+            "format": {
+              "FAIL": 20,
+              "PASS": 12
+            },
+            "quality": {
+              "PASS": 75
+            },
+            "raw_contract": {
+              "PASS": 405,
+              "FAIL": 24,
+              "INCONCLUSIVE": 6,
+              "ERROR": 1,
+              "SKIP": 32
+            },
+            "reasoning": {
+              "PASS": 28
+            },
+            "visible": {
+              "INCONCLUSIVE": 7,
+              "PASS": 5
+            }
+          },
+          "blocking": [
+            {
+              "case_id": "L10.responses.non_thinking.nonstream",
+              "facet": "budget",
+              "status": "FAIL",
+              "evidence_hashes": [
+                "4f22c42ca5025e8e81f26c5473e2671e1ba05c35e1815ec7745eb6c1efcba243"
+              ]
+            },
+            {
+              "case_id": "L10.responses.non_thinking.nonstream",
+              "facet": "functional",
+              "status": "FAIL",
+              "evidence_hashes": [
+                "4f22c42ca5025e8e81f26c5473e2671e1ba05c35e1815ec7745eb6c1efcba243"
+              ]
+            },
+            {
+              "case_id": "L10.responses.non_thinking.nonstream",
+              "facet": "protocol",
+              "status": "ERROR",
+              "evidence_hashes": [
+                "4f22c42ca5025e8e81f26c5473e2671e1ba05c35e1815ec7745eb6c1efcba243"
+              ]
+            }
+          ],
+          "requests": 868,
+          "trials": 468
+        }
+      },
+      "reasons": [
+        "Source execution is incomplete or contains an execution error",
+        "A mandatory facet is unmeasured or errored"
+      ],
+      "canonical_artifact_sha256": {
+        "summary.json": "679555b0a9a1a6861488020e895edc2b3e6394ce97133c0543046ce4f936b1e6",
+        "reliability.json": "25ac7786076c691f8b4abbff2cbc572a8f3cd041c5435e895d346c539473c2fc",
+        "evidence-index.json": "e2519bf431e96a52887732ed69305c0c38280caadf1c4b1e663e97095983bea7",
+        "summary.md": "05fa38338d37c9220908be9ad24fa1d060d899ebc446df9ea229e79488bf92ae",
+        "acceptance.json": "e4cb6f4dab22664054f49ca73254a2a5013d5b75d3941f30b4cd2a89a0910d53",
+        "results.jsonl": "30283fd8850247b0b493e37dc4dbbef517e49d8a3fb867c28ab98517d7722818",
+        "manifest.json": "84b6840e91de4fd4334e7dea63e1ffc819604c9e4f81c94505a0a2b809bac254",
+        "attempts.jsonl": "4acaf2f97ac132defc2d93abc54039fe20a0de2c5cf421f33db1320b2042beb6",
+        "junit.xml": "0d50da47d2c19a2975020c22543167fc3d10138a7d8bebc12fcd0be8bc9b6de9",
+        "acceptance.junit.xml": "88116a592c440cbe9ae7187fdddc3fdb7ea7c306fdf4fca59be5cb734b240254",
+        "acceptance.md": "2c9f8921bfc498caec8f50758ee82416018c25d0c3fdee8f70da040650294191"
+      },
+      "request_ceiling": 1808,
+      "output_token_ceiling": 3346432,
+      "dataset_hash": "0cf71782164dc787ac1cb8f94b8e17baba7959d71df1683ab63d45223963cdee",
+      "completed": false
+    },
+    {
+      "session": "official-acceptance-20260923-b0e7d5a",
+      "phase": "beta-schema",
+      "live_revision": "b0e7d5a9e70a6eddb7846076aeca05f38024ba96",
+      "source_manifest_hash": "a5428e12399e3c1b4b01bbfe6edffd607079f1321f9acb336d3de6ba2372e71c",
+      "policy_hash": "a5c2d0844e64188aefc626d8ea1ff5b3d799073469865fb83c10da5088a9fe5c",
+      "scorer_revision": "sha256:e6f11609db3796d7728fc82f11166bba19435997f0a1cca713ca3029bc3f9313",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "integrity": "verified",
+      "by_endpoint": {
+        "flash": {
+          "model": "deepseek-flash",
+          "raw_counts": {
+            "PASS": 2,
+            "FAIL": 1
+          },
+          "required_counts": {
+            "PASS": 4
+          },
+          "diagnostic_counts": {
+            "PASS": 3,
+            "FAIL": 2
+          },
+          "diagnostic_facets": {
+            "capability": {
+              "PASS": 1,
+              "FAIL": 1
+            },
+            "raw_contract": {
+              "PASS": 2,
+              "FAIL": 1
+            }
+          },
+          "blocking": [],
+          "requests": 3,
+          "trials": 3
+        },
+        "pro": {
+          "model": "deepseek-v4-pro",
+          "raw_counts": {
+            "PASS": 2,
+            "FAIL": 1
+          },
+          "required_counts": {
+            "PASS": 4
+          },
+          "diagnostic_counts": {
+            "PASS": 3,
+            "FAIL": 2
+          },
+          "diagnostic_facets": {
+            "capability": {
+              "PASS": 1,
+              "FAIL": 1
+            },
+            "raw_contract": {
+              "PASS": 2,
+              "FAIL": 1
+            }
+          },
+          "blocking": [],
+          "requests": 3,
+          "trials": 3
+        }
+      },
+      "reasons": [],
+      "canonical_artifact_sha256": {
+        "summary.json": "cd9d514b23b4eb68095670df2ddab362482da5f4a97c7c0f2084e7c04d4d8376",
+        "reliability.json": "6548098cf17c452a3cb6f9189a8661946b3985fff8bf92a3cc05633decc76f93",
+        "evidence-index.json": "07c31d4d535f715980650ad92c238fc58a79fd21e0043c29bd9ea237456040bc",
+        "summary.md": "8a69e3d5d80719b32ebccd409788731dbf37269f21c3dd2c53127d2516862b2c",
+        "acceptance.json": "42f6ad3272ed4d82e998f3ab90053d0dfc9a6f8db7aa2669313f67692cf49c26",
+        "results.jsonl": "219b3bef802a608bd12367802dba3677ac2b54b1db95e14061d33afc16b9578b",
+        "manifest.json": "41a8bdb0d125fcc16e141d5c04cb1112811430bfd4dd3e2ab1ae67f3b20654ec",
+        "attempts.jsonl": "78f8e5b7e7f0f6865486883c032cb2b3857513edea1c5f14cd7034e81be78261",
+        "junit.xml": "3d0c320e30ef285b4f80aaa2bd17df2d618ee981291220cf2a22855d31cca204",
+        "acceptance.junit.xml": "fa153d300115bd0f8b2694d067ebc64e68a543666d00098ca90adcf4fd32cd63",
+        "acceptance.md": "ef7614538cfc93dec3aaa2b78a53a150ffe0ab29e961a33f080680929af33d9c"
+      },
+      "request_ceiling": 6,
+      "output_token_ceiling": 3072,
+      "dataset_hash": "166b8e1e8921746e837d1aac0b97b001de2da7e41fb5db783c3e143aec2c16e5",
+      "completed": true
+    },
+    {
+      "session": "official-acceptance-20260923-b0e7d5a-output-confirmation",
+      "phase": "output-confirmation",
+      "live_revision": "b0e7d5a9e70a6eddb7846076aeca05f38024ba96",
+      "source_manifest_hash": "1f6655330e36d6cf7d46a55ddeff155425d98df3b63973f98a1d972f45beb2fa",
+      "policy_hash": "a5c2d0844e64188aefc626d8ea1ff5b3d799073469865fb83c10da5088a9fe5c",
+      "scorer_revision": "sha256:e6f11609db3796d7728fc82f11166bba19435997f0a1cca713ca3029bc3f9313",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "integrity": "verified",
+      "by_endpoint": {
+        "pro": {
+          "model": "deepseek-v4-pro",
+          "raw_counts": {
+            "PASS": 2
+          },
+          "required_counts": {
+            "PASS": 6
+          },
+          "diagnostic_counts": {
+            "PASS": 4
+          },
+          "diagnostic_facets": {
+            "raw_contract": {
+              "PASS": 2
+            },
+            "visible": {
+              "PASS": 2
+            }
+          },
+          "blocking": [],
+          "requests": 2,
+          "trials": 2
+        }
+      },
+      "reasons": [],
+      "canonical_artifact_sha256": {
+        "summary.json": "e4302a6912964628d8b886959585afbddc5d426c053c7bd38d3cef8e9bc8365b",
+        "reliability.json": "90c508eeac2eb410890ff9f2fc955814d3f18a3dd7691438fbdeee9d9612d2f0",
+        "evidence-index.json": "0ab576a5fef4d862d78a39353c861aee764ec9eb1a67f2a3e9c5a88799cae963",
+        "summary.md": "0fb2b973c9ca8060d2a5c9fd20ef2f50ead91fa68d331fa09f0bcd53f35f2047",
+        "acceptance.json": "79beb2e20d423401db7b11f6c3385eebad6e790e6eb8ba131dfcd81ed14a5616",
+        "results.jsonl": "5f22ff6e374b0421dc3bad49a2a22cd7010fd6bb56a7dd8e8d4373f3a20291ca",
+        "manifest.json": "74cb0eddf7899a43f971d79a87eb3f233e50c90651621457b7531c74354cc381",
+        "attempts.jsonl": "1cf7d0a688241d5faf3ca9a7f441bc749c10f04b41a7fe7bc859876e9113db87",
+        "junit.xml": "5cdbe9d54c89ae46645e5f4d9bfa80a02372c69b230b1bfde71cd393f8646db1",
+        "acceptance.junit.xml": "dbd304dd534799fcdd415075a3d5c96ac7eab52ec861c73b16d739cd6d30379e",
+        "acceptance.md": "c7ac04606191ff9572d70bb0794d6e5675996c9153d024a85983701b130ad9b1"
+      },
+      "request_ceiling": 2,
+      "output_token_ceiling": 8192,
+      "dataset_hash": "fc6e4243822fc19c784bb0981536b2b8ec49ec9447284e4405415ce254ee1442",
+      "completed": true
+    },
+    {
+      "session": "official-acceptance-20260923-b0e7d5a-output-confirmation",
+      "phase": "full-stress-pro-confirmation",
+      "live_revision": "b0e7d5a9e70a6eddb7846076aeca05f38024ba96",
+      "source_manifest_hash": "55d0ba1c3a2fabebb86a78e40233a1d59b4b89e68028d1a1ed96e5f48a57cc6b",
+      "policy_hash": "a5c2d0844e64188aefc626d8ea1ff5b3d799073469865fb83c10da5088a9fe5c",
+      "scorer_revision": "sha256:e6f11609db3796d7728fc82f11166bba19435997f0a1cca713ca3029bc3f9313",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "integrity": "verified",
+      "by_endpoint": {
+        "pro": {
+          "model": "deepseek-v4-pro",
+          "raw_counts": {
+            "PASS": 406,
+            "SKIP": 32,
+            "FAIL": 24,
+            "INCONCLUSIVE": 6
+          },
+          "required_counts": {
+            "PASS": 708,
+            "FAIL": 1,
+            "SKIP": 32
+          },
+          "diagnostic_counts": {
+            "PASS": 610,
+            "FAIL": 53,
+            "INCONCLUSIVE": 12,
+            "SKIP": 64
+          },
+          "diagnostic_facets": {
+            "capability": {
+              "PASS": 81,
+              "SKIP": 32,
+              "FAIL": 11
+            },
+            "format": {
+              "FAIL": 18,
+              "PASS": 14
+            },
+            "quality": {
+              "PASS": 75
+            },
+            "raw_contract": {
+              "PASS": 406,
+              "FAIL": 24,
+              "INCONCLUSIVE": 6,
+              "SKIP": 32
+            },
+            "reasoning": {
+              "PASS": 28
+            },
+            "visible": {
+              "INCONCLUSIVE": 6,
+              "PASS": 6
+            }
+          },
+          "blocking": [
+            {
+              "case_id": "L06.chat.non_thinking.stream",
+              "facet": "retrieval",
+              "status": "FAIL",
+              "evidence_hashes": [
+                "2d83d5e23b721729d39b4f51ac3990ea63f50bdbfd4faae21fdab40dffdcd6bd",
+                "c89ea6af82943123ccccc54ed2cb1c56f206b03edec03e0e822b1baa34ff21af",
+                "d662a08d65cb9711267db85ded7a3c1034c31644b125744666019bcc68084c20",
+                "24359736b236e3c49824d4394145d2f8daf0a61b717b481a8df072aa4a84814c"
+              ]
+            }
+          ],
+          "requests": 868,
+          "trials": 468
+        }
+      },
+      "reasons": [],
+      "canonical_artifact_sha256": {
+        "summary.json": "c30766bd028898c755b93c897b7dc078e6aec963e6a76155a7f66294ee353426",
+        "reliability.json": "877d7d47ae4a3c13d68cac890189c66a76abe7b75e6c1de058a788b1b18a096a",
+        "evidence-index.json": "960e6d198f18c8c7e8318ed059bba2381fbbf6e33dccadbc227c88e4817fd769",
+        "summary.md": "15178500dd31f2066b408c5180f4e5768e132cb144488de4c17a4f805563f2dd",
+        "acceptance.json": "f5e75bc15d94ff0facdd40712667d2ce58684c1836cf15a21b135c7b5ca40bdf",
+        "results.jsonl": "b4f14b8ee4f9fb99640db998b73d00e87ed7eb69a5864c1d303a0961355e7cb1",
+        "manifest.json": "aa77e4d530478218f1da0d5038d7107d1e0a965d1289ced4880848bb97e83d6d",
+        "attempts.jsonl": "3051f16ce7b2fc3b469eafb4866c2ad30628e959765736d54edde15b3d8ff10c",
+        "junit.xml": "b46a3ff7fc48e505939ef9908c96b36977e170c3a44f18bdc3989228a598e72d",
+        "acceptance.junit.xml": "d880940035e579ce93a13031ef4c29e88f51707c4bb73e7e94edbde80646ce09",
+        "acceptance.md": "2d421ec7dab86aac5548e6601593929b52edca4d3f73a62935f6961630adbcea"
+      },
+      "request_ceiling": 904,
+      "output_token_ceiling": 1673216,
+      "dataset_hash": "0cf71782164dc787ac1cb8f94b8e17baba7959d71df1683ab63d45223963cdee",
+      "completed": true
+    }
+  ],
+  "total_actual_requests": 5060,
+  "task_request_ceiling": 5240,
+  "task_output_token_ceiling": 9786368,
+  "supplemental_preflight": {
+    "revision": "b0e7d5a9e70a6eddb7846076aeca05f38024ba96",
+    "scorer_revision": "sha256:e6f11609db3796d7728fc82f11166bba19435997f0a1cca713ca3029bc3f9313",
+    "policy_hash": "a5c2d0844e64188aefc626d8ea1ff5b3d799073469865fb83c10da5088a9fe5c",
+    "wheel_sha256": "947696e9e4ebce951ff00251f981f3451959602aa996bbe44677e73173180ac8",
+    "request_ceiling": 906,
+    "output_token_ceiling": 1681408,
+    "task_request_ceiling": 5240,
+    "task_output_token_ceiling": 9786368,
+    "purpose": "One separately reported Pro Responses 4K confirmation in each stream mode after a 600-second execution deadline. No original result is replaced. If the bounded output confirmation passes, perform exactly one full Pro stress confirmation with unchanged controls and scorer. Preserve the original failed stress run.",
+    "phases": [
+      {
+        "phase": "output-confirmation",
+        "manifest_hash": "1f6655330e36d6cf7d46a55ddeff155425d98df3b63973f98a1d972f45beb2fa",
+        "dataset_hash": "fc6e4243822fc19c784bb0981536b2b8ec49ec9447284e4405415ce254ee1442",
+        "request_ceiling": 2,
+        "output_token_ceiling": 8192,
+        "trials": 2,
+        "facet_counts": {
+          "required": 6,
+          "diagnostic": 4
+        }
+      },
+      {
+        "phase": "full-stress-pro-confirmation",
+        "manifest_hash": "55d0ba1c3a2fabebb86a78e40233a1d59b4b89e68028d1a1ed96e5f48a57cc6b",
+        "dataset_hash": "0cf71782164dc787ac1cb8f94b8e17baba7959d71df1683ab63d45223963cdee",
+        "request_ceiling": 904,
+        "output_token_ceiling": 1673216,
+        "trials": 468,
+        "facet_counts": {
+          "required": 741,
+          "diagnostic": 739
+        }
+      }
+    ]
+  },
+  "historical_replay": [
+    {
+      "phase": "input-timeout-confirmation-pro",
+      "manifest_hash": "6811c1ba492a6ad48793773435244d4d00b4fb04c6b1e42571200b3bd3be6c3b",
+      "raw_counts": {
+        "ERROR": 0,
+        "FAIL": 0,
+        "INCONCLUSIVE": 0,
+        "PASS": 2,
+        "SKIP": 0
+      },
+      "verdict": "INCONCLUSIVE",
+      "integrity": "verified",
+      "required": {
+        "PASS": 4
+      },
+      "diagnostic": {
+        "PASS": 4
+      },
+      "blocking": [],
+      "reasons": [
+        "Each endpoint/protocol needs an applicable functional control"
+      ],
+      "source_files_sha256": {
+        "summary.json": "bda793c54abaaa7630ca9f6de598961a32eb37e7c75d076c9229a9fc93d6a963",
+        "reliability.json": "3599edecfc7b36180af30712a2b992e703916f8109f4f9f9e2dc371f5b9f2e7a",
+        "evidence-index.json": "5d3cc409ce205f8915082f36ce89b0856d45054e32fdef3a5ccb7f4ad1c8cdf9",
+        "summary.md": "6c5cf5bac3a1c12e667afcdcad3ce929d1af2468be641216c718afbd1c4a1180",
+        "results.jsonl": "5e33b9109803b9cd6dbee47b2e5b31984bbc6c9c517a6fbf3c0fcc70291e604b",
+        "manifest.json": "74073c36ad66816b7745e07eb8fb0e63d72faedd04c8de256d2a7e3b797a912a",
+        "attempts.jsonl": "fb7e9468f67d169dbcb8c5dbf8169fa5716e1ad869e55647fd7a77d2ff73066e",
+        "junit.xml": "c275d9e54afadcc60a1bf0f2094eec64984c2d9ff66fd3c52a085f1ad777443f"
+      }
+    },
+    {
+      "phase": "pilot",
+      "manifest_hash": "6c3431510bcdf21f70feb8b9aa9f6148e58a68cfa6bd52ca1e3c40a82654a06f",
+      "raw_counts": {
+        "ERROR": 0,
+        "FAIL": 0,
+        "INCONCLUSIVE": 0,
+        "PASS": 4,
+        "SKIP": 0
+      },
+      "verdict": "INCONCLUSIVE",
+      "integrity": "verified",
+      "required": {
+        "PASS": 4
+      },
+      "diagnostic": {
+        "PASS": 8
+      },
+      "blocking": [],
+      "reasons": [
+        "Each endpoint/protocol needs an applicable functional control"
+      ],
+      "source_files_sha256": {
+        "summary.json": "e775c926ebe286fe46a56e7c192fffcdd8c5d42c5c5af3906d5c0a4e4f1de27f",
+        "reliability.json": "a016107293663b611812a891b3dff8c031a8b0340712c095f3b56f4fcc50baa9",
+        "evidence-index.json": "f0cafdbdc86645f82035fa23ec9c4254cf753ec61e34284bbbdf8697620ec675",
+        "summary.md": "9698310ee51f51623a744ed3d2d990aa3feea53ceb7d4295aefd45cba87321ac",
+        "results.jsonl": "e6b09d7fbc7624908c64d2d31c1764eb04f16bd50de877e3161a0efdb4740c0f",
+        "manifest.json": "a352a3a9474020827df07e7e1e218782691f85efe89c46c083cd3cb4af120dca",
+        "attempts.jsonl": "0b3fa904b5a8d92ca160681c6bec2c966174cffdfd267f8e99a52c2b53eedbc5",
+        "junit.xml": "b2c84e914f556c3a0a184769f5cb91a9604d4300e348d2b6ede8bf3952335f5f"
+      }
+    },
+    {
+      "phase": "repeatability",
+      "manifest_hash": "afc0fc0d886f0477bd0d56d537f87677994a13ba9ccda1c6c8645eb32211e446",
+      "raw_counts": {
+        "ERROR": 0,
+        "FAIL": 2,
+        "INCONCLUSIVE": 0,
+        "PASS": 398,
+        "SKIP": 0
+      },
+      "verdict": "PASS",
+      "integrity": "verified",
+      "required": {
+        "PASS": 650
+      },
+      "diagnostic": {
+        "PASS": 546,
+        "FAIL": 4
+      },
+      "blocking": [],
+      "reasons": [],
+      "source_files_sha256": {
+        "summary.json": "990a1451d579e10761946bee9645c35f2fd156fdb15ac36f026538c5bd9f8dbb",
+        "reliability.json": "2f65d0771ca64599b549bc384ba4301f174f741869d74edef5f3b83ac7b08d94",
+        "evidence-index.json": "1ce72b10bc676d2a45b865c3512cb767b64cf2238edca4db70609ed049832a90",
+        "summary.md": "8771b11670186501433b07dda7bde484b3a23a7d1301ba886b66504e2a1c8950",
+        "results.jsonl": "5d1b06ca7288e2d8a128205a56b282a943414d3e84febeb13e2f427bfa16ed13",
+        "manifest.json": "1ab90623a5b5c529bd0768b74060a61cb119049b8d85a9b8c5427680049431d0",
+        "attempts.jsonl": "77526cba2fe86fc9ee6baf7530c2f919ec1bd92cba3cd9431dd9460541f3dacd",
+        "junit.xml": "b4b9132dea867939d1c89d65df76feb0429579ac5cdd2c02c5f7e11570973eb7"
+      }
+    },
+    {
+      "phase": "repeatability-expanded",
+      "manifest_hash": "8e7b2b0b7cdaf484a83235df55f1920c398c398bfbeeb035983893608b55a7ce",
+      "raw_counts": {
+        "ERROR": 0,
+        "FAIL": 2,
+        "INCONCLUSIVE": 0,
+        "PASS": 318,
+        "SKIP": 0
+      },
+      "verdict": "PASS",
+      "integrity": "verified",
+      "required": {
+        "PASS": 520
+      },
+      "diagnostic": {
+        "PASS": 436,
+        "FAIL": 4
+      },
+      "blocking": [],
+      "reasons": [],
+      "source_files_sha256": {
+        "summary.json": "2f217bd67281a6d1c922ba407fb640ded60e4416e019e587be80e8dacb7e5d4e",
+        "reliability.json": "129abeaf5062a73a8f2017d598dc70ac0947422a53521f3e7d726d3c8ead9d25",
+        "evidence-index.json": "69107c6d041e7fe3db746b4312ab280a1c190dce85d76e1522841cb33de9fd5c",
+        "summary.md": "d57c690994e373617d2555d75fb0bbf82d1fc04c26569b097098e07f9cc9901b",
+        "results.jsonl": "f070554d8df4770c4a0f865e809dccf40566446641060b3e079f566c9348a840",
+        "manifest.json": "118edd6f77d60b71cf458cb61d2d5bc624211546166b59039f33019cdab3e020",
+        "attempts.jsonl": "6daba5576803651a0aaecf5132f4e0df0e59b80200fa71b4f083d6701f9fda3b",
+        "junit.xml": "c03b9432f70e24b604976ce4f573964f16b5f725bd31a238541c5ded7bcb950f"
+      }
+    },
+    {
+      "phase": "schema-beta-confirmation",
+      "manifest_hash": "b1ec318a954cfc005016c03326f419f66e35700c6d7f377053c5110c4dfba6d3",
+      "raw_counts": {
+        "ERROR": 0,
+        "FAIL": 2,
+        "INCONCLUSIVE": 0,
+        "PASS": 2,
+        "SKIP": 0
+      },
+      "verdict": "INCONCLUSIVE",
+      "integrity": "verified",
+      "required": {
+        "PASS": 4
+      },
+      "diagnostic": {
+        "PASS": 4,
+        "FAIL": 4
+      },
+      "blocking": [],
+      "reasons": [
+        "Each endpoint/protocol needs an applicable functional control"
+      ],
+      "source_files_sha256": {
+        "summary.json": "b4246c072902d99454ac5d7e4822c0a6fe4021edad34aee531f5d3a3e8ea0d99",
+        "reliability.json": "f2ded0aec11bfa694709c3659fe996696e8632249992c5f5a3cfd850f87cd8fa",
+        "evidence-index.json": "e4eccddf72880c1e08a18e6a487483790165a28f3f6e327aff96af5059151b1a",
+        "summary.md": "feda23b2f0ffc54c9bcc375ab29c937f48bfebb27efb448e9c12bdeb498b9551",
+        "results.jsonl": "e3727eb1d2e7e807412c5cd42c170af03493ab7a8a23349adfab639a7cd91ea5",
+        "manifest.json": "e8b7310672c86f20a7b8f88c022dd62b353b3511c491d728dde89f57af591c81",
+        "attempts.jsonl": "d575b8f6c0398ef5c20b22ed8b1b5e5ee15732a6668cb7c056a411aaa7837c82",
+        "junit.xml": "c7dbf937a72bea32c7fecec3d0a5233d4011f37c1e2bb6dd06fcdeeae3d7aa92"
+      }
+    },
+    {
+      "phase": "schemas",
+      "manifest_hash": "92c38a4fa8e1baf1d3e2398b5a467937ab94872c3e6f24929ed84a0fb22762ea",
+      "raw_counts": {
+        "ERROR": 0,
+        "FAIL": 8,
+        "INCONCLUSIVE": 0,
+        "PASS": 184,
+        "SKIP": 64
+      },
+      "verdict": "PASS",
+      "integrity": "verified",
+      "required": {
+        "PASS": 200,
+        "SKIP": 64
+      },
+      "diagnostic": {
+        "PASS": 350,
+        "SKIP": 128,
+        "FAIL": 26
+      },
+      "blocking": [],
+      "reasons": [],
+      "source_files_sha256": {
+        "summary.json": "b85c8eacb0d7669f38a466e519b516256ba83beb67e1800623e88b5f73c40646",
+        "reliability.json": "f85aa6dbebe11480d0bfd73bac685f26a08952856e00094631dbcb6841e5a9d3",
+        "evidence-index.json": "a96a12b2a5642ed71e1e298bed4597fb542ca894eb8ae3093f157964e9bf01da",
+        "summary.md": "fd3e8760fe9373df9a795fbe6d313c29034d5cdefabe6ee088d7736b65ee80bb",
+        "results.jsonl": "55a8da1ec213e1a6fb4134ec150c8da025d3b28a2817d15b389d0f79f57a139d",
+        "manifest.json": "cd0a5305bd474b135a864a95348c9b32fa5ab7769183338a054cdf13e38b15df",
+        "attempts.jsonl": "ca359a7b3e76f003d3e5f6b93a774981bf544e8f3a727a7556c7bfd080cac97a",
+        "junit.xml": "97993cb758e15dce796db7a07f7ed4f5f00393644d2abdb7d8348669e3782333"
+      }
+    },
+    {
+      "phase": "size-timeout-confirmation",
+      "manifest_hash": "539e09cac10b17e1a193555044caa2c901c0c9a6d8787227c5ec13d56841d086",
+      "raw_counts": {
+        "ERROR": 0,
+        "FAIL": 0,
+        "INCONCLUSIVE": 2,
+        "PASS": 2,
+        "SKIP": 0
+      },
+      "verdict": "PASS",
+      "integrity": "verified",
+      "required": {
+        "PASS": 12
+      },
+      "diagnostic": {
+        "INCONCLUSIVE": 4,
+        "PASS": 4
+      },
+      "blocking": [],
+      "reasons": [],
+      "source_files_sha256": {
+        "summary.json": "f461af01d179193d1d8b77c838eaba8aa6c6fa7108a449d71ca26327d8b5e736",
+        "reliability.json": "3694dea6918e4072718eee7e27bf71183948a56e4181988599b3ce7d3baf9ca1",
+        "evidence-index.json": "aab77447d24e6741d3d87fabe0c646cb17b1618d6ea2b72bd08e44276fbe3ed6",
+        "summary.md": "9d719ea6df0bd6b4f6bb3c5019cca1561bdf2d97f7b6cc664ee840a14bc7a0ad",
+        "results.jsonl": "39016a04a26eac400f27edea48d71b3db3334359d9f6210956101e033d0d65f6",
+        "manifest.json": "0057d92a4b8a1d46be6d350300d957abfdad62f5545d6e287ed693f3d4912521",
+        "attempts.jsonl": "10e5e49f4baf4e5da3f258479ce89370ec7be374ccd06dd5f7bae16bf2219d78",
+        "junit.xml": "6e1c4641c89f8e1e49280412cfdb2192ae46b4d0159f1f895cc52d06128e0a5c"
+      }
+    },
+    {
+      "phase": "sizes-large",
+      "manifest_hash": "59f022841685c0a6e3a5bfc96e8d630b6b80372050db9afc90c618fc350f02d6",
+      "raw_counts": {
+        "ERROR": 6,
+        "FAIL": 27,
+        "INCONCLUSIVE": 0,
+        "PASS": 55,
+        "SKIP": 0
+      },
+      "verdict": "INCONCLUSIVE",
+      "integrity": "verified",
+      "required": {
+        "PASS": 184,
+        "FAIL": 10,
+        "ERROR": 6
+      },
+      "diagnostic": {
+        "FAIL": 56,
+        "PASS": 100,
+        "INCONCLUSIVE": 14,
+        "ERROR": 6
+      },
+      "blocking": [
+        {
+          "endpoint": "flash",
+          "case_id": "L11.chat.non_thinking.nonstream",
+          "facet": "budget",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L11.chat.non_thinking.nonstream",
+          "facet": "functional",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L11.chat.non_thinking.nonstream",
+          "facet": "protocol",
+          "status": "ERROR"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L11.responses.non_thinking.nonstream",
+          "facet": "budget",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L11.responses.non_thinking.nonstream",
+          "facet": "functional",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "L11.responses.non_thinking.nonstream",
+          "facet": "protocol",
+          "status": "ERROR"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L04.chat.non_thinking.nonstream",
+          "facet": "protocol",
+          "status": "ERROR"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L04.chat.non_thinking.nonstream",
+          "facet": "retrieval",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L08.chat.non_thinking.nonstream",
+          "facet": "protocol",
+          "status": "ERROR"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L08.chat.non_thinking.nonstream",
+          "facet": "retrieval",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L11.chat.non_thinking.nonstream",
+          "facet": "budget",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L11.chat.non_thinking.nonstream",
+          "facet": "functional",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L11.chat.non_thinking.nonstream",
+          "facet": "protocol",
+          "status": "ERROR"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L11.responses.non_thinking.nonstream",
+          "facet": "budget",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L11.responses.non_thinking.nonstream",
+          "facet": "functional",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "L11.responses.non_thinking.nonstream",
+          "facet": "protocol",
+          "status": "ERROR"
+        }
+      ],
+      "reasons": [
+        "Source execution is incomplete or contains an execution error",
+        "A mandatory facet is unmeasured or errored"
+      ],
+      "source_files_sha256": {
+        "summary.json": "dc4ea4280e2169ff6261321c9283648fbd57d5f2484c25fb4607a054f99ac484",
+        "reliability.json": "d0e3867569b464785ea234ee9af9eb9f2d9b2d4050306c74d615e2eda26b804d",
+        "evidence-index.json": "bfd59b4a440e4e51ef9b499c9dcfd10673df4359f514ee57a218cd128a0e58ef",
+        "summary.md": "9f88138d5be7debdf184d72a983645f5237ba6c9239b37c8164767ad85ed4c4a",
+        "results.jsonl": "fefbe9b35b235003da76f1315015f801f9d45eb5033d1ca5889d5255a24dcc9e",
+        "manifest.json": "4db4fb85adc4a2619ddd96799486bad247199c09cfd19363f327000d22062af2",
+        "attempts.jsonl": "bdf0d6625bcb1a37191ed37cfd5231e662fc667b2292b55fc3b31fb1fbc2c97d",
+        "junit.xml": "fd21f55a7db623560eb833af76ffbce8b719d9e0e41920fe78ac450d671b39c7"
+      }
+    },
+    {
+      "phase": "workflow-budget-confirmation",
+      "manifest_hash": "101ab95591536a35d34767049513827b16b15d2fd9313ecb510b697a12463acd",
+      "raw_counts": {
+        "ERROR": 0,
+        "FAIL": 0,
+        "INCONCLUSIVE": 0,
+        "PASS": 8,
+        "SKIP": 0
+      },
+      "verdict": "PASS",
+      "integrity": "verified",
+      "required": {
+        "PASS": 16
+      },
+      "diagnostic": {
+        "PASS": 8
+      },
+      "blocking": [],
+      "reasons": [],
+      "source_files_sha256": {
+        "summary.json": "902a2cf3eae6a398cebab8f33b48f3049237ab34b24b26c96f4013c6711230b4",
+        "reliability.json": "f785342a7114b5cc5942ef07f0e729de581d200893f027c579f7f0aa15629b41",
+        "evidence-index.json": "ac1c95a064515d3fb74021d737300f0af3cbe3d4b0734a2e340632a8a52de38f",
+        "summary.md": "1fd13d9014b8fb6f81f0550a11312ef58bf468b77e50bef21ce4502d944739d1",
+        "results.jsonl": "a10481adaedc4949af1827a9a0453db4a6c2a8a38294510a4e66ce6401bc8a48",
+        "manifest.json": "7422dedbd65192e5ffad8904e1a4ae4de177d113dab9c1e0766c60017747628c",
+        "attempts.jsonl": "9c1418022477d8c07aaa144bbbe9cd2237fc2f977eb7126b5fd3f975c3eccd05",
+        "junit.xml": "ffacd0a2cae463567fd70c93be630d7ac02830df73ea28379d0786718b1b873f"
+      }
+    },
+    {
+      "phase": "workflows-full",
+      "manifest_hash": "8e7df7cff8b074faf2f140a1859022ac9fef6ae37562c88560b70c39f5831bfe",
+      "raw_counts": {
+        "ERROR": 0,
+        "FAIL": 8,
+        "INCONCLUSIVE": 0,
+        "PASS": 104,
+        "SKIP": 0
+      },
+      "verdict": "FAIL",
+      "integrity": "verified",
+      "required": {
+        "PASS": 208,
+        "FAIL": 16
+      },
+      "diagnostic": {
+        "PASS": 160,
+        "FAIL": 8
+      },
+      "blocking": [
+        {
+          "endpoint": "flash",
+          "case_id": "W05.chat.non_thinking.nonstream",
+          "facet": "functional",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "W05.chat.non_thinking.nonstream",
+          "facet": "protocol",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "W05.chat.non_thinking.stream",
+          "facet": "functional",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "W05.chat.non_thinking.stream",
+          "facet": "protocol",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "W05.responses.non_thinking.nonstream",
+          "facet": "functional",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "W05.responses.non_thinking.nonstream",
+          "facet": "protocol",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "W05.responses.non_thinking.stream",
+          "facet": "functional",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "flash",
+          "case_id": "W05.responses.non_thinking.stream",
+          "facet": "protocol",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "W05.chat.non_thinking.nonstream",
+          "facet": "functional",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "W05.chat.non_thinking.nonstream",
+          "facet": "protocol",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "W05.chat.non_thinking.stream",
+          "facet": "functional",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "W05.chat.non_thinking.stream",
+          "facet": "protocol",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "W05.responses.non_thinking.nonstream",
+          "facet": "functional",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "W05.responses.non_thinking.nonstream",
+          "facet": "protocol",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "W05.responses.non_thinking.stream",
+          "facet": "functional",
+          "status": "FAIL"
+        },
+        {
+          "endpoint": "pro",
+          "case_id": "W05.responses.non_thinking.stream",
+          "facet": "protocol",
+          "status": "FAIL"
+        }
+      ],
+      "reasons": [],
+      "source_files_sha256": {
+        "summary.json": "9c197845b7b800616ad272f0b26729260243b7e3900f5d2cf7c7da336162abe0",
+        "reliability.json": "98ad652d653e5bfb6c5e5d266ddc3bebf451cb6137b3cc010542319605772c64",
+        "evidence-index.json": "c18bfe2c2caa9107d249939d3b0db4934f3822741a3f1684496522bb251447fe",
+        "summary.md": "6f8a130d40626f98d389f7c0fb93b496e2083b49e580591372579184a3c59b39",
+        "results.jsonl": "22d850bc4e3941dfb8bbf4e5105e0f4d31791d9dd10260226afb5847a0b8ff7e",
+        "manifest.json": "583d42d32e424ef185dce5bac71f205b2e0a084cb70691c07d2a2a5650e3a31d",
+        "attempts.jsonl": "716c6ba45c6e559666e610842d3e17a6680927c7e4525d35e374b91c8695c04c",
+        "junit.xml": "39b611bf4298f429ea2edd9175f320e1a1980cd6b9b1498e2b6a7aa8e34d6667"
+      }
+    }
+  ],
+  "limitations": [
+    "Three samples per selected default variant do not establish a production failure rate.",
+    "A PASS certifies only the selected workload and policy, not model weights or maximum context/output capacity.",
+    "Missing reasoning and visible-token detail remain unknown.",
+    "Calibration observations and final verification are reported separately; no failed round is replaced.",
+    "No live cancellation, retry recovery, or load/concurrency campaign is claimed.",
+    "The supplemental full Pro stress run also did not pass. The all-green full-stress target remains unmet; no further repeat or policy relaxation was performed."
+  ],
+  "original_full_stress_passed": false,
+  "supplemental_pro_full_stress_passed": false,
+  "retrieval_failure": {
+    "phase": "full-stress-pro-confirmation",
+    "endpoint": "pro",
+    "case_id": "L06.chat.non_thinking.stream",
+    "authored_bytes": 65536,
+    "http_status": 200,
+    "protocol_completed": true,
+    "history_replay_passed": true,
+    "required_retrieval": "FAIL",
+    "finding": "The final answer acknowledged the archive instead of returning the three explicitly requested facts."
+  }
+}

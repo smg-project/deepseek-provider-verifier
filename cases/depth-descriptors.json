@@ -952,6 +952,20 @@
       "family": "size.output",
       "shape": "output",
       "output_tokens": 16384
+    },
+    {
+      "id": "R41",
+      "family": "repeatability.structured",
+      "prompt_id": "depth-v2-structured-1",
+      "expanded": true,
+      "fixture": {}
+    },
+    {
+      "id": "R42",
+      "family": "repeatability.structured",
+      "prompt_id": "depth-v2-structured-2",
+      "expanded": true,
+      "fixture": {}
     }
   ]
 }

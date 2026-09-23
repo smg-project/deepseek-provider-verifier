@@ -1,0 +1,133 @@
+{
+  "version": 1,
+  "frozen_verification_revision": "5678bb36550d1fdd980e28943ac28b0295a2cc91",
+  "started_at_utc": "2026-09-23T17:10:27.543157+00:00",
+  "report_created_at": "2026-09-23T17:10:27.789459Z",
+  "scope": {
+    "profile": "deepseek-core-2026-09-23-v1",
+    "suite": "core",
+    "policy": "strict-contract-v1",
+    "route": "https://api.deepseek.com",
+    "models": {
+      "flash": "deepseek-flash",
+      "pro": "deepseek-v4-pro"
+    },
+    "protocols": [
+      "chat",
+      "responses"
+    ],
+    "template_ids": [
+      "C01",
+      "C03",
+      "C05",
+      "C07",
+      "C11",
+      "C13",
+      "C14",
+      "R26",
+      "R27",
+      "R31",
+      "R32",
+      "R41",
+      "R42",
+      "W01",
+      "S01",
+      "S02"
+    ],
+    "fresh_rounds": 1,
+    "retries": 0,
+    "concurrency": 1,
+    "installed_wheel_cli": true,
+    "manual_github_live_workflow_executed": false,
+    "self_hosted_endpoint_tested": false
+  },
+  "frozen_inputs": {
+    "scorer_revision": "sha256:e6f11609db3796d7728fc82f11166bba19435997f0a1cca713ca3029bc3f9313",
+    "policy_hash": "4f5e78ea097ac9cf501fca34ad205585155fcfcda2ccc392288d8012f7585248",
+    "manifest_hash": "e3eb77623d798ad516d861af8b35a84246fd17dbe97650a65340441aa1473743",
+    "dataset_hash": "f328d273e24116c5da1eb47ee42d1870021943489d517e3a66b9bd2b04651728",
+    "profile_hash": "b4cff497fff328fdcd477257fd2933621d355e3a4946f16dacf7768d72803cc0",
+    "wheel_sha256": "7e90a460a63a7894a706c5b7876e5c2ac12f9931bea0dc80adca5f915926b8fc",
+    "request_ceiling": 284,
+    "output_token_ceiling": 604160
+  },
+  "source_complete": true,
+  "integrity": "verified",
+  "acceptance": "PASS",
+  "raw_counts": {
+    "ERROR": 0,
+    "FAIL": 0,
+    "INCONCLUSIVE": 0,
+    "PASS": 168,
+    "SKIP": 0
+  },
+  "required_counts": {
+    "PASS": 496
+  },
+  "diagnostic_counts": {},
+  "by_endpoint": {
+    "flash": {
+      "model": "deepseek-flash",
+      "trials": 84,
+      "raw_counts": {
+        "PASS": 84
+      },
+      "required_counts": {
+        "PASS": 248
+      },
+      "requests": 138,
+      "nonpassing": []
+    },
+    "pro": {
+      "model": "deepseek-v4-pro",
+      "trials": 84,
+      "raw_counts": {
+        "PASS": 84
+      },
+      "required_counts": {
+        "PASS": 248
+      },
+      "requests": 138,
+      "nonpassing": []
+    }
+  },
+  "actual_requests": 276,
+  "cumulative_actual_requests": 5336,
+  "cumulative_planned_request_ceiling": 5524,
+  "cumulative_planned_output_token_ceiling": 10390528,
+  "offline_three_formats_identical": true,
+  "source_artifacts_unchanged": true,
+  "artifact_sha256": {
+    "manifest.json": "6dbd2d6d6fe6db2c778c97e4f077a8c5b8bb307242069dfa946525a3caa59f94",
+    "summary.json": "8fc8026c01fadbd6fe3fa88572a186cb9e778187a52bb2044f13ac317b0cc03f",
+    "summary.md": "9da4aee2e042378161654e1499589e7cbbd84986c1ac9c9e5cf1aedd2b904eec",
+    "junit.xml": "085446d13f2247f05bcadcf8a68a03dc253c5e2c6031b23dc888387576f337ae",
+    "acceptance.json": "a322e7aa669e3740b34eda2a6aff9d1bb37a5f361f93189137a88a2460f4d8b0",
+    "acceptance.md": "deaba4d1ff81859cbec402edde1204a001e85ec6b539a0e92ebd96ae1a7edcfc",
+    "acceptance.junit.xml": "7124c9f305b183532bbd9e683386b2b06cca840c056b1d513c02fac882c0a7a3"
+  },
+  "limitations": [
+    "The core inventory was selected retrospectively from earlier passing observations; this is one new confirmation after freezing that inventory.",
+    "One fresh observation per selected variant does not establish a production failure rate or guarantee future reliability.",
+    "Large input/output stress, deep schemas, larger parallel workflows and extra reasoning measurements are opt-in and not certified by this core result.",
+    "Earlier failed stress and advanced-schema observations remain unchanged in their original reports.",
+    "No self-hosted endpoint, manual GitHub live workflow, concurrency/load or live recovery campaign was run."
+  ],
+  "post_review_offline_assessment": {
+    "scorer_revision": "sha256:f420a2ce64e8456489644ae4ab31b01610d4981bb7ce74a842617d43a54ec3a7",
+    "original_live_scorer_revision": "sha256:e6f11609db3796d7728fc82f11166bba19435997f0a1cca713ca3029bc3f9313",
+    "acceptance": "PASS",
+    "required_counts": {
+      "PASS": 496
+    },
+    "unchanged_except_scorer_identity": true,
+    "source_artifact_hashes_unchanged": true,
+    "additional_live_requests": 0,
+    "offline_tests_passed": 1083,
+    "changes": [
+      "Preserve ERROR for semantic facets when the protocol establishes failed execution; fully received invalid JSON remains FAIL.",
+      "Show exact safe acceptance validation messages without echoing supplied values.",
+      "Increase the manual workflow total timeout to 100 minutes without changing case or request budgets."
+    ]
+  }
+}

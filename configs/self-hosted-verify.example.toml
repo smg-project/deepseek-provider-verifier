@@ -1,0 +1,20 @@
+# Same acceptance policy for official and self-hosted endpoints.
+# Run `dpv plan --config <this-file> --policy official-compatible-v1` before live use.
+[run]
+profile = "deepseek-verification-2026-09-22-v1"
+suite = "verification" # full-stress also includes 1 MiB input / 16K output probes
+protocols = ["chat", "responses"]
+repetitions = 1
+concurrency = 1
+max_attempts_per_endpoint = 2000
+retries = 0
+scorer_revision = "verification-v1"
+
+[endpoints.candidate]
+base_url = "http://localhost:30000/v1"
+model = "your-served-deepseek-model"
+model_release = "unknown"
+auth_none = true
+# For authentication replace auth_none with api_key_env = "CANDIDATE_API_KEY".
+# Official credentials must remain in an environment variable; never in this file.
+# Beta Chat strict-schema probes require an explicit /beta base URL and chat-only run.
