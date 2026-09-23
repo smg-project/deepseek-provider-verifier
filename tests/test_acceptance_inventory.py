@@ -148,3 +148,76 @@ def test_combined_profile_length_terminal_remains_valid(
     assert facets["protocol"].status == ("FAIL" if missing_terminal else "PASS")
     if not missing_terminal:
         assert facets["budget"].status == "PASS"
+
+
+@pytest.mark.parametrize("protocol", ["chat", "responses"])
+@pytest.mark.parametrize("stream", [False, True])
+@pytest.mark.parametrize("broken_history", [False, True])
+def test_combined_profile_continuation_protocol_uses_whole_conversation(
+    protocol, stream, broken_history, monkeypatch
+):
+    from test_runner import run
+    from test_size_cases import wire
+    from test_task3_review_fixes import protocol_response
+
+    from deepseek_provider_verifier import runner
+    from deepseek_provider_verifier.acceptance_facets import derive_facets
+    from deepseek_provider_verifier.assertions import rule_applies
+    from deepseek_provider_verifier.runner import rehash_manifest
+
+    config, profile = _load_configuration(
+        ROOT / "configs/self-hosted-verify.example.toml", None
+    )
+    m = _manifest(config, profile)
+    c = next(
+        c
+        for c in m.cases
+        if c.template_id == "C13"
+        and c.protocol == protocol
+        and c.stream == stream
+        and c.mode == "non_thinking"
+    )
+    m = rehash_manifest(
+        m.model_copy(
+            update={
+                "cases": [c],
+                "request_ceiling": c.max_requests,
+                "output_token_ceiling": c.max_requests * c.max_output_tokens,
+                "budgets": m.budgets.model_copy(update={"protocols": [protocol]}),
+                "gates": sorted(
+                    {
+                        r.assertion_id
+                        for r in profile.rules
+                        if r.id in c.rule_ids and r.gating and rule_applies(r, c)
+                    }
+                ),
+            }
+        )
+    )
+    observations = {}
+    original = runner.evaluate_case
+
+    def capture(case, values, rules):
+        if values:
+            observations[values[0].endpoint, case.id] = values
+        return original(case, values, rules)
+
+    monkeypatch.setattr(runner, "evaluate_case", capture)
+    count = 0
+
+    def respond(req):
+        nonlocal count
+        count += 1
+        body = protocol_response(protocol, text="42", call=count == 1, reasoning=False)
+        if protocol == "responses":
+            body["usage"] = {"input_tokens": 3, "output_tokens": 2, "total_tokens": 5}
+        return wire(protocol, body, stream)
+
+    result = run(m, respond)
+    assert result.case_results[0].status == "PASS"
+    if broken_history:
+        next(iter(observations.values()))[-1].request_payload[
+            "messages" if protocol == "chat" else "input"
+        ] = []
+    facets = {f.name: f for f in derive_facets(m, result, observations)}
+    assert facets["protocol"].status == ("FAIL" if broken_history else "PASS")

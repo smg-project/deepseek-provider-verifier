@@ -57,7 +57,7 @@ def _protocol(case, observations, rules):
 
         statuses.append(evaluate_case(case, observations, rules).status)
     optional = case_family(case) == "schema.optional"
-    for obs in observations:
+    if not special and observations:
         structural = case.model_copy(
             update={
                 "steps": [{"kind": "continue"}],
@@ -67,8 +67,18 @@ def _protocol(case, observations, rules):
                 },
             }
         )
-        if not special:
-            statuses.append(_status_result(structural, [obs], rules, optional).status)
+        # Ordinary replay assertions consume the whole trajectory. Branching
+        # workflows check their declared parent edges in the functional facet.
+        groups = (
+            [[obs] for obs in observations]
+            if case.oracle.get("kind") == "workflow"
+            else [observations]
+        )
+        statuses.extend(
+            _status_result(structural, group, rules, optional).status
+            for group in groups
+        )
+    for obs in observations:
         for tool in obs.tools.values():
             try:
                 if not isinstance(bounded_json(tool.arguments), dict):
