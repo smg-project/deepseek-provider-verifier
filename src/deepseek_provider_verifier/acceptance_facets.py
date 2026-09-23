@@ -168,6 +168,29 @@ def _schema(case, observations):
         return "FAIL"
 
 
+def _workflow(case, observations, rules):
+    from .workflows import evaluate_workflow
+
+    result = evaluate_workflow(case, observations, rules)
+    measured = [a for a in result.assertions if a.id == "ACCUMULATED_REASONING"]
+    task = [a.status for a in result.assertions if a.id != "ACCUMULATED_REASONING"]
+    functional = (
+        "ERROR"
+        if result.status == "ERROR"
+        else (
+            _status(task)
+            if task and rules and all(r.maturity == "calibrated" for r in rules)
+            else "INCONCLUSIVE"
+        )
+    )
+    facets = {"functional": functional}
+    if case.mode == "thinking":
+        facets["reasoning"] = (
+            _status([functional, measured[0].status]) if measured else "INCONCLUSIVE"
+        )
+    return facets
+
+
 REASONS = {
     "protocol": "HTTP status, response envelope, terminal events and original tool JSON must satisfy the selected protocol contract",
     "functional": "The authored functional control and its complete tool/history associations must succeed",
@@ -179,6 +202,7 @@ REASONS = {
     "budget": "Valid nonempty numbered output, explicit length terminal, and consistent reported total generation at least 90% of selected cap",
     "visible": "Visible token measurement requires a valid explicit reasoning-token breakdown; absent detail remains unknown",
     "raw_contract": "Unchanged canonical verdict, including all original strict assertions",
+    "reasoning": "Accumulated replay is measured only with at least two nonempty reasoning rounds and a valid full workflow; absent extra reasoning remains unknown",
 }
 
 
@@ -204,7 +228,9 @@ def derive_facets(manifest, run, observations):
                 if r.id in case.rule_ids and rule_applies(r, case)
             ]
             statuses["protocol"] = _protocol(case, values, rules)
-            if case_family(case) == "size.input":
+            if case.oracle.get("kind") == "workflow":
+                statuses.update(_workflow(case, values, rules))
+            elif case_family(case) == "size.input":
                 statuses.update(_input(case, values))
             elif case_family(case) == "size.output":
                 statuses.update(_output(case, values))

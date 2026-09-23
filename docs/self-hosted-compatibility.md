@@ -192,3 +192,10 @@ protocol and core functional gates cannot be waived. Both policies are independe
 of hostnames and model labels. Chat Beta strict schema is a separate contract:
 configure its explicit `/beta` route and select Chat only; standard-route results
 do not establish Beta support.
+
+Thinking workflows report accumulated reasoning separately from tool execution.
+All exact calls, results and replay of emitted reasoning remain mandatory. If
+fewer than two nonempty reasoning rounds are emitted, accumulated replay is
+**INCONCLUSIVE**, even when the workflow succeeds. The default policy reports
+this as an uncertified capability; strict mode or a policy requiring
+`workflow.thinking/reasoning` cannot pass that unknown measurement.

@@ -132,7 +132,8 @@ def assess_run(
         {
             f"{f.endpoint}:{f.case_id}:{f.name}"
             for f in facets
-            if f.name in ("capability", "schema", "visible") and f.status != "PASS"
+            if f.name in ("capability", "schema", "visible", "reasoning")
+            and f.status != "PASS"
         }
     )
     return AcceptanceResult(

@@ -13,6 +13,7 @@ FAMILY_FACETS = {
     "quality": ("protocol", "quality", "raw_contract"),
     "functional": ("protocol", "functional", "raw_contract"),
     "workflow": ("protocol", "functional", "raw_contract"),
+    "workflow.thinking": ("protocol", "functional", "reasoning", "raw_contract"),
     "schema.core": ("protocol", "schema", "raw_contract"),
     "schema.optional": ("protocol", "capability", "raw_contract"),
     "size.input": ("protocol", "retrieval", "format", "raw_contract"),
@@ -48,7 +49,7 @@ def case_family(case: Case) -> str:
     if kind == "schema_probe":
         return "schema.core" if case.oracle["required_support"] else "schema.optional"
     if kind == "workflow":
-        return "workflow"
+        return "workflow.thinking" if case.mode == "thinking" else "workflow"
     if kind in ("large_input", "large_output"):
         return "size.input" if kind == "large_input" else "size.output"
     if family == "repeatability.instruction":

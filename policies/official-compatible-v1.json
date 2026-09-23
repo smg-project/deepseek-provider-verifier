@@ -74,6 +74,26 @@
       "required": false
     },
     {
+      "family": "workflow.thinking",
+      "facet": "protocol",
+      "required": true
+    },
+    {
+      "family": "workflow.thinking",
+      "facet": "functional",
+      "required": true
+    },
+    {
+      "family": "workflow.thinking",
+      "facet": "reasoning",
+      "required": false
+    },
+    {
+      "family": "workflow.thinking",
+      "facet": "raw_contract",
+      "required": false
+    },
+    {
       "family": "schema.core",
       "facet": "protocol",
       "required": true

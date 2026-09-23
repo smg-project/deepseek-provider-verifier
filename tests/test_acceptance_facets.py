@@ -186,3 +186,53 @@ def test_optional_invalid_schema_retains_protocol_boundary(malformed, observed):
     f = facets(m, r, observed)
     assert f["capability"].status == "FAIL"
     assert f["protocol"].status == ("FAIL" if malformed else "PASS")
+
+
+@pytest.mark.parametrize("protocol", ["chat", "responses"])
+@pytest.mark.parametrize("stream", [False, True])
+@pytest.mark.parametrize("reasoning_rounds", [0, 1, 2])
+def test_workflow_functionality_does_not_invent_accumulated_reasoning(
+    protocol, stream, reasoning_rounds, observed
+):
+    from test_workflows import fixture_body
+
+    from deepseek_provider_verifier.acceptance import assess_run, load_policy
+    from deepseek_provider_verifier.acceptance_facets import derive_facets
+    from deepseek_provider_verifier.cli import _run_context
+    from deepseek_provider_verifier.runner import rehash_manifest
+
+    m = selected("workflows-small", "W04", protocol, thinking=True, stream=stream)
+    m = rehash_manifest(
+        m.model_copy(
+            update={"budgets": m.budgets.model_copy(update={"protocols": [protocol]})}
+        )
+    )
+    count = 0
+
+    def respond(req):
+        nonlocal count
+        body = fixture_body(
+            protocol,
+            m.cases[0].steps[count]["expect"],
+            reasoning=count < reasoning_rounds,
+        )
+        count += 1
+        return wire(protocol, body, stream)
+
+    r = run(m, respond)
+    f = facets(m, r, observed)
+    assert f["functional"].status == "PASS"
+    assert f["reasoning"].status == (
+        "PASS" if reasoning_rounds == 2 else "INCONCLUSIVE"
+    )
+    assert f["raw_contract"].status == r.case_results[0].status
+    assert r.case_results[0].status == (
+        "PASS" if reasoning_rounds == 2 else "INCONCLUSIVE"
+    )
+    r = r.model_copy(update={"report": _run_context(m, r, "verified")})
+    derived = derive_facets(m, r, observed)
+    accepted = assess_run(m, r, derived, load_policy("official-compatible-v1"), "test")
+    assert accepted.exit_code == 0
+    assert bool(accepted.uncertified_capabilities) == (reasoning_rounds < 2)
+    strict = assess_run(m, r, derived, load_policy("strict-contract-v1"), "test")
+    assert strict.exit_code == (0 if reasoning_rounds == 2 else 2)
