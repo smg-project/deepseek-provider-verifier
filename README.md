@@ -45,6 +45,24 @@ explicit `--resume` and a matching manifest.
 The historical `configs/providers.example.toml` diagnostic smoke example remains
 available with its original 34-request ceiling per endpoint.
 
+## Repeatability and deeper coverage
+
+Opt-in depth suites add repeated varied prompts, long/branching tool workflows,
+a schema matrix, and bounded large inputs/outputs for self-hosted endpoints:
+
+```sh
+uv run dpv plan --config configs/depth-repeatability.example.toml
+uv run dpv plan --config configs/depth-workflows.example.toml
+uv run dpv plan --config configs/depth-schemas.example.toml
+uv run dpv plan --config configs/depth-sizes.example.toml
+```
+
+Each run includes per-prompt failure rates and uncertainty in a derived
+`reliability.json` report. Larger matrices are separate presets. The
+[2026-09-22 official live report](docs/calibration/official-depth-2026-09-22.md)
+records both-model results, verifier fixes, and remaining failures. See the
+[coverage, exact budgets, interpretation, and endpoint setup](docs/reliability-depth.md).
+
 ## Four-request offline fixture example
 
 The installed distribution includes `configs/offline-fixture.example.toml`, `profiles/offline-confirmation.example.json`, and a small standard-library fixture provider. The profile selects C01 for Chat and Responses in streaming and non-streaming modes: exactly four requests to one endpoint. C02, C17, and C20 attach assertions to those requests without increasing the budget.

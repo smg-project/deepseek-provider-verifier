@@ -40,6 +40,18 @@ def evaluate_case(
     case: Case, observations: list[Observation], rules: list[Rule]
 ) -> CaseResult:
     applicable = [r for r in rules if r.id in case.rule_ids and rule_applies(r, case)]
+    if case.oracle.get("kind") in ("large_input", "large_output"):
+        from .size_cases import evaluate_size_case
+
+        return evaluate_size_case(case, observations, applicable)
+    if case.oracle.get("kind") == "schema_probe":
+        from .schema_cases import evaluate_schema_probe
+
+        return evaluate_schema_probe(case, observations, applicable)
+    if case.oracle.get("kind") == "workflow":
+        from .workflows import evaluate_workflow
+
+        return evaluate_workflow(case, observations, applicable)
     policies = {r.conditions.get("compatibility_policy") for r in applicable} - {None}
     if policies and (
         case.oracle.get("compatibility") or case.template_id in ("C08", "C09")
@@ -47,6 +59,10 @@ def evaluate_case(
         from .compatibility import evaluate_compatibility
 
         return evaluate_compatibility(case, observations, applicable, policies.pop())
+    if case.oracle.get("depth", {}).get("family", "").startswith("repeatability."):
+        from .compatibility import _status_result
+
+        return _status_result(case, observations, applicable, allow_rejection=False)
     return _evaluate_standard(case, observations, rules)
 
 

@@ -170,6 +170,9 @@ def build_manifest(
             for repetition in range(config.run.repetitions)
         ]
 
+    from .depth_metadata import validate_deployment_cases
+
+    validate_deployment_cases(expanded, profile.rules, config.endpoints)
     retry_multiplier = config.run.retries + 1
     requests_by_protocol: Counter[str] = Counter()
     for case in expanded:

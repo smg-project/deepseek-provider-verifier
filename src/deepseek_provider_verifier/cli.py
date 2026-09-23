@@ -127,6 +127,8 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def _plan(args) -> int:
+    from .depth_metadata import plan_resource_summary
+
     config, profile = _load_configuration(args.config, args.profile)
     if args.endpoint:
         config = _select_endpoints(config, args.endpoint)
@@ -144,6 +146,7 @@ def _plan(args) -> int:
                 "schema_version": 1,
                 "manifest": manifest.model_dump(mode="json"),
                 "missing_prerequisites": missing,
+                "resource_summary": plan_resource_summary(manifest),
             },
             indent=2,
             ensure_ascii=False,
@@ -184,13 +187,23 @@ def _run(args) -> int:
     context = _run_context(manifest, result, "verified")
     result = result.model_copy(update={"report": context})
     result = result.model_copy(update={"exit_code": exit_status(result)})
-    write_report_bundle(args.out, result, allow_existing=True)
+    write_report_bundle(args.out, result, allow_existing=True, manifest=manifest)
     print(args.out)
     return result.exit_code
 
 
 async def _execute(manifest, secrets, output_dir, resume):
-    timeout = httpx.Timeout(30.0, connect=10.0)
+    # Large inputs and nonstream generations may exceed the ordinary read timeout.
+    # The runner still bounds each complete case by this explicit manifest deadline.
+    read_seconds = (
+        manifest.budgets.case_deadline_seconds
+        if any(
+            c.oracle.get("kind") in {"large_input", "large_output"}
+            for c in manifest.cases
+        )
+        else 30.0
+    )
+    timeout = httpx.Timeout(30.0, connect=10.0, read=read_seconds)
     async with AsyncExitStack() as stack:
         clients = {
             name: await stack.enter_async_context(endpoint_client(timeout=timeout))
@@ -297,8 +310,12 @@ def _relative_evidence_link(path: Path, report_directory: Path, digest: str) -> 
 
 
 def _report(args) -> int:
-    result = load_stored_result(args.evidence)
-    rendered = render_report(result, args.format)
+    manifest = None
+    if args.evidence.is_dir() and (args.evidence / "manifest.json").exists():
+        manifest, result = load_run_evidence(args.evidence)
+    else:
+        result = load_stored_result(args.evidence)
+    rendered = render_report(result, args.format, manifest=manifest)
     if args.out:
         if args.out.exists():
             raise ValueError(f"Output path already exists: {args.out}")

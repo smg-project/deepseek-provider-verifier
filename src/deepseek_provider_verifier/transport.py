@@ -92,6 +92,8 @@ async def send_request(
     path: str,
     payload: dict,
     secret: str | None,
+    *,
+    max_response_bytes: int | None = None,
 ) -> AttemptPayload:
     """Capture one POST. Path is relative to API root; /v1 is never discarded.
 
@@ -100,6 +102,10 @@ async def send_request(
     text/reasoning/tool delta or Responses tool-item announcement. Heartbeats and
     role-only deltas do not count. Nonstream timing fields remain None.
     """
+    if max_response_bytes is not None and (
+        type(max_response_bytes) is not int or max_response_bytes <= 0
+    ):
+        raise ValueError("max_response_bytes must be a positive integer")
     if path.strip("/") not in ("chat/completions", "responses"):
         raise ValueError("path must be chat/completions or responses")
     if not endpoint.auth_none and not secret:
@@ -141,6 +147,7 @@ async def send_request(
                 in response.headers.get("content-type", "").lower()
             )
             offset = 0
+            capped = False
             # Preloaded mock/cached responses have already consumed their stream.
             iterator = (
                 response.aiter_bytes()
@@ -151,6 +158,18 @@ async def send_request(
                 elapsed = time.perf_counter() - start
                 if not chunk:
                     continue
+                if (
+                    max_response_bytes is not None
+                    and offset + len(chunk) > max_response_bytes
+                ):
+                    chunk = chunk[: max_response_bytes - offset]
+                    capped = True
+                    result.error = {
+                        "type": "RESPONSE_BYTE_LIMIT",
+                        "message": "Response capture exceeded the configured byte limit",
+                    }
+                if not chunk:
+                    break
                 result.raw_chunks.append(chunk)
                 result.chunks.append(
                     TimestampedChunk(
@@ -164,12 +183,14 @@ async def send_request(
                     result.timings["first_byte_seconds"] = elapsed
                 if streaming:
                     _record_events(result, decoder.feed(chunk), elapsed)
-            if streaming and result.chunks:
+                if capped:
+                    break
+            if streaming and result.chunks and not capped:
                 _record_events(
                     result, decoder.finish(), result.chunks[-1].elapsed_seconds
                 )
-            result.http_exchange_completed = True
-            if not streaming and not encoded and result.raw_body:
+            result.http_exchange_completed = not capped
+            if not capped and not streaming and not encoded and result.raw_body:
                 try:
                     result.raw_json = strict_json_loads(result.raw_body)
                     result.decoded_json = result.safe_evidence(result.raw_json)

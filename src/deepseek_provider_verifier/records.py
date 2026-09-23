@@ -108,6 +108,10 @@ class Rule(Record):
 
     @model_validator(mode="after")
     def diagnostic_rules_are_not_gates(self) -> Rule:
+        from .depth_metadata import validate_deployment_limits
+
+        if "deployment_limits" in self.conditions:
+            validate_deployment_limits(self.conditions["deployment_limits"])
         if "compatibility_policy" in self.conditions and self.conditions[
             "compatibility_policy"
         ] not in ("self_hosted", "official_parity"):
@@ -253,6 +257,10 @@ class Case(Record):
 
 
 def _validate_probe(steps: list[dict], oracle: dict) -> None:
+    from .depth_metadata import validate_depth_oracle, validate_depth_steps
+
+    validate_depth_oracle(oracle)
+    validate_depth_steps(steps, oracle)
     for index, step in enumerate(steps):
         if "replay_from" in step:
             source = step["replay_from"]

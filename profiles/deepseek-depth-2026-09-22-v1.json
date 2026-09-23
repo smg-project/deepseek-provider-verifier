@@ -1,0 +1,303 @@
+{
+  "id": "deepseek-depth-2026-09-22-v1",
+  "models": [
+    "self-hosted-deployment"
+  ],
+  "rules": [
+    {
+      "id": "chat.depth",
+      "protocol": "chat",
+      "conditions": {},
+      "expectation": "Satisfy the authored deterministic depth fixture and observable protocol contract. No official calibration is implied.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/reliability-depth.md",
+      "retrieved_at": "2026-09-22T20:00:00Z",
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "id": "responses.depth",
+      "protocol": "responses",
+      "conditions": {},
+      "expectation": "Satisfy the authored deterministic depth fixture and observable protocol contract. No official calibration is implied.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/reliability-depth.md",
+      "retrieved_at": "2026-09-22T20:00:00Z",
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "id": "chat.size",
+      "protocol": "chat",
+      "conditions": {
+        "deployment_limits": {}
+      },
+      "expectation": "Satisfy the authored deterministic depth fixture and observable protocol contract. No official calibration is implied.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/reliability-depth.md",
+      "retrieved_at": "2026-09-22T20:00:00Z",
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "id": "responses.size",
+      "protocol": "responses",
+      "conditions": {
+        "deployment_limits": {}
+      },
+      "expectation": "Satisfy the authored deterministic depth fixture and observable protocol contract. No official calibration is implied.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/reliability-depth.md",
+      "retrieved_at": "2026-09-22T20:00:00Z",
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    }
+  ],
+  "presets": {
+    "repeatability": {
+      "max_requests_per_protocol": 125,
+      "max_requests_per_endpoint": 250,
+      "max_total_requests": 500,
+      "max_requests_per_conversation": 2,
+      "max_retries": 0,
+      "concurrency": 1,
+      "case_deadline_seconds": 300,
+      "mode_max_output_tokens": {
+        "non_thinking": 512,
+        "thinking": 4096
+      },
+      "case_ids": [
+        "R01",
+        "R02",
+        "R03",
+        "R04",
+        "R05",
+        "R06",
+        "R07",
+        "R08",
+        "R09",
+        "R10",
+        "R11",
+        "R12",
+        "R13",
+        "R14",
+        "R15",
+        "R16",
+        "R17",
+        "R18",
+        "R19",
+        "R20"
+      ]
+    },
+    "repeatability-expanded": {
+      "max_requests_per_protocol": 500,
+      "max_requests_per_endpoint": 1000,
+      "max_total_requests": 2000,
+      "max_requests_per_conversation": 2,
+      "max_retries": 0,
+      "concurrency": 1,
+      "case_deadline_seconds": 300,
+      "mode_max_output_tokens": {
+        "non_thinking": 512,
+        "thinking": 4096
+      },
+      "case_ids": [
+        "R21",
+        "R22",
+        "R23",
+        "R24",
+        "R25",
+        "R26",
+        "R27",
+        "R28",
+        "R29",
+        "R30",
+        "R31",
+        "R32",
+        "R33",
+        "R34",
+        "R35",
+        "R36",
+        "R37",
+        "R38",
+        "R39",
+        "R40"
+      ]
+    },
+    "workflows-small": {
+      "max_requests_per_protocol": 80,
+      "max_requests_per_endpoint": 160,
+      "max_total_requests": 320,
+      "max_requests_per_conversation": 17,
+      "max_retries": 0,
+      "concurrency": 1,
+      "case_deadline_seconds": 600,
+      "mode_max_output_tokens": {
+        "non_thinking": 512,
+        "thinking": 4096
+      },
+      "case_ids": [
+        "W01",
+        "W04",
+        "W06",
+        "W07"
+      ]
+    },
+    "workflows-full": {
+      "max_requests_per_protocol": 192,
+      "max_requests_per_endpoint": 384,
+      "max_total_requests": 768,
+      "max_requests_per_conversation": 17,
+      "max_retries": 0,
+      "concurrency": 1,
+      "case_deadline_seconds": 600,
+      "mode_max_output_tokens": {
+        "non_thinking": 2048,
+        "thinking": 4096
+      },
+      "case_ids": [
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "W05",
+        "W06",
+        "W07"
+      ]
+    },
+    "schemas": {
+      "max_requests_per_protocol": 64,
+      "max_requests_per_endpoint": 128,
+      "max_total_requests": 256,
+      "max_requests_per_conversation": 1,
+      "max_retries": 0,
+      "concurrency": 1,
+      "case_deadline_seconds": 300,
+      "mode_max_output_tokens": {
+        "non_thinking": 512,
+        "thinking": 4096
+      },
+      "case_ids": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S06",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12",
+        "S13",
+        "S14",
+        "S15",
+        "S16",
+        "S17",
+        "S18",
+        "S19",
+        "S20",
+        "S21",
+        "S22",
+        "S23",
+        "S24",
+        "S25",
+        "S26",
+        "S27",
+        "S28",
+        "S29",
+        "S30",
+        "S31",
+        "S32",
+        "S33",
+        "S34",
+        "S35",
+        "S36",
+        "S37",
+        "S38",
+        "S39",
+        "S40",
+        "S41",
+        "S42",
+        "S43",
+        "S44",
+        "S45",
+        "S46",
+        "S47",
+        "S48",
+        "S49",
+        "S50",
+        "S51",
+        "S52",
+        "S53",
+        "S54",
+        "S55",
+        "S56",
+        "S57",
+        "S58",
+        "S59",
+        "S60",
+        "S61",
+        "S62",
+        "S63",
+        "S64"
+      ]
+    },
+    "sizes-small": {
+      "max_requests_per_protocol": 24,
+      "max_requests_per_endpoint": 48,
+      "max_total_requests": 96,
+      "max_requests_per_conversation": 4,
+      "max_retries": 0,
+      "concurrency": 1,
+      "case_deadline_seconds": 600,
+      "mode_max_output_tokens": {
+        "non_thinking": 16384,
+        "thinking": 4096
+      },
+      "case_ids": [
+        "L01",
+        "L02",
+        "L05",
+        "L06",
+        "L09",
+        "L10"
+      ]
+    },
+    "sizes-large": {
+      "max_requests_per_protocol": 46,
+      "max_requests_per_endpoint": 92,
+      "max_total_requests": 184,
+      "max_requests_per_conversation": 4,
+      "max_retries": 0,
+      "concurrency": 1,
+      "case_deadline_seconds": 600,
+      "mode_max_output_tokens": {
+        "non_thinking": 16384,
+        "thinking": 4096
+      },
+      "case_ids": [
+        "L01",
+        "L02",
+        "L03",
+        "L04",
+        "L05",
+        "L06",
+        "L07",
+        "L08",
+        "L09",
+        "L10",
+        "L11"
+      ]
+    }
+  }
+}

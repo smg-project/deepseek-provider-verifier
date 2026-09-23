@@ -6,6 +6,9 @@ import argparse
 import json
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+
+from .evidence import atomic_json
 
 _MODEL = "synthetic-fixture-model"
 
@@ -231,17 +234,22 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--max-requests", type=int, default=4)
+    parser.add_argument(
+        "--ready-file", type=Path, help="write the bound port as JSON after listening"
+    )
     args = parser.parse_args(argv)
-    if not 1 <= args.port <= 65535 or args.max_requests < 1:
-        parser.error("port and max-requests must be positive and bounded")
+    if not 0 <= args.port <= 65535 or args.max_requests < 1:
+        parser.error("port must be 0–65535 and max-requests must be positive")
     host = "127.0.0.1"
     server = _Server((host, args.port), args.max_requests)
     print(
-        f"Synthetic fixture listening on http://{host}:{args.port}/v1 "
+        f"Synthetic fixture listening on http://{host}:{server.server_port}/v1 "
         f"for {args.max_requests} request(s)",
         flush=True,
     )
     try:
+        if args.ready_file is not None:
+            atomic_json(args.ready_file, {"port": server.server_port})
         server.serve_forever()
     except KeyboardInterrupt:
         print("Synthetic fixture stopped", flush=True)
