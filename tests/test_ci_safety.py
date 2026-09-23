@@ -105,3 +105,45 @@ def test_sanitized_artifact_is_allowlisted_not_a_copy_of_evidence(tmp_path):
     (tmp_path / "summary.json").write_text(json.dumps(source))
     with pytest.raises(ValueError):
         ci_live.safe_summary(tmp_path)
+
+
+@pytest.mark.parametrize("endpoint", ["reference", "candidate"])
+def test_core_workflow_is_bounded_and_keeps_separate_credentials(endpoint):
+    c = config(
+        env(
+            DPV_PROFILE="deepseek-core-2026-09-23-v1",
+            DPV_ENDPOINT=endpoint,
+            DPV_CANDIDATE_URL="https://candidate.test/v1",
+        )
+    )
+    assert c.run.suite == "core"
+    assert c.run.max_attempts_per_endpoint == 142
+    assert c.run.retries == 0 and c.run.concurrency == 1
+    assert set(c.endpoints) == {endpoint}
+    assert c.endpoints[endpoint].api_key_env == (
+        "DEEPSEEK_API_KEY" if endpoint == "reference" else "CANDIDATE_API_KEY"
+    )
+
+
+@pytest.mark.parametrize("attempts", [142, 143])
+def test_core_summary_keeps_its_exact_budget_without_exposing_evidence(
+    tmp_path, attempts
+):
+    source = {
+        "manifest_hash": "a" * 64,
+        "complete": True,
+        "exit_code": 0,
+        "counts": {"PASS": 84},
+        "budget_usage": {"reference": attempts},
+        "case_results": [{"observed": "PRIVATE_SENTINEL"}],
+    }
+    (tmp_path / "summary.json").write_text(json.dumps(source))
+    if attempts == 143:
+        with pytest.raises(ValueError):
+            ci_live.safe_summary(tmp_path, profile="deepseek-core-2026-09-23-v1")
+    else:
+        result = ci_live.safe_summary(tmp_path, profile="deepseek-core-2026-09-23-v1")
+        assert result["attempts"] == 142
+        assert "PRIVATE_SENTINEL" not in json.dumps(result)
+    with pytest.raises(ValueError):
+        ci_live.safe_summary(tmp_path)

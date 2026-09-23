@@ -11,8 +11,8 @@ on:
       profile:
         description: Versioned contract scope
         type: choice
-        options: [deepseek-flash-smoke-2026-09-21-v1, deepseek-api-2026-09-21]
-        default: deepseek-flash-smoke-2026-09-21-v1
+        options: [deepseek-core-2026-09-23-v1, deepseek-flash-smoke-2026-09-21-v1, deepseek-api-2026-09-21]
+        default: deepseek-core-2026-09-23-v1
         required: true
       protocols:
         description: Required API protocols
@@ -39,7 +39,8 @@ jobs:
     if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-latest
     environment: live-verification
-    timeout-minutes: 15
+    # Allow slow serial core requests; per-case/request budgets still apply.
+    timeout-minutes: 100
     env:
       DPV_ENDPOINT: ${{ inputs.endpoint }}
       DPV_PROFILE: ${{ inputs.profile }}

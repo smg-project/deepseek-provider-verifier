@@ -53,6 +53,10 @@ def _parser() -> argparse.ArgumentParser:
         "--endpoint", action="append", default=[], help="configured endpoint name"
     )
 
+    plan.add_argument(
+        "--policy", type=Path, help="include offline acceptance inventory"
+    )
+
     run = commands.add_parser("run", help="execute named configured endpoints")
     _configuration_arguments(run)
     run.add_argument(
@@ -89,6 +93,24 @@ def _parser() -> argparse.ArgumentParser:
         "--format", choices=("json", "markdown", "junit"), default="markdown"
     )
     report.add_argument("--out", type=Path, help="new output file; stdout by default")
+    verify = commands.add_parser(
+        "verify", help="execute and assess compatibility acceptance"
+    )
+    _configuration_arguments(verify)
+    verify.add_argument("--endpoint", action="append", default=[])
+    verify.add_argument("--out", type=Path, required=True)
+    verify.add_argument("--resume", action="store_true")
+    assess = commands.add_parser(
+        "assess", help="assess verified captures without network traffic"
+    )
+    assess.add_argument("evidence", type=Path)
+    assess.add_argument("--out", type=Path, required=True)
+    for command in (verify, assess):
+        command.add_argument(
+            "--policy", type=Path, default=Path("official-compatible-v1")
+        )
+        command.add_argument("--expected-policy-hash")
+        command.add_argument("--expected-scorer-revision")
     return parser
 
 
@@ -109,6 +131,8 @@ def main(argv: list[str] | None = None) -> int:
             return _plan(args)
         if args.command == "run":
             return _run(args)
+        if args.command in ("verify", "assess"):
+            return _acceptance_command(args)
         if args.command == "compare":
             return _compare(args)
         return _report(args)
@@ -127,6 +151,7 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def _plan(args) -> int:
+    from .acceptance import load_policy
     from .depth_metadata import plan_resource_summary
 
     config, profile = _load_configuration(args.config, args.profile)
@@ -147,6 +172,15 @@ def _plan(args) -> int:
                 "manifest": manifest.model_dump(mode="json"),
                 "missing_prerequisites": missing,
                 "resource_summary": plan_resource_summary(manifest),
+                **(
+                    {
+                        "acceptance": acceptance_preflight(
+                            manifest, load_policy(args.policy)
+                        )
+                    }
+                    if args.policy
+                    else {}
+                ),
             },
             indent=2,
             ensure_ascii=False,
@@ -216,6 +250,101 @@ async def _execute(manifest, secrets, output_dir, resume):
             output_dir=output_dir,
             resume=resume,
         )
+
+
+def _acceptance_command(args):
+    from .acceptance import assess_run, load_policy
+    from .acceptance_evidence import load_observations, scorer_revision
+    from .acceptance_facets import derive_facets
+    from .acceptance_reports import write_acceptance
+    from .catalog import content_hash
+
+    policy = load_policy(args.policy)
+    revision = scorer_revision()
+    policy_hash = content_hash(policy.model_dump(mode="json"))
+    if args.expected_policy_hash and args.expected_policy_hash != policy_hash:
+        raise ValueError("Acceptance policy hash mismatch")
+    if args.expected_scorer_revision and args.expected_scorer_revision != revision:
+        raise ValueError("Acceptance scorer revision mismatch")
+    if args.command == "verify":
+        # Validate policy coverage before opening any network connection.
+        config, profile = _load_configuration(args.config, args.profile)
+        config = _select_endpoints(config, args.endpoint)
+        planned = _manifest(config, profile)
+        print(
+            json.dumps(acceptance_preflight(planned, policy), sort_keys=True),
+            flush=True,
+        )
+        if any(
+            (args.out / name).exists()
+            for name in ("acceptance.json", "acceptance.md", "acceptance.junit.xml")
+        ):
+            raise ValueError("Acceptance artifacts already exist")
+        _run(args)
+        source = args.out
+    else:
+        _require_new_directory(args.out)
+        source = args.evidence
+    manifest, run, observations = load_observations(source)
+    result = assess_run(
+        manifest, run, derive_facets(manifest, run, observations), policy, revision
+    )
+    write_acceptance(args.out, result, allow_existing=args.command == "verify")
+    print(
+        json.dumps(
+            {
+                "acceptance": result.verdict,
+                "exit_code": result.exit_code,
+                "policy": policy.id,
+                "policy_hash": policy_hash,
+                "scorer_revision": revision,
+                "integrity": result.integrity,
+                "required": dict(Counter(f.status for f in result.required_facets)),
+                "diagnostics": dict(
+                    Counter(f.status for f in result.diagnostic_facets)
+                ),
+                "uncertified_capabilities": result.uncertified_capabilities,
+            },
+            sort_keys=True,
+        )
+    )
+    return result.exit_code
+
+
+def acceptance_preflight(manifest, policy):
+    from .acceptance_records import FAMILY_FACETS, FUNCTIONAL, case_family
+    from .catalog import content_hash
+    from .depth_metadata import plan_resource_summary
+
+    selectors = {(s.family, s.facet): s.required for s in policy.selectors}
+    counts = Counter()
+    functional_protocols = set()
+    for case in manifest.cases:
+        family = case_family(case)
+        for facet in FAMILY_FACETS[family]:
+            if (family, facet) not in selectors:
+                raise ValueError("Unmapped acceptance policy coverage")
+            required = selectors[family, facet]
+            counts["required" if required else "diagnostic"] += len(manifest.endpoints)
+            if (
+                required
+                and facet in FUNCTIONAL
+                and case.oracle.get("applicable") is not False
+            ):
+                functional_protocols.add(case.protocol)
+    if not set(manifest.budgets.protocols) <= functional_protocols:
+        raise ValueError(
+            "Acceptance requires functional controls for every selected protocol"
+        )
+    return {
+        "policy": policy.id,
+        "policy_hash": content_hash(policy.model_dump(mode="json")),
+        "facet_counts": dict(counts),
+        "request_ceiling": manifest.request_ceiling,
+        "output_token_ceiling": manifest.output_token_ceiling,
+        "routes": {name: str(e.base_url) for name, e in manifest.endpoints.items()},
+        "resource_summary": plan_resource_summary(manifest),
+    }
 
 
 def _compare(args) -> int:
@@ -409,6 +538,16 @@ def _require_new_directory(path: Path) -> None:
 
 def _safe_error(exc: Exception) -> str:
     message = str(exc)
+    # These validation messages are fixed strings; never echo an appended value.
+    if message in (
+        "Acceptance policy hash mismatch",
+        "Acceptance scorer revision mismatch",
+        "Acceptance artifacts already exist",
+        "Acceptance output directory is not empty",
+        "Acceptance requires functional controls for every selected protocol",
+        "Unmapped acceptance policy coverage",
+    ):
+        return message
     allowed = (
         "run requires",
         "missing credential environment variable:",

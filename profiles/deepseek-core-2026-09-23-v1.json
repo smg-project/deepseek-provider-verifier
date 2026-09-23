@@ -1,0 +1,505 @@
+{
+  "id": "deepseek-core-2026-09-23-v1",
+  "models": [
+    "deepseek-flash",
+    "deepseek-v4-pro"
+  ],
+  "rules": [
+    {
+      "schema_version": 1,
+      "id": "chat.output.present",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C01",
+          "C03"
+        ],
+        "mode": "any",
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "assertion_id": "chat_output_present",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.stream.done",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C01",
+          "C03",
+          "C05",
+          "C07",
+          "C11",
+          "C13",
+          "C14"
+        ],
+        "stream": true,
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Ordinary core stream controls require completed responses. Depth output-limit probes validate their explicit length terminals separately.",
+      "assertion_id": "chat_stream_terminal",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.stream.usage-final-content",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C20"
+        ],
+        "stream": true,
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "assertion_id": "chat_stream_usage_placement",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.thinking.disabled",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C02"
+        ],
+        "mode": "non_thinking",
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "assertion_id": "chat_thinking_disabled",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.output.present",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C01",
+          "C03"
+        ],
+        "mode": "any",
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "assertion_id": "responses_output_present",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.thinking.disabled",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C02"
+        ],
+        "mode": "non_thinking",
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "assertion_id": "responses_thinking_disabled",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.stream.terminal",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C01",
+          "C03",
+          "C05",
+          "C07",
+          "C11",
+          "C13",
+          "C14"
+        ],
+        "stream": true,
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Ordinary core stream controls require completed responses. Depth output-limit probes validate their explicit length terminals separately.",
+      "assertion_id": "responses_stream_terminal",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.stateless",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C13",
+          "C23"
+        ],
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "assertion_id": "responses_stateless_replay",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.usage.accounting",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C20"
+        ],
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "assertion_id": "responses_usage_accounting",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c05",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C05"
+        ],
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c07",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C07"
+        ],
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c11",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C11"
+        ],
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c13",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C13"
+        ],
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "chat.case.c14",
+      "protocol": "chat",
+      "conditions": {
+        "case_ids": [
+          "C14"
+        ],
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c05",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C05"
+        ],
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c07",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C07"
+        ],
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c11",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C11"
+        ],
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c13",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C13"
+        ],
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "schema_version": 1,
+      "id": "responses.case.c14",
+      "protocol": "responses",
+      "conditions": {
+        "case_ids": [
+          "C14"
+        ],
+        "compatibility_policy": "self_hosted"
+      },
+      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/self-hosted-compatibility.md",
+      "retrieved_at": "2026-09-22T18:00:00Z",
+      "source_sha256": null,
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "id": "chat.depth",
+      "protocol": "chat",
+      "conditions": {},
+      "expectation": "Satisfy the authored deterministic depth fixture and observable protocol contract. No official calibration is implied.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/reliability-depth.md",
+      "retrieved_at": "2026-09-22T20:00:00Z",
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "id": "responses.depth",
+      "protocol": "responses",
+      "conditions": {},
+      "expectation": "Satisfy the authored deterministic depth fixture and observable protocol contract. No official calibration is implied.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/reliability-depth.md",
+      "retrieved_at": "2026-09-22T20:00:00Z",
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "id": "chat.size",
+      "protocol": "chat",
+      "conditions": {
+        "deployment_limits": {}
+      },
+      "expectation": "Satisfy the authored deterministic depth fixture and observable protocol contract. No official calibration is implied.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/reliability-depth.md",
+      "retrieved_at": "2026-09-22T20:00:00Z",
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    },
+    {
+      "id": "responses.size",
+      "protocol": "responses",
+      "conditions": {
+        "deployment_limits": {}
+      },
+      "expectation": "Satisfy the authored deterministic depth fixture and observable protocol contract. No official calibration is implied.",
+      "assertion_id": "case_oracle",
+      "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
+      "source_section": "docs/reliability-depth.md",
+      "retrieved_at": "2026-09-22T20:00:00Z",
+      "evidence_status": "project-policy",
+      "maturity": "calibrated",
+      "gating": true
+    }
+  ],
+  "presets": {
+    "core": {
+      "max_requests_per_protocol": 71,
+      "max_requests_per_endpoint": 142,
+      "max_total_requests": 284,
+      "max_requests_per_conversation": 5,
+      "max_retries": 0,
+      "concurrency": 1,
+      "case_deadline_seconds": 600,
+      "mode_max_output_tokens": {
+        "non_thinking": 512,
+        "thinking": 4096
+      },
+      "case_ids": [
+        "C01",
+        "C03",
+        "C05",
+        "C07",
+        "C11",
+        "C13",
+        "C14",
+        "R26",
+        "R27",
+        "R31",
+        "R32",
+        "R41",
+        "R42",
+        "W01",
+        "S01",
+        "S02"
+      ],
+      "attached_assertion_case_ids": [
+        "C02",
+        "C17",
+        "C20"
+      ]
+    }
+  }
+}

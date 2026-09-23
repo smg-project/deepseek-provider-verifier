@@ -1,5 +1,12 @@
 # Self-hosted compatibility and official behavior
 
+For the recommended bounded core, start with the
+[acceptance workflow](#recommended-acceptance-workflow) below. The first section
+documents the earlier opt-in boundary/parity recipes. The
+[fresh strict core report](calibration/official-core-2026-09-23.md) records both
+official models passing all selected checks; self-hosted deployments still need
+their own run.
+
 Use `configs/self-hosted.example.toml` to verify a self-hosted DeepSeek endpoint.
 Edit its URL, served model label, release, and authentication. Select only the
 protocols the deployment claims to expose; a selected protocol that rejects
@@ -131,3 +138,97 @@ responses, reasoning, and credentials are excluded from the committed record.
 Validate the **installed wheel and manual GitHub workflow in the next live run**
 as a release check alongside repeatability. The current PR's packaged CLI check
 is offline; no new live coverage is claimed for the workflow or these profiles.
+
+## Recommended acceptance workflow
+
+Use the bounded core and the same strict policy for every provider:
+
+```sh
+dpv plan --config configs/self-hosted-core.example.toml --policy strict-contract-v1
+dpv verify --config configs/self-hosted-core.example.toml --endpoint candidate \
+  --policy strict-contract-v1 --out runs/candidate-verification
+dpv assess runs/candidate-verification --policy strict-contract-v1 \
+  --out runs/candidate-strict
+```
+
+Edit the example endpoint/model and configure authentication before live use.
+The core selects 16 fixture templates, 84 trials and at most 142 requests per
+endpoint. Its planned output-token ceiling is 302,080 per endpoint. Both APIs,
+thinking modes and streaming modes are included where the selected fixtures
+support them. All selected raw assertions and facets are mandatory under
+`strict-contract-v1`, including the shallow strict-tool schema control.
+
+The core contains no large-input/output stress probes or advanced-schema matrix.
+Its passing historical observations are documented in the
+[selection record](calibration/core-selection-2026-09-23.md); this retrospective
+selection does not establish a production reliability guarantee.
+
+For opt-in extended diagnostics, retain `configs/self-hosted-verify.example.toml`
+with `official-compatible-v1`: its `verification` preset has a 210-request ceiling,
+and `full-stress` has a 904-request ceiling per endpoint with longer workflows,
+advanced schemas, 1 MiB inputs and 16K output budgets. The output-token ceiling
+and route are printed before traffic. The historical profiles and failed
+observations remain unchanged. Excluded capabilities are not certified by core.
+
+`verify` retains the canonical strict `summary.json`, `summary.md`, `junit.xml`
+and raw evidence. Its exit code and separate `acceptance.json`, `acceptance.md`,
+`acceptance.junit.xml` follow the selected acceptance policy. Existing `run`,
+`report` and `compare` behavior is unchanged. Raw strict failures can coexist
+with compatibility acceptance PASS. Acceptance JUnit records diagnostic facets
+as explicitly skipped/report-only testcases with their original statuses.
+
+The broader `official-compatible-v1` policy requires valid protocol envelopes,
+complete streams, correct core tool results and histories, shallow structured
+output, exact retrieval facts and exercised total output budgets. Exact-word
+instruction observations, advanced schema capability, raw retrieval formatting
+and visible-token measurement remain separately reported diagnostics. Advanced
+schema rejection or invalid output never certifies support. Valid extra support
+from a self-hosted provider earns a capability PASS; it need not reproduce an
+official provider defect. Malformed tool JSON always fails protocol validation.
+
+The core and expanded structured controls R41/R42 use `depth-v2` prompts with literal
+JSON examples, following the [official JSON Output guide](https://api-docs.deepseek.com/guides/json_mode/).
+They require the exact two fields and authored values; extra fields still fail.
+The unchanged `depth-v1` prose-only Chat structured prompts remain in full stress
+as instruction-quality diagnostics. Responses native strict-schema requests
+remain functional gates regardless of prompt version. Every structured prompt
+still requires raw, bounded JSON without duplicate keys. The legacy strict
+verdict is retained, and strict assessment continues to gate it.
+
+Plain-text retrieval may return exactly the expected object inside one complete
+outer JSON fence. JSON-mode responses still require raw JSON. Duplicate members,
+nonfinite numbers, excessive nesting/size, prose, repaired JSON or wrong facts
+are rejected. Total output budget means consistent provider-reported generation
+of at least 90% of the selected cap plus a valid numbered prefix and explicit
+length terminal. If reasoning token details are absent, visible tokens remain
+unknown; acceptance never assumes zero reasoning tokens.
+
+`assess` is network-free and reconstructs observations from hash-verified
+captures. It does not trust an existing acceptance sidecar. Missing captures,
+partial runs, unverified summaries and execution errors cannot pass. Exit codes
+are **0** for all required gates passing, **1** for required failures, and **2**
+for invalid/incomplete/unmeasured required evidence. A source-content hash binds
+the scorer; the policy snapshot and hash bind classification. CI can pin them with
+`--expected-policy-hash` and `--expected-scorer-revision` on verify/assess.
+
+To require an advanced capability, copy the compatibility policy, assign a new
+ID, and set `schema.optional/capability` to `required: true`. All applicable
+advanced probes then become mandatory. `strict-contract-v1` requires every
+facet, including original strict verdicts and visible measurement. Mandatory
+protocol and core functional gates cannot be waived. Both policies are independent
+of hostnames and model labels. Chat Beta strict schema is a separate contract:
+configure its explicit `/beta` route and select Chat only; standard-route results
+do not establish Beta support.
+
+Thinking workflows report accumulated reasoning separately from tool execution.
+All exact calls, results and replay of emitted reasoning remain mandatory. If
+fewer than two nonempty reasoning rounds are emitted, accumulated replay is
+**INCONCLUSIVE**, even when the workflow succeeds. The default policy reports
+this as an uncertified capability; strict mode or a policy requiring
+`workflow.thinking/reasoning` cannot pass that unknown measurement.
+
+The [2026-09-23 official acceptance report](calibration/official-acceptance-2026-09-23.md)
+records three frozen default rounds, extended stress, explicit Beta checks, and
+separately bounded confirmations after a retained request timeout. Compatibility
+and strict results are reported side by side. These observations do not certify
+a self-hosted deployment; run the selected controls against that deployment.

@@ -31,6 +31,7 @@ testpaths = ["tests"]
 include = [
   "/src/deepseek_provider_verifier",
   "/profiles",
+  "/policies",
   "/cases",
   "/schemas",
   "/configs",
@@ -50,6 +51,7 @@ packages = ["src/deepseek_provider_verifier"]
 
 [tool.hatch.build.targets.wheel.force-include]
 "profiles" = "deepseek_provider_verifier/profiles"
+"policies" = "deepseek_provider_verifier/policies"
 "cases" = "deepseek_provider_verifier/cases"
 "schemas" = "deepseek_provider_verifier/schemas"
 "configs" = "deepseek_provider_verifier/configs"
