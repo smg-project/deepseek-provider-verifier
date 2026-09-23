@@ -47,6 +47,11 @@ The [core selection record](docs/calibration/core-selection-2026-09-23.md)
 documents the unchanged controls and the prior observations used to select them.
 This is an observed stable baseline, not a guarantee of future reliability.
 
+The [fresh official core confirmation](docs/calibration/official-core-2026-09-23.md)
+passed all 168 trials and all 496 mandatory facets across Flash and Pro through
+the installed wheel, with 276 requests and zero retries. It is one new round
+after freezing the selection.
+
 The [official acceptance report](docs/calibration/official-acceptance-2026-09-23.md)
 records the three frozen default rounds, stress results, retained timeout, and
 separately reported confirmations. It does not claim every raw strict check passed.

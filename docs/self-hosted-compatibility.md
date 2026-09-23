@@ -1,5 +1,12 @@
 # Self-hosted compatibility and official behavior
 
+For the recommended bounded core, start with the
+[acceptance workflow](#recommended-acceptance-workflow) below. The first section
+documents the earlier opt-in boundary/parity recipes. The
+[fresh strict core report](calibration/official-core-2026-09-23.md) records both
+official models passing all selected checks; self-hosted deployments still need
+their own run.
+
 Use `configs/self-hosted.example.toml` to verify a self-hosted DeepSeek endpoint.
 Edit its URL, served model label, release, and authentication. Select only the
 protocols the deployment claims to expose; a selected protocol that rejects
