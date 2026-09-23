@@ -63,4 +63,10 @@ def load_cases(
                     prompt = prompts[step["prompt_id"]]
                     step.update(content=prompt.content, prompt_hash=prompt.content_hash)
             templates.append(CaseTemplate.model_validate(value))
+    if case_ids is not None:
+        depth_ids = [id for id in case_ids if id.startswith(("R", "W", "S", "L"))]
+        if depth_ids:
+            from .depth_catalog import expand_depth_cases
+
+            templates.extend(expand_depth_cases(depth_ids, selected_protocols))
     return templates

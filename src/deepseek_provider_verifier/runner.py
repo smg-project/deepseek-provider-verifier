@@ -14,6 +14,7 @@ import httpx
 from .assertions import evaluate_case, has_execution_error, rule_applies
 from .capture import AttemptPayload, Observation, redact
 from .catalog import content_hash
+from .depth_metadata import resource_limits, validate_deployment_cases
 from .evidence import (
     append_record,
     atomic_json,
@@ -76,6 +77,9 @@ def validate_manifest(manifest: Manifest) -> None:
     # model_copy bypasses validation; revalidate all nested records at the boundary.
     Manifest.model_validate(manifest.model_dump(mode="json"))
     expected = rehash_manifest(manifest)
+    validate_deployment_cases(
+        manifest.cases, manifest.profile_snapshot.rules, manifest.endpoints
+    )
     if any(
         getattr(expected, field) != getattr(manifest, field)
         for field in ("profile_hash", "dataset_hash", "manifest_hash")
@@ -421,6 +425,7 @@ async def execute_manifest(
                 if (a.endpoint, a.case_id) == key
             ]
             history, options = [], {}
+            recipe_options = []
             deadline = time.monotonic() + manifest.budgets.case_deadline_seconds
             reason = None
             step = 0
@@ -433,6 +438,19 @@ async def execute_manifest(
                     else {"kind": "continue"}
                 )
                 payload = _request(case, endpoint, recipe, history, options)
+                recipe_options.append(copy.deepcopy(options))
+                request_cap, response_cap = resource_limits(case)
+                if (
+                    request_cap is not None
+                    and len(
+                        httpx.Request(
+                            "POST", str(endpoint.base_url), json=payload
+                        ).content
+                    )
+                    > request_cap
+                ):
+                    reason = "REQUEST_BYTE_LIMIT"
+                    break
                 for retry in range(manifest.budgets.retries + 1):
                     b = manifest.budgets
                     if (
@@ -484,6 +502,11 @@ async def execute_manifest(
                                 else "responses",
                                 payload,
                                 secrets.get(name),
+                                **(
+                                    {"max_response_bytes": response_cap}
+                                    if response_cap is not None
+                                    else {}
+                                ),
                             )
                     except (TimeoutError, asyncio.CancelledError) as exc:
                         reason = (
@@ -575,6 +598,10 @@ async def execute_manifest(
                     observations[-1].transport_error
                     or (observations[-1].status_code or 200) >= 400
                 ):
+                    if (observations[-1].transport_error or {}).get(
+                        "type"
+                    ) == "RESPONSE_BYTE_LIMIT":
+                        reason = "RESPONSE_BYTE_LIMIT"
                     break
                 obs = observations[-1]
                 if obs.violations:
@@ -597,6 +624,8 @@ async def execute_manifest(
                     if follow_recipe and "replay_from" in case.steps[recipe_index + 1]:
                         source = case.steps[recipe_index + 1]["replay_from"]
                         obs = observations[source]
+                        if case.oracle.get("kind") == "workflow":
+                            options = copy.deepcopy(recipe_options[source])
                         history = copy.deepcopy(
                             obs.request_payload[
                                 "messages" if case.protocol == "chat" else "input"
@@ -622,7 +651,13 @@ async def execute_manifest(
                     update={
                         "status": "ERROR"
                         if reason
-                        in ("RUN_CANCELLED", "CASE_DEADLINE", "INVALID_TOOL_EXECUTION")
+                        in (
+                            "RUN_CANCELLED",
+                            "CASE_DEADLINE",
+                            "INVALID_TOOL_EXECUTION",
+                            "REQUEST_BYTE_LIMIT",
+                            "RESPONSE_BYTE_LIMIT",
+                        )
                         else "INCONCLUSIVE",
                         "completed": False,
                         "reason": reason,
