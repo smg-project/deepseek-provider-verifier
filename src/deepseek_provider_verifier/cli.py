@@ -53,6 +53,10 @@ def _parser() -> argparse.ArgumentParser:
         "--endpoint", action="append", default=[], help="configured endpoint name"
     )
 
+    plan.add_argument(
+        "--policy", type=Path, help="include offline acceptance inventory"
+    )
+
     run = commands.add_parser("run", help="execute named configured endpoints")
     _configuration_arguments(run)
     run.add_argument(
@@ -147,6 +151,7 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def _plan(args) -> int:
+    from .acceptance import load_policy
     from .depth_metadata import plan_resource_summary
 
     config, profile = _load_configuration(args.config, args.profile)
@@ -167,6 +172,15 @@ def _plan(args) -> int:
                 "manifest": manifest.model_dump(mode="json"),
                 "missing_prerequisites": missing,
                 "resource_summary": plan_resource_summary(manifest),
+                **(
+                    {
+                        "acceptance": acceptance_preflight(
+                            manifest, load_policy(args.policy)
+                        )
+                    }
+                    if args.policy
+                    else {}
+                ),
             },
             indent=2,
             ensure_ascii=False,

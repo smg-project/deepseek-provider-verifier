@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "id": "strict-contract-v1",
+  "mode": "strict",
+  "selectors": [
+    {
+      "family": "core",
+      "facet": "protocol",
+      "required": true
+    },
+    {
+      "family": "core",
+      "facet": "functional",
+      "required": true
+    },
+    {
+      "family": "core",
+      "facet": "raw_contract",
+      "required": true
+    },
+    {
+      "family": "quality",
+      "facet": "protocol",
+      "required": true
+    },
+    {
+      "family": "quality",
+      "facet": "quality",
+      "required": true
+    },
+    {
+      "family": "quality",
+      "facet": "raw_contract",
+      "required": true
+    },
+    {
+      "family": "functional",
+      "facet": "protocol",
+      "required": true
+    },
+    {
+      "family": "functional",
+      "facet": "functional",
+      "required": true
+    },
+    {
+      "family": "functional",
+      "facet": "raw_contract",
+      "required": true
+    },
+    {
+      "family": "workflow",
+      "facet": "protocol",
+      "required": true
+    },
+    {
+      "family": "workflow",
+      "facet": "functional",
+      "required": true
+    },
+    {
+      "family": "workflow",
+      "facet": "raw_contract",
+      "required": true
+    },
+    {
+      "family": "schema.core",
+      "facet": "protocol",
+      "required": true
+    },
+    {
+      "family": "schema.core",
+      "facet": "schema",
+      "required": true
+    },
+    {
+      "family": "schema.core",
+      "facet": "raw_contract",
+      "required": true
+    },
+    {
+      "family": "schema.optional",
+      "facet": "protocol",
+      "required": true
+    },
+    {
+      "family": "schema.optional",
+      "facet": "capability",
+      "required": true
+    },
+    {
+      "family": "schema.optional",
+      "facet": "raw_contract",
+      "required": true
+    },
+    {
+      "family": "size.input",
+      "facet": "protocol",
+      "required": true
+    },
+    {
+      "family": "size.input",
+      "facet": "retrieval",
+      "required": true
+    },
+    {
+      "family": "size.input",
+      "facet": "format",
+      "required": true
+    },
+    {
+      "family": "size.input",
+      "facet": "raw_contract",
+      "required": true
+    },
+    {
+      "family": "size.output",
+      "facet": "protocol",
+      "required": true
+    },
+    {
+      "family": "size.output",
+      "facet": "functional",
+      "required": true
+    },
+    {
+      "family": "size.output",
+      "facet": "budget",
+      "required": true
+    },
+    {
+      "family": "size.output",
+      "facet": "visible",
+      "required": true
+    },
+    {
+      "family": "size.output",
+      "facet": "raw_contract",
+      "required": true
+    }
+  ]
+}
