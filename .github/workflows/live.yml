@@ -39,7 +39,8 @@ jobs:
     if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-latest
     environment: live-verification
-    timeout-minutes: 15
+    # Allow slow serial core requests; per-case/request budgets still apply.
+    timeout-minutes: 100
     env:
       DPV_ENDPOINT: ${{ inputs.endpoint }}
       DPV_PROFILE: ${{ inputs.profile }}

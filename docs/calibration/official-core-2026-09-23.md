@@ -36,3 +36,10 @@ The inventory was selected retrospectively from earlier passing observations, do
 | wheel_sha256 | `7e90a460a63a7894a706c5b7876e5c2ac12f9931bea0dc80adca5f915926b8fc` |
 
 The [sanitized JSON record](official-core-2026-09-23.json) includes source artifact hashes and per-model counts. Raw prompts, responses, reasoning and credentials are excluded.
+
+
+## Post-review offline confirmation
+
+The final reporting fixes preserve execution errors as ERROR in dependent semantic facets, expose only fixed safe CLI validation messages, and allow 100 minutes for the manual serial workflow. They do not change selected fixtures, requests or pass criteria. The full offline suite now passes **1,083 tests**.
+
+The same captured core run was reassessed without new API calls under scorer `sha256:f420a2ce64e8456489644ae4ab31b01610d4981bb7ce74a842617d43a54ec3a7`. All **496 required facets still PASS**; the assessment JSON is unchanged except for the scorer identity, and original source artifact hashes are unchanged. The live counts and frozen provenance above continue to describe the original installed-wheel run. The separate installed release checks validate the final package; no additional live confirmation is claimed for that package.

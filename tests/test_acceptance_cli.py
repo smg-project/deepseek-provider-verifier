@@ -197,3 +197,51 @@ def test_unverified_summary_cannot_be_assessed_as_pass(tmp_path):
     result = json.loads((out / "acceptance.json").read_text())
     assert result["integrity"] == "summary-only"
     assert result["verdict"] == "INCONCLUSIVE"
+
+
+@pytest.mark.parametrize(
+    "flag,message",
+    [
+        ("--expected-policy-hash", "Acceptance policy hash mismatch"),
+        ("--expected-scorer-revision", "Acceptance scorer revision mismatch"),
+    ],
+)
+def test_pin_mismatch_identifies_safe_reason_without_reading_evidence(
+    tmp_path, capsys, flag, message
+):
+    destination = tmp_path / "output"
+    sentinel = "PRIVATE_PIN_SENTINEL"
+    assert (
+        cli.main(
+            [
+                "assess",
+                str(tmp_path / "missing-evidence"),
+                "--policy",
+                "strict-contract-v1",
+                flag,
+                sentinel,
+                "--out",
+                str(destination),
+            ]
+        )
+        == 2
+    )
+    error = capsys.readouterr().err
+    assert message in error and sentinel not in error
+    assert not destination.exists()
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "Acceptance artifacts already exist",
+        "Acceptance output directory is not empty",
+        "Acceptance requires functional controls for every selected protocol",
+        "Unmapped acceptance policy coverage",
+    ],
+)
+def test_acceptance_validation_messages_are_allowlisted_exactly(message):
+    assert cli._safe_error(ValueError(message)) == message
+    assert "PRIVATE_SENTINEL" not in cli._safe_error(
+        ValueError(message + " PRIVATE_SENTINEL")
+    )

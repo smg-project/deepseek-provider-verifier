@@ -236,3 +236,46 @@ def test_workflow_functionality_does_not_invent_accumulated_reasoning(
     assert bool(accepted.uncertified_capabilities) == (reasoning_rounds < 2)
     strict = assess_run(m, r, derived, load_policy("strict-contract-v1"), "test")
     assert strict.exit_code == (0 if reasoning_rounds == 2 else 2)
+
+
+@pytest.mark.parametrize("protocol", ["chat", "responses"])
+@pytest.mark.parametrize(
+    "suite,template,semantic",
+    [
+        ("sizes-small", "L01", {"retrieval", "format"}),
+        ("sizes-small", "L10", {"functional", "budget", "visible"}),
+        ("schemas", "S01", {"schema"}),
+        ("schemas", "S45", {"capability"}),
+    ],
+)
+@pytest.mark.parametrize(
+    "failure", ["transport", "timeout", 401, 402, 403, 408, 429, 500, 503]
+)
+def test_execution_failure_does_not_claim_semantic_mismatch(
+    protocol, suite, template, semantic, failure, observed
+):
+    m = selected(suite, template, protocol)
+
+    def respond(request):
+        if failure == "transport":
+            raise httpx.ReadError("interrupted", request=request)
+        if failure == "timeout":
+            raise httpx.ReadTimeout("timed out", request=request)
+        return httpx.Response(failure, json={"error": {"message": "unavailable"}})
+
+    r = run(m, respond)
+    before = r.model_dump_json()
+    f = facets(m, r, observed)
+    assert f["protocol"].status == "ERROR"
+    assert all(f[name].status == "ERROR" for name in semantic)
+    assert f["raw_contract"].status == r.case_results[0].status
+    assert r.model_dump_json() == before
+
+
+@pytest.mark.parametrize("protocol", ["chat", "responses"])
+def test_completed_invalid_json_remains_schema_failure(protocol, observed):
+    m = selected("schemas", "S01", protocol)
+    r = run(m, lambda request: httpx.Response(200, content=b"{bad json"))
+    f = facets(m, r, observed)
+    assert f["protocol"].status == "FAIL"
+    assert f["schema"].status == "FAIL"

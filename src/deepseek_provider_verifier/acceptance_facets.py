@@ -234,7 +234,16 @@ def derive_facets(manifest, run, observations):
                 if r.id in case.rule_ids and rule_applies(r, case)
             ]
             statuses["protocol"] = _protocol(case, values, rules)
-            if case.oracle.get("kind") == "workflow":
+            if statuses["protocol"] == "ERROR":
+                # A failed execution cannot establish a semantic mismatch.
+                # Reuse protocol classification for transport and HTTP errors;
+                # retain measured invalid JSON and the canonical raw verdict.
+                statuses.update(
+                    (name, "ERROR")
+                    for name in names
+                    if name not in ("protocol", "raw_contract")
+                )
+            elif case.oracle.get("kind") == "workflow":
                 statuses.update(_workflow(case, values, rules))
             elif case_family(case) == "size.input":
                 statuses.update(_input(case, values))

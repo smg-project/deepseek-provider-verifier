@@ -1,6 +1,6 @@
 # Bounded core selection — 2026-09-23
 
-The user requested retaining only previously reliable controls in the default entry point. The new `deepseek-core-2026-09-23-v1` profile selects 16 unchanged fixture templates from the completed official campaign. It uses `strict-contract-v1`: every selected facet and original raw assertion is mandatory.
+The default entry point retains controls that passed consistently in prior observations. The new `deepseek-core-2026-09-23-v1` profile selects 16 unchanged fixture templates from the completed official campaign. It uses `strict-contract-v1`: every selected facet and original raw assertion is mandatory.
 
 This is a retrospective selection record, **not an independent fresh live result**. Consistent observations over this small sample do not guarantee future reliability. Historical broad stress and schema failures remain available in the [original report](official-acceptance-2026-09-23.md).
 

@@ -538,6 +538,16 @@ def _require_new_directory(path: Path) -> None:
 
 def _safe_error(exc: Exception) -> str:
     message = str(exc)
+    # These validation messages are fixed strings; never echo an appended value.
+    if message in (
+        "Acceptance policy hash mismatch",
+        "Acceptance scorer revision mismatch",
+        "Acceptance artifacts already exist",
+        "Acceptance output directory is not empty",
+        "Acceptance requires functional controls for every selected protocol",
+        "Unmapped acceptance policy coverage",
+    ):
+        return message
     allowed = (
         "run requires",
         "missing credential environment variable:",
