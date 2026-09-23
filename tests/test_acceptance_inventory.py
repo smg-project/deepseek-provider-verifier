@@ -74,3 +74,77 @@ def test_plan_acceptance_inventory_is_offline(capsys):
     output = json.loads(capsys.readouterr().out)
     assert output["acceptance"]["policy_hash"]
     assert output["acceptance"]["facet_counts"]["required"] > 0
+
+
+@pytest.mark.parametrize("protocol", ["chat", "responses"])
+@pytest.mark.parametrize("missing_terminal", [False, True])
+def test_combined_profile_length_terminal_remains_valid(
+    protocol, missing_terminal, monkeypatch
+):
+    import httpx
+    from test_runner import run
+    from test_size_cases import output_body, wire
+
+    from deepseek_provider_verifier import runner
+    from deepseek_provider_verifier.acceptance_facets import derive_facets
+    from deepseek_provider_verifier.runner import rehash_manifest
+
+    config, profile = _load_configuration(
+        ROOT / "configs/self-hosted-verify.example.toml", None
+    )
+    m = _manifest(config, profile)
+    c = next(
+        c
+        for c in m.cases
+        if c.template_id == "L09" and c.protocol == protocol and c.stream
+    )
+    m = rehash_manifest(
+        m.model_copy(
+            update={
+                "cases": [c],
+                "request_ceiling": 1,
+                "output_token_ceiling": c.max_output_tokens,
+                "budgets": m.budgets.model_copy(update={"protocols": [protocol]}),
+            }
+        )
+    )
+    from deepseek_provider_verifier.assertions import rule_applies
+
+    m = rehash_manifest(
+        m.model_copy(
+            update={
+                "gates": sorted(
+                    {
+                        r.assertion_id
+                        for r in profile.rules
+                        if r.id in c.rule_ids and r.gating and rule_applies(r, c)
+                    }
+                )
+            }
+        )
+    )
+    observations = {}
+    original = runner.evaluate_case
+
+    def capture(case, values, rules):
+        if values:
+            observations[values[0].endpoint, case.id] = values
+        return original(case, values, rules)
+
+    monkeypatch.setattr(runner, "evaluate_case", capture)
+    body = output_body(protocol, usage=c.max_output_tokens)
+    response = wire(protocol, body, True)
+    if missing_terminal:
+        data = (
+            response.content.replace(b"data: [DONE]\n\n", b"")
+            if protocol == "chat"
+            else b"\n\n".join(response.content.split(b"\n\n")[:-2]) + b"\n\n"
+        )
+        response = httpx.Response(
+            200, content=data, headers={"content-type": "text/event-stream"}
+        )
+    r = run(m, lambda req: response)
+    facets = {f.name: f for f in derive_facets(m, r, observations)}
+    assert facets["protocol"].status == ("FAIL" if missing_terminal else "PASS")
+    if not missing_terminal:
+        assert facets["budget"].status == "PASS"

@@ -33,12 +33,18 @@
       "protocol": "chat",
       "conditions": {
         "case_ids": [
-          "C17"
+          "C01",
+          "C03",
+          "C05",
+          "C07",
+          "C11",
+          "C13",
+          "C14"
         ],
         "stream": true,
         "compatibility_policy": "self_hosted"
       },
-      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "expectation": "Ordinary core stream controls require completed responses. Depth output-limit probes validate their explicit length terminals separately.",
       "assertion_id": "chat_stream_terminal",
       "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
       "source_section": "docs/self-hosted-compatibility.md",
@@ -161,12 +167,18 @@
       "protocol": "responses",
       "conditions": {
         "case_ids": [
-          "C17"
+          "C01",
+          "C03",
+          "C05",
+          "C07",
+          "C11",
+          "C13",
+          "C14"
         ],
         "stream": true,
         "compatibility_policy": "self_hosted"
       },
-      "expectation": "Apply the authored API contract to the declared self-hosted endpoint. Report valid extensions and validation differences separately.",
+      "expectation": "Ordinary core stream controls require completed responses. Depth output-limit probes validate their explicit length terminals separately.",
       "assertion_id": "responses_stream_terminal",
       "source_url": "https://github.com/smg-project/deepseek-provider-verifier",
       "source_section": "docs/self-hosted-compatibility.md",
