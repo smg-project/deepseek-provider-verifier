@@ -45,16 +45,17 @@ def _status(statuses):
 
 
 def _protocol(case, observations, rules):
-    if case_family(case) == "core" and (
+    statuses = []
+    special = case_family(case) in ("core", "contract") and (
         case.oracle.get("status_class")
         or case.oracle.get("status_class_by_mode")
         or case.oracle.get("compatibility")
         or case.template_id in ("C08", "C09")
-    ):
+    )
+    if special:
         from .assertions import evaluate_case
 
-        return evaluate_case(case, observations, rules).status
-    statuses = []
+        statuses.append(evaluate_case(case, observations, rules).status)
     optional = case_family(case) == "schema.optional"
     for obs in observations:
         structural = case.model_copy(
@@ -66,7 +67,8 @@ def _protocol(case, observations, rules):
                 },
             }
         )
-        statuses.append(_status_result(structural, [obs], rules, optional).status)
+        if not special:
+            statuses.append(_status_result(structural, [obs], rules, optional).status)
         for tool in obs.tools.values():
             try:
                 if not isinstance(bounded_json(tool.arguments), dict):

@@ -34,10 +34,18 @@ def load_observations(directory):
         # Reconstruct the same final per-step trajectory the runner evaluated.
         selected = {}
         unavailable = False
+        number = 0
         for ref in result.attempt_refs:
             attempt = attempts[ref]
             if (attempt.endpoint, attempt.case_id) != (result.endpoint, result.case_id):
                 raise ValueError("Acceptance attempt identity mismatch")
+            if attempt.attempt_number <= number:
+                raise ValueError("Acceptance attempt number order mismatch")
+            number = attempt.attempt_number
+            if attempt.step == 0 and attempt.retry == 0:
+                # Resume restarts an incomplete case, retaining old attempt refs.
+                # Discard only the prior trajectory here, never its raw evidence.
+                selected.clear()
             prior = selected.get(attempt.step)
             if prior is not None and attempt.retry <= prior.retry:
                 raise ValueError("Acceptance attempt order mismatch")

@@ -19,6 +19,16 @@
       "required": true
     },
     {
+      "family": "contract",
+      "facet": "protocol",
+      "required": true
+    },
+    {
+      "family": "contract",
+      "facet": "raw_contract",
+      "required": true
+    },
+    {
       "family": "quality",
       "facet": "protocol",
       "required": true

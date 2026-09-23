@@ -9,6 +9,7 @@ from .records import Case, ResultStatus
 # Every executed trial keeps its raw verdict and a mandatory protocol facet.
 FAMILY_FACETS = {
     "core": ("protocol", "functional", "raw_contract"),
+    "contract": ("protocol", "raw_contract"),
     "quality": ("protocol", "quality", "raw_contract"),
     "functional": ("protocol", "functional", "raw_contract"),
     "workflow": ("protocol", "functional", "raw_contract"),
@@ -23,7 +24,25 @@ FUNCTIONAL = {"functional", "schema", "retrieval", "budget", "capability", "qual
 
 def case_family(case: Case) -> str:
     if "depth" not in case.oracle:
-        return "core"
+        oracle = case.oracle
+        expected_status = oracle.get("status_class_by_mode", {}).get(
+            case.mode, oracle.get("status_class")
+        )
+        kind = oracle.get("kind")
+        # Envelope/status observations do not demonstrate a positive task.
+        semantic = (
+            kind in ("exact_text", "conversation", "consistency")
+            and oracle.get("value") is not None
+            or kind in ("schema", "json_object")
+            and bool(oracle.get("schema"))
+            or kind in ("named_tool", "nested_tool", "multiple_tools", "tool_required")
+            and "expected_arguments" in oracle
+        )
+        return (
+            "core"
+            if semantic and expected_status is None and not oracle.get("compatibility")
+            else "contract"
+        )
     kind = case.oracle.get("kind")
     family = case.oracle["depth"].get("family", "")
     if kind == "schema_probe":
