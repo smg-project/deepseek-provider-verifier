@@ -98,6 +98,7 @@ class AcceptancePolicy(AcceptanceRecord):
 class AcceptanceResult(AcceptanceRecord):
     version: Literal[1] = 1
     source_manifest_hash: str
+    source_scorer_revision: str
     policy_hash: str
     policy: AcceptancePolicy
     scorer_revision: str = Field(min_length=1)

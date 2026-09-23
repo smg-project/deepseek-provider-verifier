@@ -19,7 +19,9 @@ def execute(args, cwd, env):
     )
 
 
-def run_fixture(python, dpv, outside, env, config_text, evidence, profile=None):
+def run_fixture(
+    python, dpv, outside, env, config_text, evidence, profile=None, command="run"
+):
     profile_args = ["--profile", str(profile)] if profile else []
     ready = outside / f"{evidence}-ready.json"
     ready.unlink(missing_ok=True)
@@ -63,7 +65,7 @@ def run_fixture(python, dpv, outside, env, config_text, evidence, profile=None):
         execute(
             [
                 dpv,
-                "run",
+                command,
                 "--config",
                 "fixture.toml",
                 "--endpoint",
@@ -99,7 +101,14 @@ def main():
     (sdist,) = (root / "dist").glob("*.tar.gz")
     with zipfile.ZipFile(wheel) as archive:
         names = set(archive.namelist())
-        for folder in ["profiles", "cases", "schemas", "configs", "docs/calibration"]:
+        for folder in [
+            "profiles",
+            "policies",
+            "cases",
+            "schemas",
+            "configs",
+            "docs/calibration",
+        ]:
             for path in (root / folder).rglob("*"):
                 if path.is_file():
                     assert (
@@ -123,6 +132,7 @@ def main():
             assert file in names, file
         for folder in [
             "profiles",
+            "policies",
             "cases",
             "schemas",
             "configs",
@@ -210,6 +220,53 @@ def main():
             env,
         )
         run_fixture(python, dpv, outside, env, resource.stdout, "evidence")
+        run_fixture(
+            python,
+            dpv,
+            outside,
+            env,
+            resource.stdout,
+            "acceptance-evidence",
+            command="verify",
+        )
+        accepted = json.loads(
+            (outside / "acceptance-evidence/acceptance.json").read_text()
+        )
+        assert accepted["verdict"] == "PASS" and accepted["exit_code"] == 0
+        execute(
+            [dpv, "assess", "acceptance-evidence", "--out", "assessment"], outside, env
+        )
+        from xml.etree import ElementTree as ET
+
+        for name in ["acceptance.json", "acceptance.md", "acceptance.junit.xml"]:
+            assert (outside / "assessment" / name).read_bytes() == (
+                outside / "acceptance-evidence" / name
+            ).read_bytes()
+        junit = ET.parse(outside / "assessment/acceptance.junit.xml").getroot()
+        assert junit.attrib["failures"] == "0" and junit.attrib["errors"] == "0"
+        verification = execute(
+            [
+                python,
+                "-c",
+                'from importlib.resources import files; print(files("deepseek_provider_verifier").joinpath("configs", "self-hosted-verify.example.toml").read_text(), end="")',
+            ],
+            outside,
+            env,
+        ).stdout
+        (outside / "verification.toml").write_text(verification)
+        planned = execute(
+            [
+                dpv,
+                "plan",
+                "--config",
+                "verification.toml",
+                "--policy",
+                "official-compatible-v1",
+            ],
+            outside,
+            env,
+        )
+        assert json.loads(planned.stdout)["acceptance"]["request_ceiling"] == 210
         inventory = [
             ("repeatability", "repeatability", 200, 250),
             ("repeatability-expanded", "repeatability-expanded", 800, 1000),
@@ -284,7 +341,7 @@ def main():
         ).stdout
         assert regenerated == (outside / "depth-evidence/summary.md").read_text()
     print(
-        "Wheel/sdist verified; seven depth plans; installed legacy 4/4 and depth 4/4 synthetic trials PASS, eight local requests total."
+        "Wheel/sdist verified; seven depth plans; installed legacy 4/4, acceptance 4/4, and depth 4/4 synthetic trials PASS, twelve local requests total."
     )
 
 

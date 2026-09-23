@@ -33,7 +33,8 @@ def render_acceptance(result, format):
             "",
             f"Policy: `{_md(result.policy.id)}` / `{result.policy_hash}`",
             f"Source manifest: `{result.source_manifest_hash}`",
-            f"Scorer: `{result.scorer_revision}`",
+            f"Source scorer: `{_md(result.source_scorer_revision)}`",
+            f"Acceptance scorer: `{result.scorer_revision}`",
             f"Integrity: **{result.integrity}**; exit: {result.exit_code}",
             f"Required coverage: {_md(counts)}",
             f"Diagnostics (report only): {_md(diagnostics)}",
@@ -83,6 +84,7 @@ def render_acceptance(result, format):
         ("policy_hash", result.policy_hash),
         ("scorer_revision", result.scorer_revision),
         ("source_manifest_hash", result.source_manifest_hash),
+        ("source_scorer_revision", result.source_scorer_revision),
         ("integrity", result.integrity),
         ("required_counts", counts),
     ]:

@@ -1,5 +1,13 @@
 # DeepSeek Provider Verifier
 
+
+For the recommended self-hosted acceptance workflow, use `dpv verify` with
+`configs/self-hosted-verify.example.toml` and policy `official-compatible-v1`.
+Run `dpv plan --config configs/self-hosted-verify.example.toml --policy official-compatible-v1`
+first to inspect the workload. [Acceptance and strict reports](docs/self-hosted-compatibility.md#recommended-acceptance-workflow)
+explain what must pass, which findings remain diagnostic, and how to assess
+stored captures without network traffic.
+
 DeepSeek Provider Verifier (`dpv`) is a community-owned, MIT-licensed project for collecting reproducible evidence from DeepSeek-compatible HTTP providers. It is independent of DeepSeek and provider vendors. A passing result establishes only the behavior observed for the declared endpoint, model label, profile, dataset, and capture date. It does not authenticate model weights, prove quantization, certify a vendor, or predict production-load performance.
 
 ## Quickstart

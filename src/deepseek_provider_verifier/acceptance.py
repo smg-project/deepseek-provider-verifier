@@ -137,6 +137,7 @@ def assess_run(
     )
     return AcceptanceResult(
         source_manifest_hash=manifest.manifest_hash,
+        source_scorer_revision=manifest.scorer_revision,
         policy_hash=content_hash(policy.model_dump(mode="json")),
         policy=policy,
         scorer_revision=scorer_revision,

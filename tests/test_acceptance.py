@@ -87,6 +87,7 @@ def test_acceptance_decision(condition, expected):
     before = r.model_dump_json()
     actual = assess(m, r, facets, p, "test-scorer")
     assert (actual.verdict, actual.exit_code) == expected
+    assert actual.source_scorer_revision == m.scorer_revision
     assert r.model_dump_json() == before
 
 

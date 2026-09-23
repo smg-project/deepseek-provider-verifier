@@ -180,3 +180,14 @@ initial failures, targeted confirmations, and measurement limits. No self-hosted
 candidate was supplied. Load, recovery under live concurrency, parameter effects,
 caching, vision, and files remain separate work. Inspect a concrete plan before
 choosing a live workload.
+
+## Compatibility acceptance versus strict observations
+
+The combined `deepseek-verification-2026-09-22-v1` profile keeps all existing
+fixtures unchanged and composes core controls with depth probes. Use `dpv verify`
+with `official-compatible-v1` for the recommended compatibility decision, and
+`dpv assess ... --policy strict-contract-v1` for the strict view of the same
+captures. See [acceptance workflow](self-hosted-compatibility.md#recommended-acceptance-workflow)
+for the exact gates, diagnostic limitations and exit codes. Repeated default
+runs are independent executions of the same frozen prompt/filler seeds; they
+measure repeatability without claiming broad statistical coverage.

@@ -131,3 +131,64 @@ responses, reasoning, and credentials are excluded from the committed record.
 Validate the **installed wheel and manual GitHub workflow in the next live run**
 as a release check alongside repeatability. The current PR's packaged CLI check
 is offline; no new live coverage is claimed for the workflow or these profiles.
+
+## Recommended acceptance workflow
+
+Use the versioned verification workload and the same policy for every provider:
+
+```sh
+dpv plan --config configs/self-hosted-verify.example.toml --policy official-compatible-v1
+dpv verify --config configs/self-hosted-verify.example.toml --endpoint candidate \
+  --policy official-compatible-v1 --out runs/candidate-verification
+dpv assess runs/candidate-verification --policy strict-contract-v1 \
+  --out runs/candidate-strict
+```
+
+Edit the example endpoint/model and configure authentication before live use. The
+`verification` preset has a 210-request ceiling per endpoint, with both APIs,
+thinking modes and stream modes where the selected fixtures support them. The
+`full-stress` preset has an 888-request ceiling per endpoint and additionally
+includes all depth schemas, long workflows, 1 MiB inputs and 16K output budgets.
+The output-token ceiling and route are printed before `verify` sends traffic.
+These are selected fixture sizes, not a claim about the model's maximum capacity.
+
+`verify` retains the canonical strict `summary.json`, `summary.md`, `junit.xml`
+and raw evidence. Its exit code and separate `acceptance.json`, `acceptance.md`,
+`acceptance.junit.xml` follow the selected acceptance policy. Existing `run`,
+`report` and `compare` behavior is unchanged. Raw strict failures can coexist
+with compatibility acceptance PASS. Acceptance JUnit records diagnostic facets
+as explicitly skipped/report-only testcases with their original statuses.
+
+The default `official-compatible-v1` policy requires valid protocol envelopes,
+complete streams, correct core tool results and histories, shallow structured
+output, exact retrieval facts and exercised total output budgets. Exact-word
+instruction observations, advanced schema capability, raw retrieval formatting
+and visible-token measurement remain separately reported diagnostics. Advanced
+schema rejection or invalid output never certifies support. Valid extra support
+from a self-hosted provider earns a capability PASS; it need not reproduce an
+official provider defect. Malformed tool JSON always fails protocol validation.
+
+Plain-text retrieval may return exactly the expected object inside one complete
+outer JSON fence. JSON-mode responses still require raw JSON. Duplicate members,
+nonfinite numbers, excessive nesting/size, prose, repaired JSON or wrong facts
+are rejected. Total output budget means consistent provider-reported generation
+of at least 90% of the selected cap plus a valid numbered prefix and explicit
+length terminal. If reasoning token details are absent, visible tokens remain
+unknown; acceptance never assumes zero reasoning tokens.
+
+`assess` is network-free and reconstructs observations from hash-verified
+captures. It does not trust an existing acceptance sidecar. Missing captures,
+partial runs, unverified summaries and execution errors cannot pass. Exit codes
+are **0** for all required gates passing, **1** for required failures, and **2**
+for invalid/incomplete/unmeasured required evidence. A source-content hash binds
+the scorer; the policy snapshot and hash bind classification. CI can pin them with
+`--expected-policy-hash` and `--expected-scorer-revision` on verify/assess.
+
+To require an advanced capability, copy the compatibility policy, assign a new
+ID, and set `schema.optional/capability` to `required: true`. All applicable
+advanced probes then become mandatory. `strict-contract-v1` requires every
+facet, including original strict verdicts and visible measurement. Mandatory
+protocol and core functional gates cannot be waived. Both policies are independent
+of hostnames and model labels. Chat Beta strict schema is a separate contract:
+configure its explicit `/beta` route and select Chat only; standard-route results
+do not establish Beta support.
