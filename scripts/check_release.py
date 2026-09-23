@@ -267,6 +267,33 @@ def main():
             env,
         )
         assert json.loads(planned.stdout)["acceptance"]["request_ceiling"] == 210
+        core = execute(
+            [
+                python,
+                "-c",
+                'from importlib.resources import files; print(files("deepseek_provider_verifier").joinpath("configs", "self-hosted-core.example.toml").read_text(), end="")',
+            ],
+            outside,
+            env,
+        ).stdout
+        (outside / "core.toml").write_text(core)
+        core_plan = json.loads(
+            execute(
+                [
+                    dpv,
+                    "plan",
+                    "--config",
+                    "core.toml",
+                    "--policy",
+                    "strict-contract-v1",
+                ],
+                outside,
+                env,
+            ).stdout
+        )
+        assert len(core_plan["manifest"]["cases"]) == 84
+        assert core_plan["acceptance"]["request_ceiling"] == 142
+        assert core_plan["manifest"]["output_token_ceiling"] == 302080
         inventory = [
             ("repeatability", "repeatability", 200, 250),
             ("repeatability-expanded", "repeatability-expanded", 800, 1000),
@@ -341,7 +368,7 @@ def main():
         ).stdout
         assert regenerated == (outside / "depth-evidence/summary.md").read_text()
     print(
-        "Wheel/sdist verified; seven depth plans; installed legacy 4/4, acceptance 4/4, and depth 4/4 synthetic trials PASS, twelve local requests total."
+        "Wheel/sdist verified; bounded core and seven depth plans; installed legacy 4/4, acceptance 4/4, and depth 4/4 synthetic trials PASS, twelve local requests total."
     )
 
 

@@ -11,8 +11,8 @@ on:
       profile:
         description: Versioned contract scope
         type: choice
-        options: [deepseek-flash-smoke-2026-09-21-v1, deepseek-api-2026-09-21]
-        default: deepseek-flash-smoke-2026-09-21-v1
+        options: [deepseek-core-2026-09-23-v1, deepseek-flash-smoke-2026-09-21-v1, deepseek-api-2026-09-21]
+        default: deepseek-core-2026-09-23-v1
         required: true
       protocols:
         description: Required API protocols

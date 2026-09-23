@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "profile_id": "deepseek-core-2026-09-23-v1",
+  "profile_file_sha256": "353810091b6495a04f50280902adf97e897d0e5b0d48d024af6b1fc0879e5082",
+  "policy": "strict-contract-v1",
+  "selected_template_ids": [
+    "C01",
+    "C03",
+    "C05",
+    "C07",
+    "C11",
+    "C13",
+    "C14",
+    "R26",
+    "R27",
+    "R31",
+    "R32",
+    "R41",
+    "R42",
+    "W01",
+    "S01",
+    "S02"
+  ],
+  "trials_per_endpoint": 84,
+  "request_ceiling_per_endpoint": 142,
+  "output_token_ceiling_per_endpoint": 302080,
+  "selection_evidence": [
+    {
+      "phase": "round-1",
+      "source_manifest_hash": "40ff9c726278d5bae5e69edaf5ab797b7ae9da00b14df8a4e24339394d240ecc",
+      "source_artifact_sha256": {
+        "manifest.json": "830021a275f377ea179b288d609278a097f527a9db180faf08d44f4d5ee38021",
+        "summary.json": "c0760636a56fcddb33e6320970ffa4b4db04bd86b8d5f9206c6ec54194916b87",
+        "acceptance.json": "850c4af48d7a7fb745de85d5408b016f4367a9e670c8ee523a3156e5ab3d86f7"
+      },
+      "selected_raw_counts": {
+        "PASS": 168
+      },
+      "selected_facet_counts": {
+        "PASS": 496
+      }
+    },
+    {
+      "phase": "round-2",
+      "source_manifest_hash": "40ff9c726278d5bae5e69edaf5ab797b7ae9da00b14df8a4e24339394d240ecc",
+      "source_artifact_sha256": {
+        "manifest.json": "f94b014caaea4bb9ec1c59d14562da7e4992234ccf6b87c5a3ea5be2abe08efe",
+        "summary.json": "95da5152b2157e015705eb0125fc0e11155941253625c3c2b2e5cc0bf9f570bd",
+        "acceptance.json": "376d0580b2794e72059367649de7c0f5d86389bbed915cebb84c53e1b1ac00ce"
+      },
+      "selected_raw_counts": {
+        "PASS": 168
+      },
+      "selected_facet_counts": {
+        "PASS": 496
+      }
+    },
+    {
+      "phase": "round-3",
+      "source_manifest_hash": "40ff9c726278d5bae5e69edaf5ab797b7ae9da00b14df8a4e24339394d240ecc",
+      "source_artifact_sha256": {
+        "manifest.json": "2575664904d870cf132424b54d5a7c18041ecd476b87a0f83759b29335a2fd7c",
+        "summary.json": "c6193c05b091f349ea7664c5b3608b19313ea12365205da9b1c92e03f6fbf00c",
+        "acceptance.json": "2e01cb20d0daa4c5dd6016186f1b0b220763a5a4e36e99a38b44deef56615bb1"
+      },
+      "selected_raw_counts": {
+        "PASS": 168
+      },
+      "selected_facet_counts": {
+        "PASS": 496
+      }
+    },
+    {
+      "phase": "full-stress",
+      "source_manifest_hash": "e92b12bdfdb93d99f394e484af2cd05546c0b4391455ad6ae9df068a2b47e71c",
+      "source_artifact_sha256": {
+        "manifest.json": "84b6840e91de4fd4334e7dea63e1ffc819604c9e4f81c94505a0a2b809bac254",
+        "summary.json": "679555b0a9a1a6861488020e895edc2b3e6394ce97133c0543046ce4f936b1e6",
+        "acceptance.json": "e4cb6f4dab22664054f49ca73254a2a5013d5b75d3941f30b4cd2a89a0910d53"
+      },
+      "selected_raw_counts": {
+        "PASS": 168
+      },
+      "selected_facet_counts": {
+        "PASS": 496
+      }
+    },
+    {
+      "phase": "full-stress-pro-confirmation",
+      "source_manifest_hash": "55d0ba1c3a2fabebb86a78e40233a1d59b4b89e68028d1a1ed96e5f48a57cc6b",
+      "source_artifact_sha256": {
+        "manifest.json": "aa77e4d530478218f1da0d5038d7107d1e0a965d1289ced4880848bb97e83d6d",
+        "summary.json": "c30766bd028898c755b93c897b7dc078e6aec963e6a76155a7f66294ee353426",
+        "acceptance.json": "f5e75bc15d94ff0facdd40712667d2ce58684c1836cf15a21b135c7b5ca40bdf"
+      },
+      "selected_raw_counts": {
+        "PASS": 84
+      },
+      "selected_facet_counts": {
+        "PASS": 248
+      }
+    }
+  ],
+  "limitations": [
+    "Retrospective selection from already observed runs, not an independent validation of the selected profile.",
+    "Requests, fixture values, oracles and attached assertions remain unchanged; profile and manifest identities are new.",
+    "Raw failures and complete original runs remain unchanged.",
+    "A core PASS covers only selected fixtures and does not establish production reliability or stress/advanced-schema support."
+  ]
+}

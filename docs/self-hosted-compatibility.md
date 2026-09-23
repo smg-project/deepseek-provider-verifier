@@ -134,23 +134,34 @@ is offline; no new live coverage is claimed for the workflow or these profiles.
 
 ## Recommended acceptance workflow
 
-Use the versioned verification workload and the same policy for every provider:
+Use the bounded core and the same strict policy for every provider:
 
 ```sh
-dpv plan --config configs/self-hosted-verify.example.toml --policy official-compatible-v1
-dpv verify --config configs/self-hosted-verify.example.toml --endpoint candidate \
-  --policy official-compatible-v1 --out runs/candidate-verification
+dpv plan --config configs/self-hosted-core.example.toml --policy strict-contract-v1
+dpv verify --config configs/self-hosted-core.example.toml --endpoint candidate \
+  --policy strict-contract-v1 --out runs/candidate-verification
 dpv assess runs/candidate-verification --policy strict-contract-v1 \
   --out runs/candidate-strict
 ```
 
-Edit the example endpoint/model and configure authentication before live use. The
-`verification` preset has a 210-request ceiling per endpoint, with both APIs,
-thinking modes and stream modes where the selected fixtures support them. The
-`full-stress` preset has a 904-request ceiling per endpoint and additionally
-includes all depth schemas, long workflows, 1 MiB inputs and 16K output budgets.
-The output-token ceiling and route are printed before `verify` sends traffic.
-These are selected fixture sizes, not a claim about the model's maximum capacity.
+Edit the example endpoint/model and configure authentication before live use.
+The core selects 16 fixture templates, 84 trials and at most 142 requests per
+endpoint. Its planned output-token ceiling is 302,080 per endpoint. Both APIs,
+thinking modes and streaming modes are included where the selected fixtures
+support them. All selected raw assertions and facets are mandatory under
+`strict-contract-v1`, including the shallow strict-tool schema control.
+
+The core contains no large-input/output stress probes or advanced-schema matrix.
+Its passing historical observations are documented in the
+[selection record](calibration/core-selection-2026-09-23.md); this retrospective
+selection does not establish a production reliability guarantee.
+
+For opt-in extended diagnostics, retain `configs/self-hosted-verify.example.toml`
+with `official-compatible-v1`: its `verification` preset has a 210-request ceiling,
+and `full-stress` has a 904-request ceiling per endpoint with longer workflows,
+advanced schemas, 1 MiB inputs and 16K output budgets. The output-token ceiling
+and route are printed before traffic. The historical profiles and failed
+observations remain unchanged. Excluded capabilities are not certified by core.
 
 `verify` retains the canonical strict `summary.json`, `summary.md`, `junit.xml`
 and raw evidence. Its exit code and separate `acceptance.json`, `acceptance.md`,
@@ -159,7 +170,7 @@ and raw evidence. Its exit code and separate `acceptance.json`, `acceptance.md`,
 with compatibility acceptance PASS. Acceptance JUnit records diagnostic facets
 as explicitly skipped/report-only testcases with their original statuses.
 
-The default `official-compatible-v1` policy requires valid protocol envelopes,
+The broader `official-compatible-v1` policy requires valid protocol envelopes,
 complete streams, correct core tool results and histories, shallow structured
 output, exact retrieval facts and exercised total output budgets. Exact-word
 instruction observations, advanced schema capability, raw retrieval formatting
@@ -168,7 +179,7 @@ schema rejection or invalid output never certifies support. Valid extra support
 from a self-hosted provider earns a capability PASS; it need not reproduce an
 official provider defect. Malformed tool JSON always fails protocol validation.
 
-The compact structured controls R41/R42 use `depth-v2` prompts with literal
+The core and expanded structured controls R41/R42 use `depth-v2` prompts with literal
 JSON examples, following the [official JSON Output guide](https://api-docs.deepseek.com/guides/json_mode/).
 They require the exact two fields and authored values; extra fields still fail.
 The unchanged `depth-v1` prose-only Chat structured prompts remain in full stress

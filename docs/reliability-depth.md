@@ -6,6 +6,12 @@ existing smoke, compatibility, and dated official calibration profiles are uncha
 The depth rules are executable project-policy gates, not official observations.
 They apply to the operator's served model alias without claiming weight identity.
 
+The recommended default is the smaller `deepseek-core-2026-09-23-v1` profile
+with `configs/self-hosted-core.example.toml` and `strict-contract-v1`. It keeps
+previously passing API/tool/shallow-schema controls; every selected check remains
+mandatory. The larger suites below are explicit extensions and retain their
+original evidence and findings. A core PASS does not certify these extensions.
+
 ## Select and inspect a workload
 
 Copy one example, set the endpoint URL/model/release and authentication, inspect
@@ -185,7 +191,7 @@ choosing a live workload.
 
 The combined `deepseek-verification-2026-09-22-v1` profile keeps all existing
 fixtures unchanged and composes core controls with depth probes. Use `dpv verify`
-with `official-compatible-v1` for the recommended compatibility decision, and
+with `official-compatible-v1` for an expanded compatibility decision, and
 `dpv assess ... --policy strict-contract-v1` for the strict view of the same
 captures. See [acceptance workflow](self-hosted-compatibility.md#recommended-acceptance-workflow)
 for the exact gates, diagnostic limitations and exit codes. Repeated default

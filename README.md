@@ -1,9 +1,9 @@
 # DeepSeek Provider Verifier
 
 For the recommended self-hosted acceptance workflow, use `dpv verify` with
-`configs/self-hosted-verify.example.toml` and policy `official-compatible-v1`.
-Run `dpv plan --config configs/self-hosted-verify.example.toml --policy official-compatible-v1`
-first to inspect the workload. [Acceptance and strict reports](docs/self-hosted-compatibility.md#recommended-acceptance-workflow)
+`configs/self-hosted-core.example.toml` and policy `strict-contract-v1`.
+Run `dpv plan --config configs/self-hosted-core.example.toml --policy strict-contract-v1`
+first to inspect the bounded core workload. [Acceptance and strict reports](docs/self-hosted-compatibility.md#recommended-acceptance-workflow)
 explain what must pass, which findings remain diagnostic, and how to assess
 stored captures without network traffic.
 
@@ -16,22 +16,36 @@ without credentials or network traffic:
 
 ```sh
 uv sync
-uv run dpv plan --config configs/self-hosted-verify.example.toml --policy official-compatible-v1
+uv run dpv plan --config configs/self-hosted-core.example.toml --policy strict-contract-v1
 ```
 
 Copy the config and set your endpoint URL, served model label, release, and
 authentication. Then select the candidate explicitly and use a new output directory:
 
 ```sh
-cp configs/self-hosted-verify.example.toml providers.toml
-uv run dpv plan --config providers.toml --policy official-compatible-v1
-uv run dpv verify --config providers.toml --endpoint candidate --out runs/candidate
+cp configs/self-hosted-core.example.toml providers.toml
+uv run dpv plan --config providers.toml --policy strict-contract-v1
+uv run dpv verify --config providers.toml --endpoint candidate --policy strict-contract-v1 --out runs/candidate
 ```
 
 Read `runs/candidate/acceptance.md` for the policy verdict, required checks,
 and diagnostic findings. JSON and JUnit acceptance reports accompany it; the
-canonical strict reports and captures remain separate. The compact verification
-workload has a 210-request ceiling for one endpoint with both protocols.
+canonical strict reports and captures remain separate. The core workload selects 16 fixture templates (84 trials) and has a 142-request
+ceiling per endpoint with both protocols. Every selected facet is mandatory under
+the strict policy, including the original raw assertions. The core covers API
+responses, streaming, thinking controls, tools, history, a four-round tool chain,
+and shallow structured output.
+
+Large input/output probes, deep schemas, exact-word quality prompts, larger
+parallel tool workflows and extra reasoning measurements are opt-in. They are
+excluded from the core result and are not certified by a core PASS. Use
+`configs/self-hosted-verify.example.toml` for the earlier expanded `verification`
+or `full-stress` presets with `official-compatible-v1`; original cases and reports
+remain available. The manual GitHub workflow also defaults to the bounded core.
+
+The [core selection record](docs/calibration/core-selection-2026-09-23.md)
+documents the unchanged controls and the prior observations used to select them.
+This is an observed stable baseline, not a guarantee of future reliability.
 
 The [official acceptance report](docs/calibration/official-acceptance-2026-09-23.md)
 records the three frozen default rounds, stress results, retained timeout, and

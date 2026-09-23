@@ -11,7 +11,11 @@ from pathlib import Path
 
 from deepseek_provider_verifier.records import Endpoint
 
-PROFILES = {"deepseek-api-2026-09-21", "deepseek-flash-smoke-2026-09-21-v1"}
+PROFILES = {
+    "deepseek-api-2026-09-21": ("smoke", 34),
+    "deepseek-flash-smoke-2026-09-21-v1": ("smoke", 34),
+    "deepseek-core-2026-09-23-v1": ("core", 142),
+}
 PROTOCOLS = {
     "chat": ["chat"],
     "responses": ["responses"],
@@ -28,6 +32,7 @@ def config_text(env):
     protocols = PROTOCOLS.get(env["DPV_PROTOCOLS"])
     if protocols is None:
         raise ValueError("Unsupported protocol selection")
+    suite, max_attempts = PROFILES[profile]
     official = endpoint == "reference"
     target = Endpoint(
         name=endpoint,
@@ -43,10 +48,10 @@ def config_text(env):
     # quoting with Unicode scalars preserved (no UTF-16 surrogate escapes).
     values = {
         "profile": profile,
-        "suite": "smoke",
+        "suite": suite,
         "protocols": protocols,
         "concurrency": 1,
-        "max_attempts_per_endpoint": 34,
+        "max_attempts_per_endpoint": max_attempts,
         "retries": 0,
         "repetitions": 1,
         "execution_order": "sequential",
@@ -71,8 +76,11 @@ def config_text(env):
     return "\n".join(lines) + "\n"
 
 
-def safe_summary(directory):
+def safe_summary(directory, *, profile="deepseek-flash-smoke-2026-09-21-v1"):
     """Deliberately omit arbitrary strings, reasons, observations and links."""
+    if profile not in PROFILES:
+        raise ValueError("Unsupported profile")
+    _, max_attempts = PROFILES[profile]
     summary = json.loads((directory / "summary.json").read_text())
     counts = summary["counts"]
     budget = summary["budget_usage"]
@@ -83,7 +91,9 @@ def safe_summary(directory):
         or any(type(n) is not int or n < 0 for n in counts.values())
         or not isinstance(budget, dict)
         or not set(budget) <= {"reference", "candidate"}
-        or any(type(n) is not int or not 0 <= n <= 34 for n in budget.values())
+        or any(
+            type(n) is not int or not 0 <= n <= max_attempts for n in budget.values()
+        )
         or len(budget) != 1
         or type(summary["complete"]) is not bool
         or type(summary["exit_code"]) is not int
@@ -113,7 +123,7 @@ def main():
         Path("runs").mkdir(exist_ok=True)
         Path("runs/live-provider.toml").write_text(text)
     else:
-        result = safe_summary(Path("runs/live"))
+        result = safe_summary(Path("runs/live"), profile=os.environ["DPV_PROFILE"])
         Path("runs/sanitized").mkdir(exist_ok=True)
         Path("runs/sanitized/summary.json").write_text(
             json.dumps(result, indent=2) + "\n"
