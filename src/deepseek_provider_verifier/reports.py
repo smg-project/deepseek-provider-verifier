@@ -336,6 +336,54 @@ def _date(value) -> str:
     )
 
 
+def _case_evidence(item, context) -> str:
+    links = context.evidence_links if context else {}
+    return (
+        ", ".join(
+            f"[{index + 1}]({_md(link)})"
+            for index, link in enumerate(
+                links.get(
+                    f"{item.endpoint}:{item.case_id}", links.get(item.case_id, [])
+                )
+            )
+        )
+        or "unavailable"
+    )
+
+
+def _assertion_failures(result: RunResult) -> list[str]:
+    groups = {}
+    for item in result.case_results:
+        for assertion in item.assertions:
+            if assertion.status not in ("FAIL", "ERROR", "INCONCLUSIVE"):
+                continue
+            key = (item.endpoint, assertion.id, assertion.status, assertion.gating)
+            groups.setdefault(key, {})[item.case_id] = item
+    if not groups:
+        return []
+    lines = [
+        "",
+        "## Assertion failures",
+        "",
+        (
+            "Counts are distinct cases within each row; a case may appear in multiple rows. "
+            "Gating reflects the original assertion flag, not a new acceptance decision. "
+            "These groups do not infer root causes."
+        ),
+        "",
+        "| Endpoint | Assertion | Status | Gating | Affected cases | Example case | Evidence |",
+        "| --- | --- | --- | --- | ---: | --- | --- |",
+    ]
+    for (endpoint, assertion, status, gating), cases in sorted(groups.items()):
+        example = cases[min(cases)]
+        lines.append(
+            f"| {_md(endpoint)} | {_md(assertion)} | {status} | "
+            f"{'yes' if gating else 'no'} | {len(cases)} | {_md(example.case_id)} | "
+            f"{_case_evidence(example, result.report)} |"
+        )
+    return lines
+
+
 def _run_markdown(result: RunResult) -> str:
     counts = _run_counts(result)
     context = result.report
@@ -371,6 +419,7 @@ def _run_markdown(result: RunResult) -> str:
             "",
             *(f"- `{_md(gate)}`" for gate in result.enabled_gates),
             *(["- `none`"] if not result.enabled_gates else []),
+            *_assertion_failures(result),
             "",
             "## Cases",
             "",
@@ -379,22 +428,11 @@ def _run_markdown(result: RunResult) -> str:
         ]
     )
     required = set(context.required_case_ids if context else [])
-    links = context.evidence_links if context else {}
     for item in result.case_results:
         reasons = [assertion.reason for assertion in item.assertions]
         if item.reason:
             reasons.append(item.reason)
-        evidence = (
-            ", ".join(
-                f"[{index + 1}]({_md(link)})"
-                for index, link in enumerate(
-                    links.get(
-                        f"{item.endpoint}:{item.case_id}", links.get(item.case_id, [])
-                    )
-                )
-            )
-            or "unavailable"
-        )
+        evidence = _case_evidence(item, context)
         lines.append(
             f"| {_md(item.case_id)} | {_md(item.endpoint)} | {item.status} | "
             f"{'unavailable' if context is None else 'yes' if item.case_id in required else 'no'} | {evidence} | {_md('; '.join(reasons))} |"

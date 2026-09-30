@@ -36,6 +36,8 @@ the strict policy, including the original raw assertions. The core covers API
 responses, streaming, thinking controls, tools, history, a four-round tool chain,
 and shallow structured output.
 
+For failure triage, read the assertion summary in `runs/candidate/summary.md` before the per-case details. It groups failed, errored, and inconclusive assertions by endpoint, assertion ID, status, and original gating flag, with affected-case counts and example evidence links. A case can appear in more than one group; grouping does not infer a root cause or change strict or acceptance verdicts. Regenerate it offline with `uv run dpv report runs/candidate --format markdown`.
+
 Large input/output probes, deep schemas, exact-word quality prompts, larger
 parallel tool workflows and extra reasoning measurements are opt-in. They are
 excluded from the core result and are not certified by a core PASS. Use

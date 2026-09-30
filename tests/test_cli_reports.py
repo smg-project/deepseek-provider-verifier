@@ -900,3 +900,93 @@ def test_run_loader_rejects_checkpoint_with_deleted_journals(tmp_path, fixture_s
         (FileNotFoundError, ValueError), match="checkpoint|No such file"
     ):
         load_run_evidence(run_dir)
+
+
+@pytest.mark.parametrize("with_context", [True, False])
+def test_assertion_failure_summary_counts_cases_and_preserves_evidence(with_context):
+    from collections import Counter
+
+    source = _run_result(status="FAIL")
+    first = source.case_results[0]
+    failure = first.assertions[0].model_copy(
+        update={
+            "id": "usage|<check>",
+            "observed": {"reasoning": "private-observation-not-for-summary"},
+        }
+    )
+    first = first.model_copy(
+        update={
+            "case_id": "one",
+            "assertions": [
+                failure,
+                failure,  # Repeated checks in one case are counted once.
+                failure.model_copy(update={"gating": False}),
+                failure.model_copy(update={"id": "passing-check", "status": "PASS"}),
+            ],
+        }
+    )
+    second = first.model_copy(update={"case_id": "two", "assertions": [failure]})
+    others = [
+        first.model_copy(
+            update={
+                "endpoint": "other",
+                "case_id": case_id,
+                "status": status,
+                "assertions": [failure.model_copy(update={"status": status})],
+            }
+        )
+        for case_id, status in [("one", "ERROR"), ("two", "INCONCLUSIVE")]
+    ]
+    cases = [first, second, *others]
+    context = source.report.model_copy(
+        update={
+            "endpoints": {first.endpoint: "fixture-model", "other": "other-model"},
+            "required_case_ids": ["one", "two"],
+            "evidence_links": {
+                f"{first.endpoint}:one": ["attempts.jsonl#sha256-" + "a" * 64]
+            },
+        }
+    )
+    result = source.model_copy(
+        update={
+            "case_results": cases,
+            "counts": dict(Counter(item.status for item in cases)),
+            "budget_usage": {first.endpoint: 2, "other": 2},
+            "report": context if with_context else None,
+            "exit_code": 2,
+        }
+    )
+    before = result.model_dump(mode="json")
+    markdown = render_report(result, "markdown")
+    summary = markdown.split("## Assertion failures", 1)[1].split("## Cases", 1)[0]
+    candidate = "candidate\\|unsafe next"
+    check = "usage\\|&lt;check&gt;"
+    assert f"| {candidate} | {check} | FAIL | yes | 2 | one |" in summary
+    assert f"| {candidate} | {check} | FAIL | no | 1 | one |" in summary
+    assert f"| other | {check} | ERROR | yes | 1 | one |" in summary
+    assert f"| other | {check} | INCONCLUSIVE | yes | 1 | two |" in summary
+    assert "passing-check" not in summary
+    assert "private-observation-not-for-summary" not in markdown
+    if with_context:
+        assert "[1](attempts.jsonl#sha256-" + "a" * 64 + ")" in summary
+    else:
+        assert "unavailable" in summary
+    assert result.model_dump(mode="json") == before
+    canonical = json.loads(render_report(result, "json"))
+    assert canonical["case_results"] == before["case_results"]
+    assert canonical["exit_code"] == 2
+    assert all(
+        f"| {status} | {canonical['counts'][status]} |" in markdown
+        for status in ALL_COUNTS
+    )
+    junit = ET.fromstring(render_report(result, "junit"))
+    assert len(junit.findall("testcase")) == 4
+    assert junit.attrib["failures"] == "2"
+    assert junit.attrib["errors"] == "2"
+
+
+@pytest.mark.parametrize("status", ["PASS", "SKIP"])
+def test_assertion_failure_summary_omits_passing_and_skipped_checks(status):
+    assert "## Assertion failures" not in render_report(
+        _run_result(status=status), "markdown"
+    )
