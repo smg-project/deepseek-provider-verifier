@@ -582,8 +582,21 @@ def _valid_usage(usage: Any, protocol: str) -> bool:
     details = usage.get(
         "output_tokens_details", usage.get("completion_tokens_details", {})
     )
+    detail_fields = (
+        (
+            "reasoning_tokens",
+            "audio_tokens",
+            "accepted_prediction_tokens",
+            "rejected_prediction_tokens",
+            "text_tokens",
+        )
+        if protocol == "chat"
+        else ("reasoning_tokens",)
+    )
     return isinstance(details, dict) and all(
-        type(v) is int and v >= 0 for v in details.values()
+        type(details[k]) is int and details[k] >= 0
+        for k in detail_fields
+        if k in details
     )
 
 
