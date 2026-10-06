@@ -202,6 +202,50 @@ def test_chat_stream_replay_keeps_reasoning_and_tools():
     assert result.assistant_messages[0]["provider_extra"] is True
 
 
+@pytest.mark.parametrize("stream", [False, True])
+@pytest.mark.parametrize(
+    "fields,expected,invalid",
+    [
+        ({"reasoning_content": "think"}, "think", False),
+        ({"reasoning": "think"}, "think", False),
+        ({"reasoning_content": "think", "reasoning": "think"}, "think", False),
+        ({"reasoning_content": "think", "reasoning": "other"}, "think", False),
+        ({"reasoning_content": "", "reasoning": "think"}, "think", False),
+        ({"reasoning_content": None, "reasoning": "think"}, "think", False),
+        ({}, "", False),
+        ({"reasoning": ""}, "", False),
+        ({"reasoning": 7}, "", True),
+        ({"reasoning_content": "think", "reasoning": 7}, "think", True),
+    ],
+)
+def test_chat_reasoning_alias_preserves_raw_evidence(stream, fields, expected, invalid):
+    message = {"role": "assistant", "content": "answer", **fields}
+    body = {
+        "id": "chat-fixture",
+        "object": "chat.completion.chunk" if stream else "chat.completion",
+        "created": 1,
+        "model": "fixture-model",
+        "choices": [
+            {
+                "index": 0,
+                "delta" if stream else "message": message,
+                "finish_reason": "stop",
+            }
+        ],
+    }
+    if stream:
+        wire = ("data: " + json.dumps(body) + "\n\ndata: [DONE]\n\n").encode()
+        observed = assemble_chat(decode_sse([wire]))
+        assert observed.raw_objects == [body]
+    else:
+        observed = assemble_chat_json(body)
+        assert observed.raw_response == body
+        assert observed.assistant_messages == [message]
+    assert observed.reasoning == expected
+    assert ("INVALID_TEXT_DELTA" in observed.violations) == invalid
+    assert observed.text == "answer"
+
+
 def test_responses_duplicate_done_and_terminal_are_reported():
     wire = fixture("responses", "interleaved.sse")
     line = b'event: response.function_call_arguments.done\ndata: {"type":"response.function_call_arguments.done","sequence_number":7,"output_index":0,"item_id":"i1","arguments":"{\\"x\\":2}"}\n\n'

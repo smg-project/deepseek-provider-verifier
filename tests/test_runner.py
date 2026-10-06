@@ -157,15 +157,18 @@ def test_complete_positive_run_records_all_attempts(tmp_path):
     assert json.loads((tmp_path / "summary.json").read_text())["complete"]
 
 
-def test_history_replay_and_tool_result_use_original_id(tmp_path):
+@pytest.mark.parametrize("reasoning_field", ["reasoning_content", "reasoning"])
+def test_history_replay_and_tool_result_use_original_id(tmp_path, reasoning_field):
     bodies = []
 
     def handler(request):
         bodies.append(json.loads(request.content))
         if len(bodies) == 1:
-            return httpx.Response(
-                200, json=response(None, [tool()], "Reasoning must survive intact")
+            body = response(None, [tool()])
+            body["choices"][0]["message"][reasoning_field] = (
+                "Reasoning must survive intact"
             )
+            return httpx.Response(200, json=body)
         return httpx.Response(200, json=response("42"))
 
     m = manifest(
@@ -175,7 +178,7 @@ def test_history_replay_and_tool_result_use_original_id(tmp_path):
     result = run(m, handler, tmp_path)
     assert result.exit_code == 0
     messages = bodies[1]["messages"]
-    assert messages[1]["reasoning_content"] == "Reasoning must survive intact"
+    assert messages[1][reasoning_field] == "Reasoning must survive intact"
     assert messages[2] == {"role": "tool", "tool_call_id": "call-a", "content": "42"}
 
 
@@ -840,7 +843,8 @@ def test_failed_infrastructure_trial_is_incomplete_and_not_marked_done(tmp_path)
     assert not load_resume_state(tmp_path, result.manifest_hash).completed_case_ids
 
 
-def test_chat_stream_continuation_replays_fragmented_arguments():
+@pytest.mark.parametrize("reasoning_field", ["reasoning_content", "reasoning"])
+def test_chat_stream_continuation_replays_fragmented_arguments(reasoning_field):
     from deepseek_provider_verifier.runner import rehash_manifest
 
     m = manifest(
@@ -856,7 +860,8 @@ def test_chat_stream_continuation_replays_fragmented_arguments():
         bodies.append(json.loads(request.content))
         deltas = (
             [
-                {"role": "assistant", "reasoning_content": "fixture trace"},
+                {"role": "assistant", reasoning_field: "fixture "},
+                {reasoning_field: "trace"},
                 {"tool_calls": [{"index": 0, **tool(arguments='{"a":17,')}]},
                 {"tool_calls": [{"index": 0, "function": {"arguments": '"b":25}'}}]},
             ]
@@ -902,7 +907,7 @@ def test_chat_stream_continuation_replays_fragmented_arguments():
         bodies[1]["messages"][1]["tool_calls"][0]["function"]["arguments"]
         == '{"a":17,"b":25}'
     )
-    assert bodies[1]["messages"][1]["reasoning_content"] == "fixture trace"
+    assert bodies[1]["messages"][1][reasoning_field] == "fixture trace"
 
 
 def test_responses_stream_full_history_is_available_for_next_user_turn():

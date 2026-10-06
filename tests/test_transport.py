@@ -129,7 +129,8 @@ def test_pre_header_timeout_not_retried():
     assert len(calls) == 1
 
 
-def test_timing_distinguishes_role_and_meaningful_delta(monkeypatch):
+@pytest.mark.parametrize("field", ["content", "reasoning_content", "reasoning"])
+def test_timing_distinguishes_role_and_meaningful_delta(monkeypatch, field):
     ticks = iter([0.0, 1.0, 2.0, 3.0, 4.0, 5.0])
     monkeypatch.setattr(
         "deepseek_provider_verifier.transport.time",
@@ -143,7 +144,11 @@ def test_timing_distinguishes_role_and_meaningful_delta(monkeypatch):
                 [
                     b": heartbeat\n\n",
                     b'data: {"choices":[{"index":0,"delta":{"role":"assistant"}}]}\n\n',
-                    b'data: {"choices":[{"index":0,"delta":{"content":"Hi"}}]}\n\n',
+                    (
+                        'data: {"choices":[{"index":0,"delta":{"'
+                        + field
+                        + '":"Hi"}}]}\n\n'
+                    ).encode(),
                 ]
             ),
         ),

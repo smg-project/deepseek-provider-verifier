@@ -129,6 +129,7 @@ def _pair(
         if case.protocol == "chat":
             for item in expected[key]:
                 item.pop("reasoning_content", None)
+                item.pop("reasoning", None)
         else:
             expected[key] = [i for i in expected[key] if i.get("type") != "reasoning"]
         exercised = expected == observations[2].request_payload
