@@ -361,3 +361,43 @@ def test_unknown_oracle_cannot_become_a_terminal_only_pass():
         evaluate(case(oracle={"kind": "not-registered"}), [observation()]).status
         == "INCONCLUSIVE"
     )
+
+
+def usage_result(protocol, details, *, total=5):
+    input_key, output_key, details_key = (
+        ("prompt_tokens", "completion_tokens", "completion_tokens_details")
+        if protocol == "chat"
+        else ("input_tokens", "output_tokens", "output_tokens_details")
+    )
+    o = observation(
+        usage={input_key: 2, output_key: 3, "total_tokens": total, details_key: details}
+    )
+    o.protocol = protocol
+    return evaluate(
+        case(protocol=protocol),
+        [o],
+        [rule(protocol=protocol, assertion_id="usage_accounting")],
+    )
+
+
+@pytest.mark.parametrize("protocol", ["chat", "responses"])
+def test_usage_accepts_extension_arrays(protocol):
+    details = {
+        "reasoning_tokens": 1,
+        "output_tokens_per_turn": [],
+        "tool_output_tokens_per_turn": [0],
+    }
+    assert usage_result(protocol, details).status == "PASS"
+
+
+@pytest.mark.parametrize(
+    "protocol, details, total",
+    [
+        ("responses", {"reasoning_tokens": -1}, 5),
+        ("chat", {"audio_tokens": True}, 5),
+        ("responses", {"reasoning_tokens": 1}, 6),
+        ("responses", [], 5),
+    ],
+)
+def test_usage_keeps_invalid_accounting_failures(protocol, details, total):
+    assert usage_result(protocol, details, total=total).status == "FAIL"
