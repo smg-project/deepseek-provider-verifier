@@ -63,20 +63,33 @@ def _choices(
                 {
                     key: value
                     for key, value in delta.items()
-                    if key not in ("content", "reasoning_content", "tool_calls")
+                    if key
+                    not in ("content", "reasoning_content", "reasoning", "tool_calls")
                     and not (key == "role" and value is None)
                 }
             )
         for field, segments in [
             ("content", observed.text_segments),
             ("reasoning_content", observed.reasoning_segments),
+            ("reasoning", observed.reasoning_segments),
         ]:
             text = delta.get(field)
             if text is not None:
                 if not isinstance(text, str):
                     observed.flag("INVALID_TEXT_DELTA", source)
-                elif text:
+                elif text and (
+                    field != "reasoning" or not delta.get("reasoning_content")
+                ):
                     segments.append(Segment(text=text, identity=ci, source=source))
+                    if (
+                        stream
+                        and field != "content"
+                        and not any(
+                            name in replay
+                            for name in ("reasoning_content", "reasoning")
+                        )
+                    ):
+                        replay[field] = ""
         calls = delta.get("tool_calls", [])
         if not isinstance(calls, list):
             observed.flag("INVALID_TOOL_CALLS", source)
@@ -168,7 +181,10 @@ def _finish(observed: Observation, has_terminal: bool) -> Observation:
             replay = observed.assistant_messages[index]
             for field, segments in [
                 ("content", observed.text_segments),
-                ("reasoning_content", observed.reasoning_segments),
+                (
+                    "reasoning" if "reasoning" in replay else "reasoning_content",
+                    observed.reasoning_segments,
+                ),
             ]:
                 selected = [
                     segment.text for segment in segments if segment.identity == ci

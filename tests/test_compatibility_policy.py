@@ -268,7 +268,15 @@ def paired_manifest(protocol, policy="self_hosted"):
     return policy_manifest(m, policy)
 
 
-@pytest.mark.parametrize("protocol", ["chat", "responses"])
+@pytest.mark.parametrize(
+    "protocol,reasoning_fields",
+    [
+        ("chat", ["reasoning_content"]),
+        ("chat", ["reasoning"]),
+        ("chat", ["reasoning_content", "reasoning"]),
+        ("responses", []),
+    ],
+)
 @pytest.mark.parametrize(
     "omitted_status,policy,expected",
     [
@@ -278,14 +286,19 @@ def paired_manifest(protocol, policy="self_hosted"):
     ],
 )
 def test_reasoning_pair_reuses_the_same_setup_without_the_control_answer(
-    protocol, omitted_status, policy, expected
+    protocol, reasoning_fields, omitted_status, policy, expected
 ):
     requests = []
 
     def provider(request):
         requests.append(json.loads(request.content))
         if len(requests) == 1:
-            return httpx.Response(200, json=protocol_response(protocol, call=True))
+            body = protocol_response(protocol, call=True)
+            if protocol == "chat":
+                message = body["choices"][0]["message"]
+                trace = message.pop("reasoning_content")
+                message.update({field: trace for field in reasoning_fields})
+            return httpx.Response(200, json=body)
         if len(requests) == 2:
             return httpx.Response(200, json=protocol_response(protocol))
         return httpx.Response(
@@ -302,6 +315,7 @@ def test_reasoning_pair_reuses_the_same_setup_without_the_control_answer(
     if protocol == "chat":
         for item in control[key]:
             item.pop("reasoning_content", None)
+            item.pop("reasoning", None)
     else:
         control[key] = [i for i in control[key] if i.get("type") != "reasoning"]
     assert requests[2] == control

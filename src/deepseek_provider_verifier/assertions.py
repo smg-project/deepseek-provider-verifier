@@ -722,7 +722,11 @@ def _mutation_exercised(
         return False
     if mutation == "omit_reasoning":
         replay = [
-            {k: v for k, v in item.items() if k != "reasoning_content"}
+            {
+                k: v
+                for k, v in item.items()
+                if k not in ("reasoning_content", "reasoning")
+            }
             for item in originals
             if item.get("type") != "reasoning"
         ]

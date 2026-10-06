@@ -61,6 +61,7 @@ def _meaningful(value: Any) -> bool:
             if isinstance(delta, dict) and (
                 delta.get("content")
                 or delta.get("reasoning_content")
+                or delta.get("reasoning")
                 or delta.get("tool_calls")
             ):
                 return True

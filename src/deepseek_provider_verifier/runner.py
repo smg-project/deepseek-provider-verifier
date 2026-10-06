@@ -201,6 +201,7 @@ def _replay(
     if mutation == "omit_reasoning":
         for item in replay:
             item.pop("reasoning_content", None)
+            item.pop("reasoning", None)
         replay = [item for item in replay if item.get("type") != "reasoning"]
         if replay == items:
             raise ValueError("No returned reasoning exists for the negative mutation")
