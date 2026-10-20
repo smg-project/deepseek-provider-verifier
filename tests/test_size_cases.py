@@ -328,3 +328,37 @@ def test_unknown_incomplete_reason_cannot_authorize_partial_record():
     b["incomplete_details"] = "malformed"
     r = run(m, lambda req: httpx.Response(200, json=b))
     assert r.case_results[0].status == "FAIL"
+
+
+@pytest.mark.parametrize("id", ["L01", "L05", "L09"])
+@pytest.mark.parametrize("protocol", ["chat", "responses"])
+def test_size_cases_pin_sampling_on_every_request(id, protocol):
+    from deepseek_provider_verifier import size_cases
+
+    m = selected("sizes-small", id, protocol)
+    c = m.cases[0]
+    bodies = []
+
+    def handler(req):
+        bodies.append(json.loads(req.content))
+        if c.oracle["kind"] == "large_output":
+            usage = c.max_output_tokens * 95 // 100
+            return wire(protocol, output_body(protocol, usage=usage), False)
+        text = (
+            "ack"
+            if len(bodies) < c.max_requests
+            else json.dumps(c.oracle["expected_facts"])
+        )
+        return httpx.Response(
+            200, json=protocol_response(protocol, text=text, reasoning=False)
+        )
+
+    r = run(m, handler).case_results[0]
+    assert r.status == "PASS"
+    assert len(bodies) == c.max_requests
+    for body in bodies:
+        assert body["temperature"] == size_cases.PINNED_TEMPERATURE == 0
+        if protocol == "chat":
+            assert body["seed"] == size_cases.PINNED_SEED
+        else:
+            assert "seed" not in body

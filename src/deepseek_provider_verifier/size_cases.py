@@ -6,6 +6,27 @@ import httpx
 
 from .compatibility import _status_result
 from .json_utils import strict_json_loads
+
+# A size verdict measures the provider: whether the facts come back and how far a
+# generation runs. At the API's default sampling the same prompt draws differently
+# shaped answers from one request to the next (a fenced JSON object one time, a
+# bare one the next), so every size request pins greedy decoding, and on Chat,
+# whose API has the member, a fixed seed; the Responses API has no seed member.
+# What the verdict then reads is a stable property of the model and the provider,
+# not of the draw; the strictness of the verdict itself is unchanged.
+PINNED_TEMPERATURE = 0
+PINNED_SEED = 42
+
+
+def pinned_sampling(protocol: str) -> dict:
+    """The request members every size step sends to make its answer reproducible."""
+
+    request = {"temperature": PINNED_TEMPERATURE}
+    if protocol == "chat":
+        request["seed"] = PINNED_SEED
+    return request
+
+
 from .records import AssertionResult, MetricObservation
 from .workflows import _parent_request
 
@@ -126,6 +147,8 @@ def size_template(descriptor, protocol):
             seed=seed,
             bounded_steps=True,
         )
+    for step in steps:
+        step["request"] = pinned_sampling(protocol)
     return CaseTemplate(
         id=descriptor["id"],
         prompt_id=descriptor["id"],

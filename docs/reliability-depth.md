@@ -132,6 +132,11 @@ instructions. L05–L08 distribute the same total sizes across four turns. Seede
 varied filler surrounds facts near the beginning, middle, and end. All three facts
 must be returned correctly. Literal UTF-8 bytes are not token estimates.
 
+Every size request pins sampling: `temperature` 0 on both protocols and a fixed
+`seed` on Chat (the Responses API has no seed member), so a retrieval or
+output-boundary verdict is a property of the model and the provider rather than
+of one sampling draw; the strictness of the verdict is unchanged.
+
 When a run includes input- or output-size probes, the CLI's HTTP read timeout
 follows the manifest's per-case deadline (600 seconds in the shipped size presets), allowing
 large input processing and nonstream generation to finish. The runner still
